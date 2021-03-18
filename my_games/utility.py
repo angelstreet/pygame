@@ -1,4 +1,4 @@
-import pygame
+import pygame,os
 
 FPS = 60
 BLACK = (0,0,0)
@@ -14,3 +14,12 @@ def draw_text(display, text,font_name, size,color, x, y ):
 def reset_keys(self):
     self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY, self.K_ESCAPE = False, False, False, False, False
     return self
+
+def resize_screen(w,h,resizable=False):
+    #print(w,h,resizable)
+    if resizable:
+        screen =pygame.display.set_mode((w, h), pygame.RESIZABLE)
+    else:
+        screen =pygame.display.set_mode((w, h))
+    display = pygame.Surface((w,h))
+    return screen,display

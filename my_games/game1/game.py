@@ -1,10 +1,12 @@
 import pygame
-from utility import FPS,WHITE,BLACK,draw_text,reset_keys
+from utility import FPS,WHITE,BLACK,draw_text,reset_keys,resize_screen
+clock = pygame.time.Clock()
 
 class Game():
     def __init__(self,screen,display,WIDTH,HEIGHT):
         self.screen = screen
         self.display = display
+        self.WIDTH, self.HEIGHT = WIDTH,HEIGHT
         self.w, self.h = WIDTH,HEIGHT
         self.mid_w, self.mid_h = WIDTH / 2, HEIGHT / 2
         self.running, self.playing = True, False
@@ -20,19 +22,18 @@ class Game():
         reset_keys(self)
 
     def launch(self,game_menu):
+        reset_keys(self)
+        self.screen,self.display = resize_screen(self.w, self.h)
         self.game_menu = game_menu
         self.playing = True
         print("Game Start")
-        displayInfo = pygame.display.Info()
-        #pygame.display.set_mode((displayInfo.current_w, displayInfo.current_h))
-        #pygame.display.set_mode((self.w,self.h), pygame.FULLSCREEN)
-        clock = pygame.time.Clock()
         while self.playing:
             self.check_events()
             if self.START_KEY:
                 self.playing= False
             if self.K_ESCAPE :
                 self.playing= False
+                self.screen,self.display = resize_screen(self.game_menu.current_menu.w, self.game_menu.current_menu.h)
                 self.game_menu.game_options_menu.display_menu()
             self.display.fill(WHITE)
             draw_text(self.display,'Thanks for Playing', self.font_name,self.font_size, BLACK,self.mid_w, self.mid_h)
@@ -41,19 +42,17 @@ class Game():
             clock.tick(FPS)
 
     def resume(self):
+        reset_keys(self)
+        self.screen,self.display = resize_screen(self.w, self.h)
         self.playing = True
         print("Game Resume")
-        #displayInfo = pygame.display.Info()
-        #pygame.display.set_mode((displayInfo.current_w, displayInfo.current_h))
-        #pygame.display.set_mode((self.w,self.h), pygame.FULLSCREEN)
-        clock = pygame.time.Clock()
-        return
         while self.playing:
             self.check_events()
             if self.START_KEY:
                 self.playing= False
             if self.K_ESCAPE :
                 self.playing= False
+                self.screen,self.display = resize_screen(self.game_menu.current_menu.w, self.game_menu.current_menu.h)
                 self.game_menu.game_options_menu.display_menu()
             self.display.fill(WHITE)
             draw_text(self.display,'Resume Playing', self.font_name,self.font_size, BLACK,self.mid_w, self.mid_h)
@@ -66,6 +65,10 @@ class Game():
             if event.type == pygame.QUIT:
                 self.running, self.playing = False, False
                 pygame.quit()
+            if event.type == pygame.VIDEORESIZE :
+                self.w,self.h=event.w,event.h
+                self.mid_w,self.mid_h= self.w / 2, self.h / 2
+                self.screen,self.display = resize_screen(event.w, event.h,True)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.K_ESCAPE = True
@@ -77,9 +80,6 @@ class Game():
                     self.DOWN_KEY = True
                 if event.key == pygame.K_UP:
                     self.UP_KEY = True
-
-    def reset_keys(self):
-        self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
 
     def draw_text(self, text, size, x, y ):
         font = pygame.font.Font(self.font_name,size)

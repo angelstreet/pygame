@@ -19,6 +19,7 @@ class Menu():
         self.game_menu = game_menu
         self.screen = screen
         self.display = display
+        self.w,self.h=WIDTH,HEIGHT
         self.mid_w, self.mid_h = WIDTH / 2, HEIGHT / 2
         self.run_display = False
         self.cursor_rect = pygame.Rect(0, 0, 20, 20)

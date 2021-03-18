@@ -1,6 +1,7 @@
 #AngelStreet @2021
 ####################################################
 import pygame
+from utility import resize_screen
 from game_menu import GameMenu
 from game1.game import Game
 
@@ -12,17 +13,16 @@ def draw_window():
 #MAIN----------------------
 def main():
     #VAR----------------------
-    WIDTH, HEIGHT = 900, 500
-    WINDOW_SIZE = (WIDTH, HEIGHT)
+    MENU_WIDTH, MENU_HEIGHT = 900, 500
+    GAME_WIDTH, GAME_HEIGHT = 1200, 600
     TITLE = "First Game!"
     #INIT PYGAME----------------------
     pygame.init() # initiates pygame
     pygame.display.set_caption(TITLE)
-    screen = pygame.display.set_mode(WINDOW_SIZE) # initiate the window
-    display = pygame.Surface(WINDOW_SIZE) # used as the surface for rendering, which is scaled
+    screen,display = resize_screen(MENU_WIDTH, MENU_HEIGHT)
     run = True
     #INIT MENU----------------------
-    game = Game(screen,display,WIDTH,HEIGHT)
-    menuList = GameMenu(screen,display,WIDTH,HEIGHT,game)
+    game = Game(screen,display,GAME_WIDTH, GAME_HEIGHT)
+    menuList = GameMenu(screen,display,MENU_WIDTH, MENU_HEIGHT,game)
 if __name__ == "__main__":
     main()
