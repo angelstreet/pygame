@@ -23,3 +23,7 @@ def resize_screen(w,h,resizable=False):
         screen =pygame.display.set_mode((w, h))
     display = pygame.Surface((w,h))
     return screen,display
+
+def blit_screen(self):
+    self.screen.blit(self.display, (0, 0))
+    reset_keys(self)

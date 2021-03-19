@@ -10,7 +10,7 @@ from game1.game import Game
 def draw_window():
     pygame.display.update()
 
-#MAIN----------------------
+#MAIN------------------""----
 def main():
     #VAR----------------------
     MENU_WIDTH, MENU_HEIGHT = 900, 500

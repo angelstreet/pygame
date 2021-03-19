@@ -1,5 +1,5 @@
 import pygame
-from utility import FPS,WHITE,BLACK,draw_text,reset_keys
+from utility import FPS,WHITE,BLACK,draw_text,reset_keys,blit_screen
 
 class GameMenu():
     def __init__(self,screen,display,WIDTH,HEIGHT,game):
@@ -31,10 +31,6 @@ class Menu():
     def draw_cursor(self):
         draw_text(self.display,'*', self.font_name, 15,WHITE, self.cursor_rect.x, self.cursor_rect.y)
 
-    def blit_screen(self):
-        self.screen.blit(self.display, (0, 0))
-        self = reset_keys(self)
-
     def check_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -63,7 +59,7 @@ class FirstScreenMenu(Menu):
         self.run_display = True
         self.game_menu.current_menu = self
         self.display.fill((255,0,0))
-        self.blit_screen()
+        blit_screen(self)
         pygame.display.update()
         pygame.time.delay(300)
         self.run_display = False
@@ -80,7 +76,7 @@ class LoadingMenu(Menu):
         self.run_display = True
         self.game_menu.current_menu = self
         self.display.fill((0,255,0))
-        self.blit_screen()
+        blit_screen(self)
         pygame.display.update()
         pygame.time.delay(300)
         self.run_display = False
@@ -100,7 +96,6 @@ class MainMenu(Menu):
         reset_keys(self)
         print(self.state)
         self.run_display = True
-        clock = pygame.time.Clock()
         while self.run_display:
             self.display.fill((0,0,0))
             draw_text(self.display,'Main Menu', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 20)
@@ -110,9 +105,8 @@ class MainMenu(Menu):
             self.check_events()
             self.check_input()
             self.draw_cursor()
-            self.blit_screen()
+            blit_screen(self)
             pygame.display.update()
-            clock.tick(FPS)
 
     def move_cursor(self):
         if self.DOWN_KEY:
@@ -161,7 +155,6 @@ class OptionsMenu(Menu):
         reset_keys(self)
         print(self.state)
         self.run_display = True
-        clock = pygame.time.Clock()
         while self.run_display:
             self.check_events()
             self.check_input()
@@ -170,9 +163,8 @@ class OptionsMenu(Menu):
             draw_text(self.display,'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
             draw_text(self.display,'Controls', self.font_name, 15, WHITE, self.controlsx, self.controlsy)
             self.draw_cursor()
-            self.blit_screen()
+            blit_screen(self)
             pygame.display.update()
-            clock.tick(FPS)
 
     def check_input(self):
         if self.BACK_KEY or self.K_ESCAPE:
@@ -196,16 +188,14 @@ class CreditsMenu(Menu):
     def display_menu(self):
         reset_keys(self)
         self.run_display = True
-        clock = pygame.time.Clock()
         while self.run_display:
             self.check_events()
             self.check_input()
             self.display.fill(BLACK)
             draw_text(self.display,'Credits', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 20)
             draw_text(self.display,'Made by me', self.font_name, 15, WHITE, self.mid_w, self.mid_h + 10)
-            self.blit_screen()
+            blit_screen(self)
             pygame.display.update()
-            clock.tick(FPS)
 
     def check_input(self):
         if self.START_KEY or self.BACK_KEY or self.K_ESCAPE:
@@ -215,60 +205,57 @@ class CreditsMenu(Menu):
 class GameOptionsMenu(Menu):
     def __init__(self,game_menu,screen,display,WIDTH,HEIGHT):
         Menu.__init__(self,game_menu,screen,display,WIDTH,HEIGHT)
-        self.state = 'Volume'
-        self.volx, self.voly = self.mid_w, self.mid_h + 20
-        self.controlsx, self.controlsy = self.mid_w, self.mid_h + 40
-        self.resumex, self.resumey = self.mid_w, self.mid_h + 60
-        self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
+        self.state = 'Resume'
+        self.resumex, self.resumey = self.mid_w, self.mid_h + 20
+        self.volx, self.voly = self.mid_w, self.mid_h + 40
+        self.controlsx, self.controlsy = self.mid_w, self.mid_h + 60
+        self.cursor_rect.midtop = (self.resumex + self.offset, self.resumey)
 
     def display_menu(self):
         reset_keys(self)
         print(self.state)
         self.run_display = True
-        clock = pygame.time.Clock()
+
         while self.run_display:
             self.check_events()
             self.check_input()
             self.display.fill((0, 0, 0))
             draw_text(self.display,'Options', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 30)
+            draw_text(self.display,'Resume', self.font_name, 15, WHITE, self.resumex, self.resumey)
             draw_text(self.display,'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
             draw_text(self.display,'Controls', self.font_name, 15, WHITE, self.controlsx, self.controlsy)
-            draw_text(self.display,'Resume', self.font_name, 15, WHITE, self.resumex, self.resumey)
             self.draw_cursor()
-            self.blit_screen()
+            blit_screen(self)
             pygame.display.update()
-            clock.tick(FPS)
 
     def check_input(self):
         if self.BACK_KEY or self.K_ESCAPE:
             reset_keys(self)
             self.run_display = False
-            self.state = 'Volume'
-            self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
+            self.state = 'Resume'
+            self.cursor_rect.midtop = (self.resumex + self.offset, self.resumey)
             self.game_menu.game.resume()
         elif self.DOWN_KEY:
-            if self.state == 'Volume':
+            if self.state == 'Resume':
+                self.state = 'Volume'
+                self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
+            elif self.state == 'Volume':
                 self.state = 'Controls'
                 self.cursor_rect.midtop = (self.controlsx + self.offset, self.controlsy)
             elif self.state == 'Controls':
                 self.state = 'Resume'
                 self.cursor_rect.midtop = (self.resumex + self.offset, self.resumey)
-            elif self.state == 'Resume':
+        elif self.UP_KEY:
+            if self.state == 'Controls':
                 self.state = 'Volume'
                 self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
-        elif self.UP_KEY:
-            if self.state == 'Volume':
+            elif self.state == 'Volume':
                 self.state = 'Resume'
                 self.cursor_rect.midtop = (self.resumex + self.offset, self.resumey)
-            elif self.state == 'Controls':
-                self.state = 'Volume'
-                self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
             elif self.state == 'Resume':
                 self.state = 'Controls'
                 self.cursor_rect.midtop = (self.controlsx + self.offset, self.controlsy)
         elif self.START_KEY:
             if self.state == 'Resume':
                 self.run_display = False
-                self.state = 'Volume'
-                self.cursor_rect.midtop = (self.volx + self.offset, self.voly)
                 self.game_menu.game.resume()
