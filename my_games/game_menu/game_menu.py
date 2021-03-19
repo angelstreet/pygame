@@ -1,35 +1,37 @@
 import pygame
-from utility import FPS,WHITE,BLACK,draw_text,reset_keys,blit_screen
+from utility import FPS, WHITE, BLACK, draw_text, reset_keys, blit_screen
+
 
 class GameMenu():
-    def __init__(self,screen,display,WIDTH,HEIGHT,game):
+    def __init__(self, screen, display, WIDTH, HEIGHT, game):
         self.game = game
-        self.first_screen_menu = FirstScreenMenu(self,screen,display,WIDTH,HEIGHT)
-        self.loading_menu = LoadingMenu(self,screen,display,WIDTH,HEIGHT)
-        self.main_menu = MainMenu(self,screen,display,WIDTH,HEIGHT,game)
-        self.options_menu = OptionsMenu(self,screen,display,WIDTH,HEIGHT)
-        self.credits_menu = CreditsMenu(self,screen,display,WIDTH,HEIGHT)
-        self.game_options_menu = GameOptionsMenu(self,screen,display,WIDTH,HEIGHT)
+        self.first_screen_menu = FirstScreenMenu(self, screen, display, WIDTH, HEIGHT)
+        self.loading_menu = LoadingMenu(self, screen, display, WIDTH, HEIGHT)
+        self.main_menu = MainMenu(self, screen, display, WIDTH, HEIGHT, game)
+        self.options_menu = OptionsMenu(self, screen, display, WIDTH, HEIGHT)
+        self.credits_menu = CreditsMenu(self, screen, display, WIDTH, HEIGHT)
+        self.game_options_menu = GameOptionsMenu(self, screen, display, WIDTH, HEIGHT)
         self.current_menu = self.first_screen_menu
         self.current_menu.display_menu()
 
 
 class Menu():
-    def __init__(self,game_menu,screen,display,WIDTH, HEIGHT):
+    def __init__(self, game_menu, screen, display, WIDTH, HEIGHT):
         self.game_menu = game_menu
         self.screen = screen
         self.display = display
-        self.w,self.h=WIDTH,HEIGHT
+        self.w, self.h = WIDTH, HEIGHT
         self.mid_w, self.mid_h = WIDTH / 2, HEIGHT / 2
         self.run_display = False
         self.cursor_rect = pygame.Rect(0, 0, 20, 20)
         self.offset = - 100
-        self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY, self.K_ESCAPE = False, False, False, False,False
+        self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY, self.K_ESCAPE = False, False, False, False, False
         self.font_name = pygame.font.get_default_font()
         self.font_size = 20
 
     def draw_cursor(self):
-        draw_text(self.display,'*', self.font_name, 15,WHITE, self.cursor_rect.x, self.cursor_rect.y)
+        draw_text(self.display, '*', self.font_name, 15, WHITE,
+                  self.cursor_rect.x, self.cursor_rect.y)
 
     def check_events(self):
         for event in pygame.event.get():
@@ -48,9 +50,10 @@ class Menu():
                 if event.key == pygame.K_ESCAPE:
                     self.K_ESCAPE = True
 
+
 class FirstScreenMenu(Menu):
-    def __init__(self,game_menu,screen,display,WIDTH,HEIGHT):
-        Menu.__init__(self,game_menu,screen,display,WIDTH,HEIGHT)
+    def __init__(self, game_menu, screen, display, WIDTH, HEIGHT):
+        Menu.__init__(self, game_menu, screen, display, WIDTH, HEIGHT)
         self.state = "FirstScreen"
         self.startx, self.starty = self.mid_w, self.mid_h + 30
 
@@ -58,16 +61,17 @@ class FirstScreenMenu(Menu):
         print(self.state)
         self.run_display = True
         self.game_menu.current_menu = self
-        self.display.fill((255,0,0))
+        self.display.fill((255, 0, 0))
         blit_screen(self)
         pygame.display.update()
         pygame.time.delay(300)
         self.run_display = False
         self.game_menu.loading_menu.display_menu()
 
+
 class LoadingMenu(Menu):
-    def __init__(self,game_menu,screen,display,WIDTH,HEIGHT):
-        Menu.__init__(self,game_menu,screen,display,WIDTH,HEIGHT)
+    def __init__(self, game_menu, screen, display, WIDTH, HEIGHT):
+        Menu.__init__(self, game_menu, screen, display, WIDTH, HEIGHT)
         self.state = "LoadingMenu"
         self.startx, self.starty = self.mid_w, self.mid_h + 30
 
@@ -75,16 +79,17 @@ class LoadingMenu(Menu):
         print(self.state)
         self.run_display = True
         self.game_menu.current_menu = self
-        self.display.fill((0,255,0))
+        self.display.fill((0, 255, 0))
         blit_screen(self)
         pygame.display.update()
         pygame.time.delay(300)
         self.run_display = False
         self.game_menu.main_menu.display_menu()
 
+
 class MainMenu(Menu):
-    def __init__(self,game_menu,screen,display,WIDTH,HEIGHT,game):
-        Menu.__init__(self,game_menu,screen,display,WIDTH,HEIGHT)
+    def __init__(self, game_menu, screen, display, WIDTH, HEIGHT, game):
+        Menu.__init__(self, game_menu, screen, display, WIDTH, HEIGHT)
         self.state = "Start"
         self.startx, self.starty = self.mid_w, self.mid_h + 30
         self.optionsx, self.optionsy = self.mid_w, self.mid_h + 60
@@ -97,11 +102,15 @@ class MainMenu(Menu):
         print(self.state)
         self.run_display = True
         while self.run_display:
-            self.display.fill((0,0,0))
-            draw_text(self.display,'Main Menu', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 20)
-            draw_text(self.display,"Start Game", self.font_name,self.font_size,  WHITE,self.startx, self.starty)
-            draw_text(self.display,"Options", self.font_name,self.font_size,  WHITE,self.optionsx, self.optionsy)
-            draw_text(self.display,"Credits", self.font_name,self.font_size,  WHITE,self.creditsx, self.creditsy)
+            self.display.fill((0, 0, 0))
+            draw_text(self.display, 'Main Menu', self.font_name,
+                      self.font_size, WHITE, self.mid_w, self.mid_h - 20)
+            draw_text(self.display, "Start Game", self.font_name,
+                      self.font_size,  WHITE, self.startx, self.starty)
+            draw_text(self.display, "Options", self.font_name,
+                      self.font_size,  WHITE, self.optionsx, self.optionsy)
+            draw_text(self.display, "Credits", self.font_name,
+                      self.font_size,  WHITE, self.creditsx, self.creditsy)
             self.check_events()
             self.check_input()
             self.draw_cursor()
@@ -143,9 +152,10 @@ class MainMenu(Menu):
                 self.run_display = False
                 self.game_menu.credits_menu.display_menu()
 
+
 class OptionsMenu(Menu):
-    def __init__(self,game_menu,screen,display,WIDTH,HEIGHT):
-        Menu.__init__(self,game_menu,screen,display,WIDTH,HEIGHT)
+    def __init__(self, game_menu, screen, display, WIDTH, HEIGHT):
+        Menu.__init__(self, game_menu, screen, display, WIDTH, HEIGHT)
         self.state = 'Volume'
         self.volx, self.voly = self.mid_w, self.mid_h + 20
         self.controlsx, self.controlsy = self.mid_w, self.mid_h + 40
@@ -159,9 +169,11 @@ class OptionsMenu(Menu):
             self.check_events()
             self.check_input()
             self.display.fill((0, 0, 0))
-            draw_text(self.display,'Options', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 30)
-            draw_text(self.display,'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
-            draw_text(self.display,'Controls', self.font_name, 15, WHITE, self.controlsx, self.controlsy)
+            draw_text(self.display, 'Options', self.font_name,
+                      self.font_size, WHITE, self.mid_w, self.mid_h - 30)
+            draw_text(self.display, 'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
+            draw_text(self.display, 'Controls', self.font_name,
+                      15, WHITE, self.controlsx, self.controlsy)
             self.draw_cursor()
             blit_screen(self)
             pygame.display.update()
@@ -181,9 +193,10 @@ class OptionsMenu(Menu):
             # TO-DO: Create a Volume Menu and a Controls Menu
             pass
 
+
 class CreditsMenu(Menu):
-    def __init__(self,game_menu,screen,display,WIDTH,HEIGHT):
-        Menu.__init__(self,game_menu,screen,display,WIDTH,HEIGHT)
+    def __init__(self, game_menu, screen, display, WIDTH, HEIGHT):
+        Menu.__init__(self, game_menu, screen, display, WIDTH, HEIGHT)
 
     def display_menu(self):
         reset_keys(self)
@@ -192,8 +205,10 @@ class CreditsMenu(Menu):
             self.check_events()
             self.check_input()
             self.display.fill(BLACK)
-            draw_text(self.display,'Credits', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 20)
-            draw_text(self.display,'Made by me', self.font_name, 15, WHITE, self.mid_w, self.mid_h + 10)
+            draw_text(self.display, 'Credits', self.font_name,
+                      self.font_size, WHITE, self.mid_w, self.mid_h - 20)
+            draw_text(self.display, 'Made by me', self.font_name,
+                      15, WHITE, self.mid_w, self.mid_h + 10)
             blit_screen(self)
             pygame.display.update()
 
@@ -202,9 +217,10 @@ class CreditsMenu(Menu):
             self.run_display = False
             self.game_menu.main_menu.display_menu()
 
+
 class GameOptionsMenu(Menu):
-    def __init__(self,game_menu,screen,display,WIDTH,HEIGHT):
-        Menu.__init__(self,game_menu,screen,display,WIDTH,HEIGHT)
+    def __init__(self, game_menu, screen, display, WIDTH, HEIGHT):
+        Menu.__init__(self, game_menu, screen, display, WIDTH, HEIGHT)
         self.state = 'Resume'
         self.resumex, self.resumey = self.mid_w, self.mid_h + 20
         self.volx, self.voly = self.mid_w, self.mid_h + 40
@@ -220,10 +236,12 @@ class GameOptionsMenu(Menu):
             self.check_events()
             self.check_input()
             self.display.fill((0, 0, 0))
-            draw_text(self.display,'Options', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 30)
-            draw_text(self.display,'Resume', self.font_name, 15, WHITE, self.resumex, self.resumey)
-            draw_text(self.display,'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
-            draw_text(self.display,'Controls', self.font_name, 15, WHITE, self.controlsx, self.controlsy)
+            draw_text(self.display, 'Options', self.font_name,
+                      self.font_size, WHITE, self.mid_w, self.mid_h - 30)
+            draw_text(self.display, 'Resume', self.font_name, 15, WHITE, self.resumex, self.resumey)
+            draw_text(self.display, 'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
+            draw_text(self.display, 'Controls', self.font_name,
+                      15, WHITE, self.controlsx, self.controlsy)
             self.draw_cursor()
             blit_screen(self)
             pygame.display.update()

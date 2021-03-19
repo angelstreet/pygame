@@ -1,0 +1,52 @@
+{"tilemap": {
+  "tilesheet_name" :"tilesheet1.png",
+	"colorkey" :[0,255,0],
+	"map_data" :[[0,0,0,0,0],[1,1,1,1,0],[0,0,0,0,0],[0,4,0,0,0],[0,4,0,0,0]],
+	"tiles_data" :[
+	{
+			"name": "tile1",
+			"w": 160,
+			"h": 120,
+			"x":0,
+			"y":0,
+			"offsetx" : 0,
+			"offsety" : 40
+	},
+	{
+			"name": "tile2",
+			"w": 160,
+			"h": 120,
+			"x":160,
+			"y":0,
+			"offsetx" : 0,
+			"offsety" : 40
+	},
+	{
+			"name": "tile3",
+			"w": 160,
+			"h": 120,
+			"x":320,
+			"y":0,
+			"offsetx" : 0,
+			"offsety" : 40
+	},
+	{
+			"name": "tile4",
+			"w": 160,
+			"h": 120,
+			"x":480,
+			"y":0,
+			"offsetx" : 0,
+			"offsety" : 40
+	},
+	{
+			"name": "tile5",
+			"w": 160,
+			"h": 120,
+			"x":640,
+			"y":0,
+			"offsetx" : 0,
+			"offsety" : 40
+	}]
+	}
+}
