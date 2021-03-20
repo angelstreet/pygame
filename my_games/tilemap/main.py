@@ -58,6 +58,8 @@ def main():
                     player.K_DOWN = True
                 if event.key == pygame.K_SPACE:
                     player.K_SPACE = True
+                if event.key == pygame.K_RETURN:
+                    player.K_RETURN = True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == K_LEFT:
                      player.K_LEFT = False
@@ -69,6 +71,8 @@ def main():
                     player.K_DOWN = False
                 if event.key == pygame.K_SPACE:
                     player.K_SPACE = False
+                if event.key == pygame.K_RETURN:
+                    player.K_RETURN = False
 
         draw_game(screen,display,all_sprite,map)
         clock.tick(FPS)
