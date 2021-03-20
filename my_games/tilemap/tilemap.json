@@ -18,7 +18,7 @@
                   []
                 ],
                 [
-                  [{"tile_frame":3,"z":0},{"tile_frame":0,"z":-40}],
+                  [{"tile_frame":3,"z":0},{"tile_frame":3,"z":-60}],
                   [{"tile_frame":1,"z":0}],
                   [{"tile_frame":1,"z":0}],
                   [{"tile_frame":4,"z":0}],
@@ -29,7 +29,7 @@
                   [{"tile_frame":5,"z":0}],
                   [{"tile_frame":1,"z":0}],
                   [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":1,"z":0},{"tile_frame":0,"z":-40}]
+                  [{"tile_frame":1,"z":0},{"tile_frame":5,"z":-40}]
                 ],
                 [
                   [{"tile_frame":1,"z":0}],

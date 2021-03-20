@@ -29,8 +29,8 @@ class Tile(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.tile_sprite, (round(self.w*self.scale), round(self.h*self.scale)))
         self.rect = self.image.get_rect()
         self.rect.x=self.isox+MAP_WIDTH/2+MAP_X
-        self.rect.y=self.isoy+MAP_Y
-        
+        self.rect.y=self.isoy+MAP_Y+self.z
+
     def isStatic(self):
         if self.z==0 :
             return True
@@ -105,8 +105,6 @@ class Map(pygame.sprite.Sprite):
         self.rect.y = MAP_Y
         for tile in self.static_tiles :
             self.image.blit(tile.image,(tile.isox+MAP_WIDTH/2,tile.isoy))
-        print(self.static_tiles[0])
-        print(self.dynamic_tiles[0])
 
     def move(self, x, y):
         move_sprite(self, x, y)
