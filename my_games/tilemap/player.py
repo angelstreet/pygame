@@ -60,6 +60,7 @@ class Player(pygame.sprite.Sprite):
             self.current_frame_id=0
 
     def set_frame(self):
+        print(self.current_frame, self.current_frame_id,self.direction_h,self.direction_v)
         self.set_current_frame("%s_right_%s" % (self.current_state, self.direction_v))
 
 
@@ -156,14 +157,14 @@ class Player(pygame.sprite.Sprite):
                 self.set_state('walk')
             if self.K_UP:
                 self.velocity_y = -self.velocity
-                if self.direction_h != 'up':
-                    self.direction_h = 'up'
+                if self.direction_v != 'up':
+                    self.direction_v = 'up'
                     self.current_frame_id = 0
                 self.set_state('walk')
             elif self.K_DOWN:
                 self.velocity_y = self.velocity
-                if self.direction_h != 'down':
-                    self.direction_h = 'down'
+                if self.direction_v != 'down':
+                    self.direction_v = 'down'
                     self.current_frame_id = 0
                 self.set_state('walk')
             if not (self.K_LEFT or self.K_RIGHT) :
@@ -193,7 +194,6 @@ class Player(pygame.sprite.Sprite):
         nb_frames = self.get_nb_frame()
         now = pygame.time.get_ticks()
         if now - self.last_updated > 100*frame_rate:
-            print(self.current_frame, self.current_frame_id,self.direction_h,now - self.last_updated)
             self.last_updated = now
             self.current_frame_id += 1
             if self.current_frame_id == nb_frames :
@@ -201,7 +201,6 @@ class Player(pygame.sprite.Sprite):
                 if self.current_state in ('attack', 'hurt'):
                     self.last_updated = now
                     self.set_state('idle')
-
         self.display_current_sprite()
 
     def update(self):
