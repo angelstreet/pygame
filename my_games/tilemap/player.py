@@ -54,25 +54,12 @@ class Player(pygame.sprite.Sprite):
                     frame['sprite_flip'] = sprite_flip
 
     def set_current_frame(self,frame):
-        #print(self.direction_h,self.current_frame,self.current_frame_id)
-        if not self.direction_h in self.current_frame:
-            self.current_frame_id=0
-        if self.prev_frame != self.current_frame:
+        if self.current_frame != frame:
             self.prev_frame = self.current_frame
             self.current_frame = frame
             self.current_frame_id=0
 
-
-    def set_direction(self):
-        if "down" in self.current_frame :
-            self.direction_v = "down"
-        else : self.direction_v = "up"
-        if "right" in self.current_frame :
-            self.direction_h = "right"
-        else  : self.direction_h = "left"
-
     def set_frame(self):
-        print(self.current_state)
         self.set_current_frame("%s_right_%s" % (self.current_state, self.direction_v))
 
 
@@ -91,6 +78,14 @@ class Player(pygame.sprite.Sprite):
                         self.current_state = state
         self.set_frame()
 
+    def init_direction_from_frame(self):
+        if "down" in self.current_frame :
+            self.direction_v = "down"
+        else : self.direction_v = "up"
+        if "right" in self.current_frame :
+            self.direction_h = "right"
+        else  : self.direction_h = "left"
+
     def init_player(self):
         self.load_player_data_from_json()
         self.image = pygame.Surface(
@@ -99,7 +94,7 @@ class Player(pygame.sprite.Sprite):
         self.image.set_colorkey(self.colorkey)
         self.prev_frame = None
         self.current_frame = self.first_frame
-        self.set_direction()
+        self.init_direction_from_frame()
         self.set_state()
         self.set_frame()
         self.load_player_frames()
@@ -149,19 +144,27 @@ class Player(pygame.sprite.Sprite):
         elif not (self.current_state == 'attack' or self.current_state == 'jump' or self.current_state == 'fall' or self.current_state == 'hurt'):
             if self.K_LEFT:
                 self.velocity_x = -self.velocity
-                self.direction_h = 'left'
+                if self.direction_h != 'left':
+                    self.direction_h = 'left'
+                    self.current_frame_id = 0
                 self.set_state('walk')
             elif self.K_RIGHT:
                 self.velocity_x = self.velocity
-                self.direction_h = 'right'
+                if self.direction_h != 'right':
+                    self.direction_h = 'right'
+                    self.current_frame_id = 0
                 self.set_state('walk')
             if self.K_UP:
                 self.velocity_y = -self.velocity
-                self.direction_v = 'up'
+                if self.direction_h != 'up':
+                    self.direction_h = 'up'
+                    self.current_frame_id = 0
                 self.set_state('walk')
             elif self.K_DOWN:
                 self.velocity_y = self.velocity
-                self.direction_v = 'down'
+                if self.direction_h != 'down':
+                    self.direction_h = 'down'
+                    self.current_frame_id = 0
                 self.set_state('walk')
             if not (self.K_LEFT or self.K_RIGHT) :
                 self.velocity_x = 0
@@ -190,8 +193,7 @@ class Player(pygame.sprite.Sprite):
         nb_frames = self.get_nb_frame()
         now = pygame.time.get_ticks()
         if now - self.last_updated > 100*frame_rate:
-            #if(self.current_state=='attack') :
-            #    print(self.current_frame_id)
+            print(self.current_frame, self.current_frame_id,self.direction_h,now - self.last_updated)
             self.last_updated = now
             self.current_frame_id += 1
             if self.current_frame_id == nb_frames :
