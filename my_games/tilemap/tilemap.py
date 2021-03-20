@@ -3,15 +3,57 @@
 import pygame
 from utility import load_json, get_sprite, cartesian_to_iso, move_sprite
 RED = (255, 0, 0)
-MAP_WIDTH, MAP_HEIGHT = 1200, 1200
+MAP_WIDTH, MAP_HEIGHT = 1000, 600
+MAP_X= 80
+MAP_Y = 80
 
+class Tile(pygame.sprite.Sprite):
+    def __init__(self,tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,colorkey,scale=1):
+        pygame.sprite.Sprite.__init__(self)
+        self.tile_sprite=tile_sprite
+        self.tile_frame = tile_frame
+        self.x = x
+        self.y = y
+        self.z = z
+        self.w = w
+        self.h = h
+        self.isox = isox
+        self.isoy = isoy
+        self.offsetx = offsetx
+        self.offsety = offsety
+        self.colorkey = colorkey
+        self.scale = scale
+        self.init_tile()
+
+    def init_tile(self):
+        self.image = pygame.transform.scale(self.tile_sprite, (round(self.w*self.scale), round(self.h*self.scale)))
+        self.rect = self.image.get_rect()
+        self.rect.x=self.isox+MAP_WIDTH/2+MAP_X
+        self.rect.y=self.isoy+MAP_Y
+        
+    def isStatic(self):
+        if self.z==0 :
+            return True
+
+    def zsort(self):
+        return round(self.rect.y+self.rect.h)
+
+    def update(self):
+        pass
+
+
+    def __str__(self):
+        return "Tile - tile_frame:%s, x:%s, y:%s, z:%s, w:%s, h:%s, isox:%s, isoy:%s, offsetx:%s, offsety:%s, colorkey:%s, scale:%s" % (self.tile_frame,self.x,self.y,self.z,self.w,self.h,self.isox,self.isoy,self.offsetx,self.offsety,self.colorkey,self.scale)
 
 class Map(pygame.sprite.Sprite):
     def __init__(self, json, scale=1):
         pygame.sprite.Sprite.__init__(self)
         self.json = json
         self.scale = scale
+        self.static_tiles = []
+        self.dynamic_tiles = []
         self.init_map()
+        self.draw_map()
 
     def load_map_data_from_json(self):
         data = load_json(self.json)
@@ -20,40 +62,54 @@ class Map(pygame.sprite.Sprite):
         self.tiles_data = data['tilemap']['tiles_data']
         self.map_data = data['tilemap']['map_data']
 
-    def draw_tile(self, x, y, z, tile_id):
-        tile = self.tiles[tile_id-1]
-        tile_sprite, w, h, offsetx, offsety = tile
-        isox, isoy = cartesian_to_iso(x, y, w-offsetx, h-offsety)
-        self.image.blit(tile_sprite, (MAP_WIDTH/2+isox, MAP_HEIGHT/2+isoy+z))
+    def sort_tile(self,tile):
+        if tile.isStatic() :
+            self.static_tiles.append(tile)
+        else: self.dynamic_tiles.append(tile)
+
+    def draw_tile(self, x, y, z, tile_frame):
+        tile_data = self.tileset[tile_frame-1]
+        tile_sprite, w, h, offsetx, offsety = tile_data
+        isox, isoy = cartesian_to_iso(x, y, w*self.scale-offsetx*self.scale, h*self.scale-offsety*self.scale)
+        tile = Tile(tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,self.colorkey,self.scale)
+        self.sort_tile(tile)
+
 
     def draw_tiles(self, x, y, tile_list):
         for tile in tile_list:
-            print(tile)
             tile_frame = tile['tile_frame']
-            tile_z = tile['z']
+            z = tile['z']
             if tile_frame > 0:
-                self.draw_tile(x, y, tile_z, tile_frame)
+                self.draw_tile(x, y, z, tile_frame)
 
     def init_map(self):
         self.image = pygame.Surface((MAP_WIDTH, MAP_HEIGHT))
         self.rect = self.image.get_rect()
-        self.image.set_colorkey((0, 0, 0))
         self.load_map_data_from_json()
         self.tilesheet_img = pygame.image.load(self.tilesheet_name).convert()
+        self.image.set_colorkey((0,0,0))
+        self.tileset = []
         self.tiles = []
         for tile_data in self.tiles_data:
-            x, y = tile_data['x'], tile_data['y']
-            w, h = tile_data['w'], tile_data['h']
-            offsetx, offsety = tile_data['offsetx'], tile_data['offsety']
-            tile_sprite = get_sprite(self.tilesheet_img, x, y, w, h, self.colorkey)
-            self.tiles.append((tile_sprite, w, h, offsetx, offsety))
+            x,y = tile_data['x'], tile_data['y']
+            w,h = tile_data['w'], tile_data['h']
+            offsetx,offsety = tile_data['offsetx'], tile_data['offsety']
+            tile_sprite = get_sprite(self.tilesheet_img, x, y, w, h,self.colorkey)
+            self.tileset.append((tile_sprite,w,h,offsetx,offsety))
         for y, row in enumerate(self.map_data):
             for x, tile_list in enumerate(row):
-                if tile_list:
-                    self.draw_tiles(x, y, tile_list)
+                    self.draw_tiles(x,y,tile_list)
 
-        self.image = pygame.transform.scale(
-            self.image, (round(self.rect.width*self.scale), round(self.rect.height*self.scale)))
+    def draw_map(self) :
+        self.rect.x = MAP_X
+        self.rect.y = MAP_Y
+        for tile in self.static_tiles :
+            self.image.blit(tile.image,(tile.isox+MAP_WIDTH/2,tile.isoy))
+        print(self.static_tiles[0])
+        print(self.dynamic_tiles[0])
 
     def move(self, x, y):
         move_sprite(self, x, y)
+
+    def zsort(self):
+        return 1

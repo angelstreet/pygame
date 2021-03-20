@@ -208,3 +208,6 @@ class Player(pygame.sprite.Sprite):
         #self.set_frame()  # attack_right_down_1, hurt_right_up_1, etc..
         #self.set_state()  # idle, move or attack
         self.animate()  # animate player by updating frame
+
+    def zsort(self):
+        return round(self.rect.y+self.rect.h)
