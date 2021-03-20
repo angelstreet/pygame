@@ -34,10 +34,12 @@ class Map(pygame.sprite.Sprite):
             tiles.append((tile_sprite,w,h,offsetx,offsety))
         for y, row in enumerate(self.map_data):
             for x, tile_id in enumerate(row):
-                tile=tiles[tile_id]
-                tile_sprite,w,h,offsetx,offsety = tile
-                isox, isoy = cartesian_to_iso(x, y, w-offsetx, h-offsety)
-                self.image.blit(tile_sprite, (MAP_WIDTH/2+isox, isoy))
+                if tile_id!=0 and tile_id<=len(tiles):
+                    print(tile_id,len(tiles))
+                    tile=tiles[tile_id-1]
+                    tile_sprite,w,h,offsetx,offsety = tile
+                    isox, isoy = cartesian_to_iso(x, y, w-offsetx, h-offsety)
+                    self.image.blit(tile_sprite, (MAP_WIDTH/2+isox, isoy))
         self.image = pygame.transform.scale(self.image, (round(self.rect.width*self.scale), round(self.rect.height*self.scale)))
 
     def move(self,x,y):

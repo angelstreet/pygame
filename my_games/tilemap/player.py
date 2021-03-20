@@ -60,7 +60,6 @@ class Player(pygame.sprite.Sprite):
             self.current_frame_id=0
 
     def set_frame(self):
-        print(self.current_frame, self.current_frame_id,self.direction_h,self.direction_v)
         self.set_current_frame("%s_right_%s" % (self.current_state, self.direction_v))
 
 
