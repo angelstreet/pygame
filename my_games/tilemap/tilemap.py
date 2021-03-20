@@ -2,11 +2,9 @@
 ####################################################
 import sys,os,pygame
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utility import load_json,get_sprite,cartesian_to_iso
+from utility import load_json,get_sprite,cartesian_to_iso,move_sprite
 RED = (255, 0, 0)
 MAP_WIDTH, MAP_HEIGHT = 1200,800
-MAPOFFSETX, MAPOFFSETY = 500, 100
-
 
 class Map(pygame.sprite.Sprite):
     def __init__(self, json,scale=1):
@@ -40,5 +38,8 @@ class Map(pygame.sprite.Sprite):
                 tile=tiles[tile_id]
                 tile_sprite,w,h,offsetx,offsety = tile
                 isox, isoy = cartesian_to_iso(x, y, w-offsetx, h-offsety)
-                self.image.blit(tile_sprite, (MAPOFFSETX+isox, MAPOFFSETY+isoy))
-        pygame.transform.scale(self.image, (self.rect.width*self.scale, self.rect.height*self.scale))   
+                self.image.blit(tile_sprite, (MAP_WIDTH/2+isox, isoy))
+        self.image = pygame.transform.scale(self.image, (round(self.rect.width*self.scale), round(self.rect.height*self.scale)))
+
+    def move(self,x,y):
+        move_sprite(self,x,y)

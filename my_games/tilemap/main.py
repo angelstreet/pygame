@@ -7,10 +7,12 @@ MENU_WIDTH, MENU_HEIGHT = 1200, 800
 FPS = 60
 WHITE = (255, 255, 255)
 TITLE = "Isomap"
+MAP_X, MAP_Y = 250, 100
+PLAYER_X, PLAYER_Y = 530,140
 # FUNCTIONS----------------------
 def draw_game(screen,display,all_sprite,map):
     display.fill(WHITE)
-    display.blit(map, (0, 0))
+    display.blit(map.image, (map.rect.x, map.rect.y))
     all_sprite.update()
     all_sprite.draw(display)
     screen.blit(pygame.transform.scale(display, screen.get_size()), (0, 0))
@@ -24,10 +26,10 @@ def main():
     screen = pygame.display.set_mode((MENU_WIDTH, MENU_HEIGHT))
     display = pygame.Surface((MENU_WIDTH, MENU_HEIGHT))
     # GAME ---------------------
-    map = Map('tilemap.json')
-    player = Player('player.json',3)
-    player.rect.x = 500
-    player.rect.y = 120
+    map = Map('tilemap.json',0.5)
+    map.move(MAP_X, MAP_Y)
+    player = Player('player.json',2)
+    player.move(PLAYER_X, PLAYER_Y)
     all_sprite = pygame.sprite.OrderedUpdates()
     all_sprite.add(player)
     running = True
@@ -60,7 +62,7 @@ def main():
                 if event.key == pygame.K_SPACE:
                     player.K_SPACE = False
 
-        draw_game(screen,display,all_sprite,map.image)
+        draw_game(screen,display,all_sprite,map)
         clock.tick(FPS)
 
 

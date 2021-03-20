@@ -2,7 +2,7 @@
 ####################################################
 import sys,os,pygame
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utility import load_json,get_sprite
+from utility import load_json,get_sprite,move_sprite
 class Player(pygame.sprite.Sprite):
     def __init__(self,json,scale=1):
         pygame.sprite.Sprite.__init__(self)
@@ -47,16 +47,15 @@ class Player(pygame.sprite.Sprite):
             midbottom = value[0]['midbottom']
             flip  = value[-1]
             for i, frame in enumerate(value) :
-                if i>0:
+                if i>0 and isinstance(frame,dict):
                     frame_name = frame['name']
                     x,y,w,h,offsetx,offsety = self.get_frame_sprite_data(frame)
                     if flip :
                         sprite = get_sprite(self.playersheet_img_flip, x, y, w, h,self.colorkey)
                     else :
                         sprite = get_sprite(self.playersheet_img, x, y, w, h,self.colorkey)
-                    pygame.transform.scale(sprite, (w*self.scale, h*self.scale))
+                    sprite = pygame.transform.scale(sprite, (w*self.scale, h*self.scale))
                     frame['sprite'] = sprite
-                    #print(value)
 
     def init_player(self) :
        self.load_player_data_from_json()
@@ -70,9 +69,12 @@ class Player(pygame.sprite.Sprite):
     def reset_velocity(self) :
         self.velocity_x,self.velocity_y = 0,0
 
-    def move(self) :
-        self.rect.x += self.velocity_x
-        self.rect.y += self.velocity_y + self.velocity_z
+
+    def move(self,x,y):
+        move_sprite(self,x,y)
+
+    def move_player(self,) :
+        self.move(self.velocity_x,self.velocity_y + self.velocity_z)
 
     def check_event(self) :
         if self.K_SPACE:
@@ -128,7 +130,7 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.reset_velocity()
         self.check_event() #check key press event
-        self.move()
+        self.move_player()
         self.set_state() #idle, move or attack
         self.set_direction() #left or right
         self.animate() #animate player by updating frame
