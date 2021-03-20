@@ -1,7 +1,44 @@
 {"tilemap": {
   "tilesheet_name" :"tilesheet1.png",
 	"colorkey" :[0,255,0],
-	"map_data" :[[1,1,3,1,3],[2,2,2,2,0],[3,1,1,4,1],[1,5,1,1,4],[1,5,0,1,5]],
+  "_comment": "Multidimensionnal isometric tilemap",
+  "map_data" :[
+                [
+                  [{"tile_frame":1,"z":0}, {"tile_frame":3,"z":-40},{"tile_frame":2,"z":-120}],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":3,"z":0}],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":3,"z":0}]
+                ],
+                [
+                  [{"tile_frame":2,"z":0}],
+                  [{"tile_frame":2,"z":0}],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":2,"z":0}],
+                  []
+                ],
+                [
+                  [{"tile_frame":3,"z":0},{"tile_frame":3,"z":-40}],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":4,"z":0}],
+                  [{"tile_frame":1,"z":0}]
+                ],
+                [
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":5,"z":0}],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":1,"z":0},{"tile_frame":1,"z":-40}]
+                ],
+                [
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":5,"z":0}],
+                  [],
+                  [{"tile_frame":1,"z":0}],
+                  [{"tile_frame":5,"z":0}]
+                ]
+              ],
 	"tiles_data" :[
 	{
 			"name": "tile1",
