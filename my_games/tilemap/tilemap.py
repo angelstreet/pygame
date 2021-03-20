@@ -41,3 +41,4 @@ class Map(pygame.sprite.Sprite):
                 tile_sprite,w,h,offsetx,offsety = tile
                 isox, isoy = cartesian_to_iso(x, y, w-offsetx, h-offsety)
                 self.image.blit(tile_sprite, (MAPOFFSETX+isox, MAPOFFSETY+isoy))
+        pygame.transform.scale(self.image, (self.rect.width*self.scale, self.rect.height*self.scale))   
