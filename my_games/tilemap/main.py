@@ -1,8 +1,12 @@
 #AngelStreet @2021
 ####################################################
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 from tilemap import Map
 from player import Player
+
+
 MENU_WIDTH, MENU_HEIGHT = 1200, 800
 FPS = 60
 WHITE = (255, 255, 255)

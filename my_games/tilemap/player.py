@@ -1,11 +1,7 @@
 #AngelStreet @2021
 ####################################################
 from utility import load_json, get_sprite, move_sprite
-import sys
-import os
 import pygame
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, json, scale=1):
@@ -156,8 +152,10 @@ class Player(pygame.sprite.Sprite):
             elif self.K_DOWN:
                 self.velocity_y = self.velocity
                 self.direction_v = 'down'
-            if not (self.K_LEFT or self.K_RIGHT or self.K_UP or self.K_DOWN) :
-                self.reset_velocity()
+            if not (self.K_LEFT or self.K_RIGHT) :
+                self.velocity_x = 0
+            if not (self.K_UP or self.K_DOWN) :
+                self.velocity_y = 0
     def set_frame(self):
         if self.state == 'attack' :
             self.set_current_state("attack_%s_%s" % (self.direction_h,self.direction_v))
@@ -197,7 +195,6 @@ class Player(pygame.sprite.Sprite):
                 if self.state in ('attack', 'hurt'):
                     self.last_updated = now
                     self.state = 'idle'
-
         self.display_current_sprite()
 
     def update(self):

@@ -1,7 +1,6 @@
 #AngelStreet @2021
 ####################################################
-import sys,os,pygame
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import pygame
 from utility import load_json,get_sprite,cartesian_to_iso,move_sprite
 RED = (255, 0, 0)
 MAP_WIDTH, MAP_HEIGHT = 1200,800
