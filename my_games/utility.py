@@ -50,3 +50,7 @@ def cartesian_to_iso(x, y, w, h):
     iso_x = round((x - y) * w/2)
     iso_y = round((x + y) * h/2)
     return iso_x, iso_y
+
+def move_sprite(self, x, y) :
+    self.rect.x += x
+    self.rect.y += y

@@ -65,6 +65,10 @@ class Player(pygame.sprite.Sprite):
                     sprite = pygame.transform.scale(sprite, (w*self.scale, h*self.scale))
                     frame['sprite'] = sprite
 
+    def set_current_state(self,state):
+        self.prev_state = self.current_state
+        self.current_state = state
+
     def set_state(self):
         states = ['idle', 'walk', 'attack', 'jump', 'hurt']
         for state in states:
@@ -114,17 +118,17 @@ class Player(pygame.sprite.Sprite):
                 self.z=0
                 self.reset_velocity()
 
-
     def attack(self):
         pass
 
     def jump(self):
         self.z = 0
         self.velocity_z = self.jump_force
-        if self.K_LEFT:
-            self.velocity_x = -self.velocity
-        elif self.K_RIGHT:
-            self.velocity_x = self.velocity
+        if 'walk' in self.prev_state:
+            if self.direction_h=='left' :
+                self.velocity_x = -self.velocity
+            else :
+                self.velocity_x = self.velocity
 
     def fall(self):
         pass
@@ -152,21 +156,22 @@ class Player(pygame.sprite.Sprite):
             elif self.K_DOWN:
                 self.velocity_y = self.velocity
                 self.direction_v = 'down'
-
+            if not (self.K_LEFT or self.K_RIGHT or self.K_UP or self.K_DOWN) :
+                self.reset_velocity()
     def set_frame(self):
         if self.state == 'attack' :
-            self.current_state = "attack_%s_%s" % (self.direction_h,self.direction_v)
+            self.set_current_state("attack_%s_%s" % (self.direction_h,self.direction_v))
         elif self.state == 'jump' :
-            self.current_state = "jump_%s_%s" % (self.direction_h,self.direction_v)
+            self.set_current_state("jump_%s_%s" % (self.direction_h,self.direction_v))
         elif self.state == 'fall' :
-            self.current_state = "fall_%s_%s" % (self.direction_h,self.direction_v)
+            self.set_current_state("fall_%s_%s" % (self.direction_h,self.direction_v))
         else:
             if self.velocity_x != 0:
-                self.current_state = "walk_%s_%s" % (self.direction_h,self.direction_v)
+                self.set_current_state("walk_%s_%s" % (self.direction_h,self.direction_v))
             elif self.velocity_y != 0:
-                self.current_state = "walk_%s_%s" % (self.direction_h,self.direction_v)
+                self.set_current_state("walk_%s_%s" % (self.direction_h,self.direction_v))
             elif self.velocity_x==0 and self.velocity_x==0 and self.velocity_z == 0 :
-                self.current_state = "idle_%s_%s" % (self.direction_h,self.direction_v)
+                self.set_current_state("idle_%s_%s" % (self.direction_h,self.direction_v))
 
     def get_frame_rate(self):
         # +1 to skip midbottm
@@ -196,7 +201,6 @@ class Player(pygame.sprite.Sprite):
         self.display_current_sprite()
 
     def update(self):
-        self.reset_velocity()
         self.check_event()  # check key press event
         self.move_player()
         self.set_frame()  # attack_right_down_1, hurt_right_up_1, etc..
