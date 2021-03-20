@@ -39,3 +39,14 @@ def load_json(json_file):
         data = json.load(f)
     f.close()
     return data
+
+def get_sprite(sprite_sheet, x, y, w, h,colorkey):
+    sprite = pygame.Surface((w, h))
+    sprite.set_colorkey(colorkey)
+    sprite.blit(sprite_sheet, (0, 0), (x, y, w, h))
+    return sprite
+
+def cartesian_to_iso(x, y, w, h):
+    iso_x = round((x - y) * w/2)
+    iso_y = round((x + y) * h/2)
+    return iso_x, iso_y
