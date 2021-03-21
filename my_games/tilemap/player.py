@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.z = 0
         self.current_state = None
         pygame.mixer.init()
+        pygame.mixer.music.set_volume(0.1)
         self.init_player()
 
 
@@ -123,7 +124,8 @@ class Player(pygame.sprite.Sprite):
                 self.reset_velocity()
 
     def attack(self):
-        pass
+        pygame.mixer.music.load('sword.mp3')
+        pygame.mixer.music.play()
 
     def jump(self):
         self.z = 0
