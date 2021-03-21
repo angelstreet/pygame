@@ -50,6 +50,8 @@ def draw_fx(display,fx_sprites):
 
 def draw_ui(display,ui_sprites,clock):
     display_fps(display,clock)
+    ui_sprites.update()
+    ui_sprites.draw(display)
 
 def draw_screen(screen,display,bg_sprites,game_sprites,fx_sprites,ui_sprites,clock):
     draw_bg(display,bg_sprites)
