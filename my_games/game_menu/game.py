@@ -3,7 +3,7 @@ from utility import FPS,WHITE,BLACK,draw_text,reset_keys,resize_screen,blit_scre
 clock = pygame.time.Clock()
 
 class Game():
-    def __init__(self,screen,display,WIDTH,HEIGHT):
+    def __init__(self,screen,display,WIDTH,HEIGHT,isplaying=True):
         self.screen = screen
         self.display = display
         self.w, self.h = WIDTH,HEIGHT

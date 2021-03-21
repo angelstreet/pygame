@@ -34,9 +34,14 @@ class Game():
 
 #PLAYER-----------------------------------------------------
     def create_game_menu(self,w,h,game):
-         game_menu = GameMenu(w,h,game)
-         self.ui_sprites.add(game_menu)
-         return game_menu
+         self.game_menu = GameMenu(w,h,game)
+         self.ui_sprites.add( self.game_menu)
+         return  self.game_menu
+    def hide_game_menu(self):
+         self.ui_sprites.remove(self.game_menu)
+
+    def show_game_menu(self):
+           self.ui_sprites.add( self.game_menu)
 #PLAYER-----------------------------------------------------
     def create_player(self,json,scale):
          player = Player(json,scale)
@@ -106,4 +111,8 @@ class Game():
         pygame.display.update()
 
     def resume(self):
-        self.launch(self.game_menu, True)
+        self.isplaying = True
+        self.resize_screen(self.w,self.h,True)
+
+    def resize_screen(self,w,h,resizable=False):
+        self.screen, self.display = resize_screen(w,h,resizable)

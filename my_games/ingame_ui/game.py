@@ -1,7 +1,6 @@
 import pygame
-from utility import FPS, WHITE, BLACK, draw_text, reset_keys, resize_screen, blit_screen
-import ui_interface
-from ui_interface import ColorGameBar,ImageGameBar,HeartGameBar
+from src.utility import FPS, WHITE, BLACK, draw_text, reset_keys, resize_screen, blit_screen
+from src.ui_interface import ColorGameBar,ImageGameBar,HeartGameBar
 
 FPS = 60
 BLACK = (0, 0, 0)

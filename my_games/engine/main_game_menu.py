@@ -18,15 +18,16 @@ def main():
     # GAME ---------------------
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT,False)
     tilemap = game.create_isotilemap(0,100,'assets/data/isotilemap.json',0.5)
-    game_menu = game.create_game_menu(GAME_WIDTH, GAME_HEIGHT, game)
-    game_menu.first_screen_menu = FirstScreenMenu(game_menu, GAME_WIDTH, GAME_HEIGHT, 'assets/image/fortnite.jpg')
-    game_menu.loading_menu = LoadingMenu(game_menu, GAME_WIDTH, GAME_HEIGHT, 'assets/image/fortnite_loading.jpg', 'assets/sound/fortnite_loading.mp3')
-    game_menu.main_menu = MainMenu(game_menu,  GAME_WIDTH, GAME_HEIGHT, game)
-    game_menu.options_menu = OptionsMenu(game_menu,  GAME_WIDTH, GAME_HEIGHT)
-    game_menu.credits_menu = CreditsMenu(game_menu,  GAME_WIDTH, GAME_HEIGHT)
-    game_menu.game_options_menu = GameOptionsMenu(game_menu,  GAME_WIDTH, GAME_HEIGHT)
+    game_menu = game.create_game_menu(800, 600, game)
+    game_menu.first_screen_menu = FirstScreenMenu(game_menu, 'assets/image/fortnite.jpg')
+    game_menu.loading_menu = LoadingMenu(game_menu, 'assets/image/fortnite_loading.jpg', 'assets/sound/fortnite_loading.mp3')
+    game_menu.main_menu = MainMenu(game_menu)
+    game_menu.options_menu = OptionsMenu(game_menu)
+    game_menu.credits_menu = CreditsMenu(game_menu)
+    game_menu.game_options_menu = GameOptionsMenu(game_menu)
     game_menu.current_menu = game_menu.main_menu
     game_menu.current_menu.show()
+
     # LOOP----------------------
     running = True
     clock = pygame.time.Clock()
@@ -46,10 +47,10 @@ def main():
                     if event.key == pygame.K_ESCAPE:
                         game.K_ESCAPE = True
                         game.isplaying = False
-                        self.screen, self.display = resize_screen(self.game_menu.current_menu.w, self.game_menu.current_menu.h)
-                        self.game_menu.game_options_menu.show()
+                        game.resize_screen(game.w, game.h)
+                        game_menu.game_options_menu.show()
+                        game.show_game_menu()
                 else:
-                    print('test')
                     if event.key == pygame.K_ESCAPE:
                         game_menu.current_menu.go_back()
                     if event.key == pygame.K_RETURN:
