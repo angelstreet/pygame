@@ -14,6 +14,7 @@ class GameBar(pygame.sprite.Sprite):
         self.y = y
 
     def update(self):
+        return
         self.draw_bar()
 
 
@@ -127,7 +128,8 @@ class HeartGameBar(ImageGameBar):
 
     def draw_heart(self,i,sprite_id) :
         dest = (round(i*self.w*self.scale)+i*self.offset,0)
-        area = (round((sprite_id-1)*self.w)*self.scale,0,round(sprite_id*self.w*self.scale),round(self.h*self.scale))
+        area = (round((sprite_id-1)*self.w)*self.scale,0,round(self.w*self.scale),round(self.h*self.scale))
+        print(i,sprite_id,dest,area)
         self.image.blit(self.spritesheet,dest,area)
 
     def draw_bar(self) :

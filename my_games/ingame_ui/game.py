@@ -34,7 +34,7 @@ class Game():
     def init_healtbar(self):
         #self.healthbar =ColorGameBar(50, 100, 10, 10, 200, 40)
         #self.healthbar =ImageGameBar(100, 100, 10, 10,'healthbar_bg.png','healthbar_fill.png',84, (0,0,0),True)
-        self.healthbar =HeartGameBar(6, 6, 10, 10,'heart.json',0.2,10)
+        self.healthbar =HeartGameBar(3, 6, 10, 10,'heart.json',0.2,10)
 
         self.ui_sprites.add(self.healthbar)
 
