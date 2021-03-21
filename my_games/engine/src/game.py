@@ -1,6 +1,9 @@
 import pygame
-from src.utility import FPS, WHITE, BLACK, draw_text, resize_screen, blit_screen
-from src.ui_interface import ColorGameBar,ImageGameBar,HeartGameBar
+from src.utility import FPS, WHITE, BLACK, draw_text, resize_screen
+from src.ui import ColorGameBar,ImageGameBar,HeartGameBar
+from src.isotilemap import IsoTileMap
+from src.player import Player
+from src.game_menu import GameMenu
 
 FPS = 60
 BLACK = (0, 0, 0)
@@ -9,12 +12,12 @@ FONT_NAME = pygame.font.get_default_font()
 FONT_SIZE = 14
 
 class Game():
-    def __init__(self, screen, display, WIDTH, HEIGHT):
+    def __init__(self, screen, display, WIDTH, HEIGHT, isplaying=True):
         self.screen = screen
         self.display = display
         self.w, self.h = WIDTH, HEIGHT
         self.mid_w, self.mid_h = WIDTH / 2, HEIGHT / 2
-        self.playing = False
+        self.isplaying = isplaying
         self.game_menu = None
         self.screen = screen
         self.current_game_menu = "game_menu_world"
@@ -29,6 +32,22 @@ class Game():
         self.fx_sprites = pygame.sprite.Group()
         self.ui_sprites = pygame.sprite.OrderedUpdates()
 
+#PLAYER-----------------------------------------------------
+    def create_game_menu(self,w,h,game):
+         game_menu = GameMenu(w,h,game)
+         self.ui_sprites.add(game_menu)
+         return game_menu
+#PLAYER-----------------------------------------------------
+    def create_player(self,json,scale):
+         player = Player(json,scale)
+         self.game_sprites.add(player)
+         return player
+#ISOTILEMAP-----------------------------------------------------
+    def create_isotilemap(self,x,y, json,scale):
+        isotilemap = IsoTileMap(x,y,json,scale)
+        self.bg_sprites.add(isotilemap.getBackground())
+        self.game_sprites.add(isotilemap.getTiles())
+        return isotilemap
 #HEALTHBAR-----------------------------------------------------
     def create_colorgamebar(self, value,total, x, y, w,h):
         colorgamebar =ColorGameBar(value,total, x, y, w,h)
@@ -79,41 +98,12 @@ class Game():
 
     def draw_screen(self,clock):
         self.draw_bg()
-        self.draw_game()
-        self.draw_fx()
+        if self.isplaying :
+            self.draw_game()
+            self.draw_fx()
         self.draw_ui(clock)
         self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
         pygame.display.update()
-
-#CHECK_EVENTS-----------------------------------------------------
-    def check_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.playing = False
-                pygame.quit()
-            if event.type == pygame.VIDEORESIZE:
-                self.w, self.h = event.w, event.h
-                self.mid_w, self.mid_h = self.w / 2, self.h / 2
-                self.screen, self.display = resize_screen(event.w, event.h, True)
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    self.K_ESCAPE = True
-                if event.key == pygame.K_RETURN:
-                    self.START_KEY = True
-                if event.key == pygame.K_BACKSPACE:
-                    self.BACK_KEY = True
-                if event.key == pygame.K_DOWN:
-                    self.DOWN_KEY = True
-                if event.key == pygame.K_UP:
-                    self.UP_KEY = True
-        if self.START_KEY:
-            self.playing = False
-        if self.K_ESCAPE:
-            self.playing = False
-            if self.game_menu:
-                self.screen, self.display = resize_screen(
-                    self.game_menu.current_menu.w, self.game_menu.current_menu.h)
-                self.game_menu.game_options_menu.display_menu()
 
     def resume(self):
         self.launch(self.game_menu, True)

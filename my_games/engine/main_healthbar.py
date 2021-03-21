@@ -17,12 +17,15 @@ def main():
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
     colorgamebar = game.create_colorgamebar(70, 100, 10, 10, 200, 40)
     imagegamebar = game.create_imagegamebar(80, 100, 10, 120,'assets/image/healthbar_bg.png','assets/image/healthbar_fill.png',84,0.5, (0,0,0))
-    imagegamebar.draw_bar()
     heartgamebar = game.create_heartgamebar(6, 6, 10, 250,'assets/data/heart.json',0.2,10)
     # LOOP----------------------
+    running = True
     clock = pygame.time.Clock()
-    while True:
-        game.check_events()
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                return pygame.quit()
         game.draw_screen(clock)
         colorgamebar.value=max(1,colorgamebar.value-0.3)
         imagegamebar.value=max(0,imagegamebar.value-0.2)
