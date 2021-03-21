@@ -1,0 +1,11 @@
+{"heart": {
+  "sprite_name" :"assets/image/heart.png",
+	"colorkey" :[0,0,0],
+  "w" : 260,
+  "h" : 230,
+  "empty_id":2,
+  "full_id":1,
+  "half_id":3,
+  "max_heart" : 5
+  }
+}
