@@ -8,7 +8,7 @@ MAP_X= 80
 MAP_Y = 80
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self,tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,colorkey,scale=1):
+    def __init__(self,tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,colorkey,scale,sort):
         pygame.sprite.Sprite.__init__(self)
         self.tile_sprite=tile_sprite
         self.tile_frame = tile_frame
@@ -23,6 +23,7 @@ class Tile(pygame.sprite.Sprite):
         self.offsety = offsety
         self.colorkey = colorkey
         self.scale = scale
+        self.sort = sort
         self.init_tile()
 
     def init_tile(self):
@@ -32,11 +33,14 @@ class Tile(pygame.sprite.Sprite):
         self.rect.y=self.isoy+MAP_Y+self.z
 
     def isStatic(self):
-        if self.z==0 :
-            return True
+        return not self.sort
 
     def zsort(self):
-        return round(self.rect.y+self.rect.h)
+        if self.z>0 :
+            depth = round(self.rect.y+self.rect.h-10*self.z)
+        else :
+            depth = round(self.rect.y+self.rect.h-self.z)
+        return depth
 
     def update(self):
         pass
@@ -65,13 +69,14 @@ class Map(pygame.sprite.Sprite):
     def sort_tile(self,tile):
         if tile.isStatic() :
             self.static_tiles.append(tile)
-        else: self.dynamic_tiles.append(tile)
+        else:
+            self.dynamic_tiles.append(tile)
 
-    def draw_tile(self, x, y, z, tile_frame):
+    def draw_tile(self, x, y, z, tile_frame,sort):
         tile_data = self.tileset[tile_frame-1]
         tile_sprite, w, h, offsetx, offsety = tile_data
         isox, isoy = cartesian_to_iso(x, y, w*self.scale-offsetx*self.scale, h*self.scale-offsety*self.scale)
-        tile = Tile(tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,self.colorkey,self.scale)
+        tile = Tile(tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,self.colorkey,self.scale,sort)
         self.sort_tile(tile)
 
 
@@ -79,8 +84,12 @@ class Map(pygame.sprite.Sprite):
         for tile in tile_list:
             tile_frame = tile['tile_frame']
             z = tile['z']
+            sort = False
+            if 'sort' in tile :
+                sort = True
+
             if tile_frame > 0:
-                self.draw_tile(x, y, z, tile_frame)
+                self.draw_tile(x, y, z, tile_frame,sort)
 
     def init_map(self):
         self.image = pygame.Surface((MAP_WIDTH, MAP_HEIGHT))

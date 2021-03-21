@@ -4,39 +4,39 @@
   "_comment": "Multidimensionnal isometric tilemap",
   "map_data" :[
                 [
-                  [{"tile_frame":1,"z":0}, {"tile_frame":3,"z":-20}],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":3,"z":0}],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":3,"z":0}]
+                  [{"tile_frame":1,"z":0,"sort":true}, {"tile_frame":3,"z":-20,"sort":true},{"tile_frame":3,"z":-40,"sort":true},{"tile_frame":2,"z":-60,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":3,"z":0,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":3,"z":0,"sort":true}]
                 ],
                 [
-                  [{"tile_frame":2,"z":0}],
-                  [{"tile_frame":2,"z":0}],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":2,"z":0}],
+                  [{"tile_frame":2,"z":0,"sort":true}],
+                  [{"tile_frame":2,"z":0,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":2,"z":0,"sort":true}],
                   []
                 ],
                 [
-                  [{"tile_frame":3,"z":0},{"tile_frame":3,"z":-60}],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":4,"z":0}],
-                  [{"tile_frame":1,"z":0}]
+                  [{"tile_frame":3,"z":0,"sort":true},{"tile_frame":3,"z":-60,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":4,"z":0,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}]
                 ],
                 [
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":5,"z":0}],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":1,"z":0},{"tile_frame":5,"z":-40}]
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":5,"z":0,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":1,"z":0,"sort":true},{"tile_frame":1,"z":20,"sort":true},{"tile_frame":1,"z":40,"sort":true}]
                 ],
                 [
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":5,"z":0}],
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":5,"z":0,"sort":true}],
                   [],
-                  [{"tile_frame":1,"z":0}],
-                  [{"tile_frame":5,"z":0}]
+                  [{"tile_frame":1,"z":0,"sort":true}],
+                  [{"tile_frame":5,"z":0,"sort":true},{"tile_frame":5,"z":20,"sort":true}]
                 ]
               ],
 	"tiles_data" :[

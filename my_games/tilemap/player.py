@@ -1,7 +1,6 @@
 #AngelStreet @2021
 ####################################################
 from utility import load_json, get_sprite, move_sprite
-
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -20,7 +19,9 @@ class Player(pygame.sprite.Sprite):
         self.jump_force = -10
         self.z = 0
         self.current_state = None
+        pygame.mixer.init()
         self.init_player()
+
 
     def load_player_data_from_json(self):
         data = load_json(self.json)
@@ -127,6 +128,8 @@ class Player(pygame.sprite.Sprite):
     def jump(self):
         self.z = 0
         self.velocity_z = self.jump_force
+        pygame.mixer.music.load('jump.mp3')
+        pygame.mixer.music.play()
 
     def fall(self):
         pass
@@ -210,4 +213,5 @@ class Player(pygame.sprite.Sprite):
         self.animate()  # animate player by updating frame
 
     def zsort(self):
-        return round(self.rect.y+self.rect.h)
+        depth = round(self.rect.y+self.rect.h-self.z+54)
+        return depth
