@@ -5,12 +5,10 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 
-def draw_text(display, text, font_name, size, color, x, y):
+def draw_text(text, font_name, size, color):
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(str(text), True, color)
-    text_rect = text_surface.get_rect()
-    text_rect.center = (x, y)
-    display.blit(text_surface, text_rect)
+    return text_surface
 
 
 def resize_screen(w, h, resizable=False):

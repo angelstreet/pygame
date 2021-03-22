@@ -128,14 +128,14 @@ class HeartGameBar(ImageGameBar):
         self.rect.y = self.y
         dimension = round(self.spritesheet.get_rect().width*self.scale), round(self.spritesheet.get_rect().height*self.scale)
         self.spritesheet = pygame.transform.scale(self.spritesheet, dimension)
-
         if not self.colorkey == (0,0,0) :
             self.image.set_colorkey(self.colorkey)
 
     def draw_heart(self,i,sprite_id) :
         dest = (round(i*self.w*self.scale)+i*self.offset,0)
         area = (round((sprite_id-1)*self.w)*self.scale,0,round(self.w*self.scale),round(self.h*self.scale))
-        self.image.blit(self.spritesheet,dest,area)
+        self.image.blit(self.spritesheet,(dest),area)
+        self.image.blit(self.spritesheet,((0,0)),area)
 
     def draw_bar(self) :
         self.image.fill((255,255,255))
