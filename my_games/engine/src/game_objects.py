@@ -30,7 +30,6 @@ class Text(pygame.sprite.Sprite):
         else:
             self.layer.add(self)
 
-
     def draw(self):
         font = draw_text(self.text, self.font_name, self.size, self.color)
         font_rect = font.get_rect()

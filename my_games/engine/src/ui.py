@@ -127,12 +127,13 @@ class HeartGameBar(ImageGameBar):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+        self.w *= self.scale
+        self.h*=self.scale
 
     def draw_heart(self,i,sprite_id) :
-        dest = (round(i*self.w*self.scale)+i*self.offset,0)
-        area = (round((sprite_id-1)*self.w)*self.scale,0,round(self.w*self.scale),round(self.h*self.scale))
+        dest = i*self.w+i*self.offset,0
+        area = (sprite_id-1)*self.w,0,self.w,self.h
         self.image.blit(self.spritesheet,(dest),area)
-        self.image.blit(self.spritesheet,((0,0)),area)
 
     def draw(self) :
         nb_hearts = int(self.total/2)
