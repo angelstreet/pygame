@@ -18,10 +18,13 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 1
         self.jump_force = -10
         self.z = 0
+        self.rigid = True
+        self.collision_list = []
         self.current_state = None
         pygame.mixer.init()
         pygame.mixer.music.set_volume(0.1)
         self.init_player()
+        self.debug = True
 
 
     def load_player_data_from_json(self):
@@ -109,21 +112,27 @@ class Player(pygame.sprite.Sprite):
     def move(self, x, y):
         move_sprite(self.rect,x, y)
 
-    def move_player(self,):
-        self.move(self.velocity_x, self.velocity_y + self.velocity_z)
-        if (self.current_state == 'jump' and self.velocity_z<0) :
-            self.velocity_z = min(0,self.velocity_z+self.gravity)
-            self.z+=self.velocity_z
-        elif(self.current_state == 'jump' and self.velocity_z==0) :
-            self.set_state("fall")
-        elif(self.current_state == 'fall') :
-            self.velocity_z = max(self.jump_force,self.velocity_z+self.gravity)
-            self.z+=self.velocity_z
-            if(self.velocity_z==-1*self.jump_force+self.gravity) :
-                self.set_state("idle")
-                self.velocity_z = 0
-                self.z=0
-                self.reset_velocity()
+    def check_collision(self):
+        if len(self.collision_list)>0:
+            return False
+        return False
+
+    def move_player(self):
+        if not self.check_collision():
+            self.move(self.velocity_x, self.velocity_y + self.velocity_z)
+            if (self.current_state == 'jump' and self.velocity_z<0) :
+                self.velocity_z = min(0,self.velocity_z+self.gravity)
+                self.z+=self.velocity_z
+            elif(self.current_state == 'jump' and self.velocity_z==0) :
+                self.set_state("fall")
+            elif(self.current_state == 'fall') :
+                self.velocity_z = max(self.jump_force,self.velocity_z+self.gravity)
+                self.z+=self.velocity_z
+                if(self.velocity_z==-1*self.jump_force+self.gravity) :
+                    self.set_state("idle")
+                    self.velocity_z = 0
+                    self.z=0
+                    self.reset_velocity()
 
     def attack(self):
         if 'attack' in self.sound_data :
@@ -197,6 +206,16 @@ class Player(pygame.sprite.Sprite):
             self.image = self.frames_data[self.current_frame][self.current_frame_id+1]['sprite']
         else:
             self.image = self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip']
+        if self.debug :
+            self.displayCollisionLosange()
+            self.displayRadius()
+
+    def displayCollisionLosange(self):
+        return
+        self.image.blit(self.get_collision_sprite().image,(0,0))
+
+    def displayRadius(self):
+        pass
 
     def animate(self):
         frame_rate = self.get_frame_rate()
@@ -220,3 +239,27 @@ class Player(pygame.sprite.Sprite):
     def zsort(self):
         depth = round(self.rect.y+self.rect.h-self.z+50)
         return depth
+
+    def is_moving(self) :
+        if self.velocity_x!=0 or self.velocity_y!=0 or self.velocity_z!=0:
+            return True
+        return True
+        return False
+
+    def get_collision_sprite(self) :
+        sprite = pygame.sprite.Sprite()
+        sprite.image = pygame.Surface((self.rect.size),pygame.SRCALPHA, 32).convert_alpha()
+        w,h = int(100*0.43),int(60*0.43)
+        x,y,z=40,54,40
+        polygon_b=[(w/2+x, y), (w+x, h/2+y), (w/2+x, h+y),(x, h/2+y)]
+        pygame.draw.polygon(sprite.image,(0,0,255),polygon_b)
+        sprite.mask = pygame.mask.from_surface(sprite.image)
+        sprite.rect = self.image.get_rect()
+        sprite.rect.x=self.rect.x
+        sprite.rect.y=self.rect.y
+        #polygon_t=[(w/2+x, y-z), (w+x, h/2+y-z), (w/2+x, h+y-z),(x, h/2+y-z)]
+        #pygame.draw.polygon(collision_sprite,(255,0,0),polygon_t)
+        #pygame.draw.line(collision_sprite,(0,0,255),polygon_t[1],polygon_b[1] )
+        #pygame.draw.line(collision_sprite,(0,0,255),polygon_t[3],polygon_b[3])
+        sprite.parent = self
+        return sprite

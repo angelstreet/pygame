@@ -5,7 +5,7 @@ from src.utility import load_json, cartesian_to_iso
 RED = (255, 0, 0)
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self,tilemap, tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,sort):
+    def __init__(self,tilemap, tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,sort,rigid):
         pygame.sprite.Sprite.__init__(self)
         self.tilemap=tilemap
         self.tile_sprite=tile_sprite
@@ -20,27 +20,44 @@ class Tile(pygame.sprite.Sprite):
         self.offsetx = offsetx
         self.offsety = offsety
         self.sort = sort
+        self.rigid= rigid
+        self.collision_list = []
         self.init_tile()
 
     def init_tile(self):
         self.image = pygame.Surface((self.w, self.h),pygame.SRCALPHA, 32).convert_alpha()
         self.image.blit(self.tile_sprite , (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = self.isox+self.offsetx+self.tilemap.map_w/2+self.tilemap.x
         self.rect.y = self.isoy+self.z+self.offsety+self.tilemap.y
 
-    def isStatic(self):
+    def is_static(self):
         return not self.sort
 
     def zsort(self):
         depth = round(self.rect.y+self.rect.h-self.z)
         return depth
 
+    def is_moving(self) :
+        return False
+
+    def get_collision_sprite(self) :
+        sprite = pygame.sprite.Sprite()
+        sprite.image = pygame.Surface((self.rect.size),pygame.SRCALPHA, 32).convert_alpha()
+        w,h = self.w,self.h
+        polygon_b=[(0,h-h/3), (w/2, h-h/3*2), (w, h-h/3),(w/2, h)]
+        pygame.draw.polygon(sprite.image,(255,255,0),polygon_b)
+        sprite.mask = pygame.mask.from_surface(sprite.image)
+        sprite.rect = self.image.get_rect()
+        sprite.rect.x=self.rect.x
+        sprite.rect.y=self.rect.y
+        self.image.blit(sprite.image,(0,0))
+        sprite.parent = self
+        return sprite
+
     def update(self):
         pass
-
-    def __str__(self):
-        return "Tile - tile_frame:%s, x:%s, y:%s, z:%s, w:%s, h:%s, isox:%s, isoy:%s, offsetx:%s, offsety:%s, scale:%s" % (self.tile_frame,self.x,self.y,self.z,self.w,self.h,self.isox,self.isoy,self.offsetx,self.offsety,self.scale)
 
 class IsoTileMap(pygame.sprite.Sprite):
     def __init__(self,x,y,map_w,map_h, json, scale=1):
@@ -65,16 +82,16 @@ class IsoTileMap(pygame.sprite.Sprite):
         self.map_data = data['tilemap']['map_data']
 
     def sort_tile(self,tile):
-        if not self.sort or tile.isStatic() :
+        if not self.sort or tile.is_static() :
             self.static_tiles.append(tile)
         else:
             self.dynamic_tiles.append(tile)
 
-    def draw_tile(self, x, y, z, tile_frame,sort):
+    def draw_tile(self, x, y, z, tile_frame,sort,rigid):
         tile_data = self.tileset[tile_frame-1]
         tile_sprite, w, h, offsetx, offsety = tile_data
         isox, isoy = cartesian_to_iso(x, y, w, h+offsety)
-        tile = Tile(self,tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,sort)
+        tile = Tile(self,tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,sort,rigid)
         self.sort_tile(tile)
 
     def zsort(self, tile):
@@ -86,11 +103,13 @@ class IsoTileMap(pygame.sprite.Sprite):
         for tile in tile_list:
             tile_frame = tile['tile_frame']
             z = tile['z']*self.scale
-            sort = False
+            sort,rigid = False,False
             if 'sort' in tile :
                 sort = True
+            if 'rigid' in tile :
+                rigid = True
             if tile_frame > 0:
-                self.draw_tile(x, y, z, tile_frame,sort)
+                self.draw_tile(x, y, z, tile_frame,sort,rigid)
 
     def init_map(self):
         self.image = pygame.Surface((self.map_w*self.scale, self.map_h*self.scale),pygame.SRCALPHA, 32).convert_alpha()
@@ -120,7 +139,7 @@ class IsoTileMap(pygame.sprite.Sprite):
                 self.draw_tiles(x,y,tile_list)
 
     def draw_map(self) :
-        self.image.fill(RED)
+        #self.image.fill(RED)
         for tile in self.static_tiles :
             print(tile.y,tile.offsety,self.scale,tile.isox,tile.isoy)
             x = tile.isox+tile.offsetx+self.map_w/2

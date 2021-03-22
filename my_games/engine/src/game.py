@@ -99,6 +99,29 @@ class Game(pygame.sprite.Sprite):
         healthbar = HeartGameBar(value, total, x, y, json, scale, offset)
         self.ui_sprites.add(healthbar)
         return healthbar
+# COLLISION-----------------------------------------------------
+    def check_collision(self):
+        moving_list, hit_list = [], []
+        non_moving_list = pygame.sprite.Group()
+
+        for sprite in self.game_sprites.sprites() :
+            if 'rigid' in dir(sprite) and sprite.rigid :
+                if 'is_moving' in dir(sprite) and sprite.is_moving() :
+                    moving_list.append(sprite.get_collision_sprite())
+                else :
+                    non_moving_list.add(sprite.get_collision_sprite())
+
+        for collision_sprite in moving_list :
+            self.image.blit(collision_sprite.image,(collision_sprite.rect.x,collision_sprite.rect.y))
+            collision_list = pygame.sprite.spritecollide(collision_sprite, non_moving_list, False, pygame.sprite.collide_mask)
+            print("Check Collision")
+            if len(collision_list)>0 :
+                #collision_sprite.parent.image.blit(collision_sprite.image,(0,0))
+                for sprite in collision_list:
+                    print(sprite.parent, sprite)
+                    #sprite.parent.image.blit(sprite.image,(0,0))
+                    collision_sprite.parent.collision_list.append(sprite)
+
 
 # GAME-----------------------------------------------------
     def draw_bg(self):
@@ -110,14 +133,15 @@ class Game(pygame.sprite.Sprite):
             return sprite.zsort()
         return 1
 
-    def sortGameSprite(self, game_sprites):
+    def sort_game_sprite(self, game_sprites):
         tmp = game_sprites.sprites()
         tmp.sort(key=self.zsort)
         return pygame.sprite.OrderedUpdates(tmp)
 
     def draw_game(self):
         self.game_sprites.update()
-        self.game_sprites = self.sortGameSprite(self.game_sprites)
+        self.check_collision()
+        self.game_sprites = self.sort_game_sprite(self.game_sprites)
         self.game_sprites.draw(self.display)
 
     def draw_fx(self):
