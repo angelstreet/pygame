@@ -13,11 +13,6 @@ def draw_image(display, image,scale=1):
         else :
             display.blit(image, (0,0))
 
-def draw_text(text, font_name, size, color):
-    font = pygame.font.Font(font_name, size)
-    text_surface = font.render(str(text), True, color)
-    return text_surface
-
 
 def resize_screen(w, h, resizable=False):
     # print(w,h,resizable)
@@ -35,17 +30,11 @@ def load_json(json_file):
     f.close()
     return data
 
-def get_sprite(sprite_sheet, x, y, w, h,colorkey):
-    sprite = pygame.Surface((w, h))
-    sprite.set_colorkey(colorkey)
-    sprite.blit(sprite_sheet, (0, 0), (x, y, w, h))
-    return sprite
-
 def cartesian_to_iso(x, y, w, h):
     iso_x = round((x - y) * w/2)
     iso_y = round((x + y) * h/2)
     return iso_x, iso_y
 
-def move_sprite(self, x, y) :
-    self.rect.x += x
-    self.rect.y += y
+def move_sprite(rect, x, y) :
+    rect.x += x
+    rect.y += y

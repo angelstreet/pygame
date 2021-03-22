@@ -1,6 +1,6 @@
 #AngelStreet @2021
 ####################################################
-from src.utility import load_json, get_sprite, move_sprite
+from src.utility import load_json, move_sprite
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -40,6 +40,9 @@ class Player(pygame.sprite.Sprite):
     def load_player_frames(self):
         # Create spritesheets
         self.playersheet_img = pygame.image.load(self.playersheet_name).convert_alpha()
+        rect = self.playersheet_img.get_rect()
+        dimension = int(rect.width*self.scale), int(rect.height*self.scale)
+        self.playersheet_img = pygame.transform.scale(self.playersheet_img, dimension)
         # Create sprite for all animation frames
         for key, value in self.frames_data.items():
             midbottom = value[0]['midbottom']
@@ -47,12 +50,10 @@ class Player(pygame.sprite.Sprite):
             for i, frame in enumerate(value):
                 if i > 0 and isinstance(frame, dict):
                     frame_name = frame['name']
-                    x, y, w, h, offsetx, offsety = self.get_frame_sprite_data(frame)
-                    sprite = get_sprite(self.playersheet_img, x, y, w, h, self.colorkey)
-                    sprite_flip = get_sprite(self.playersheet_img, x, y, w, h, self.colorkey)
-                    sprite_flip = pygame.transform.flip(sprite_flip, True, False)
-                    sprite = pygame.transform.scale(sprite, (w*self.scale, h*self.scale))
-                    sprite_flip = pygame.transform.scale(sprite_flip, (w*self.scale, h*self.scale))
+                    x, y, w, h, offsetx, offsety = [int(elt*self.scale) for elt in self.get_frame_sprite_data(frame)]
+                    sprite = pygame.Surface((w, h),pygame.SRCALPHA, 32).convert_alpha()
+                    sprite.blit(self.playersheet_img , (0, 0), (x, y, w, h))
+                    sprite_flip =  pygame.transform.flip(sprite, True, False)
                     frame['sprite'] = sprite
                     frame['sprite_flip'] = sprite_flip
 
@@ -106,7 +107,7 @@ class Player(pygame.sprite.Sprite):
         self.velocity_x, self.velocity_y = 0, 0
 
     def move(self, x, y):
-        move_sprite(self, x, y)
+        move_sprite(self.rect,x, y)
 
     def move_player(self,):
         self.move(self.velocity_x, self.velocity_y + self.velocity_z)

@@ -1,5 +1,5 @@
 import pygame
-from src.utility import FPS, WHITE, BLACK, draw_text
+from src.utility import FPS, WHITE, BLACK
 
 
 class GameMenu(pygame.sprite.Sprite):
@@ -13,11 +13,6 @@ class GameMenu(pygame.sprite.Sprite):
     def init_game_menu(self):
         self.image = pygame.Surface((self.w, self.h))
         self.rect = self.image.get_rect()
-        self.center()
-
-    def center(self):
-        self.rect.x = (self.game.w-self.w )/2
-        self.rect.y = (self.game.h-self.h )/2
 
     def update(self):
         self.current_menu.update()
@@ -28,11 +23,12 @@ class Menu():
         self.w = game_menu.w
         self.h = game_menu.h
         self.display = self.game_menu.image
-        self.mid_w = self.w/2
+        self.mid_w = self.w/2-70
         self.mid_h = self.h/2
+        self.center =  self.mid_w,self.mid_h
         self.run_display = False
         self.cursor_rect = pygame.Rect(0, 0, 20, 20)
-        self.offset = - 100
+        self.offset = - 80
         self.font_name = pygame.font.get_default_font()
         self.font_size = 20
 
@@ -52,8 +48,13 @@ class Menu():
     def press_enter(self):
         pass
 
+    def draw_text(self,display, text, font_name, size, color, x, y):
+        font = pygame.font.Font(font_name, size)
+        text_surface = font.render(str(text), True, color)
+        self.display.blit(text_surface,(x,y))
+
     def draw_cursor(self):
-        draw_text(self.display, '*', self.font_name, 20, WHITE,self.cursor_rect.x, self.cursor_rect.y)
+        self.draw_text(self.display, '*', self.font_name, 20, WHITE,self.cursor_rect.x, self.cursor_rect.y)
 
 class FirstScreenMenu(Menu):
     def __init__(self, game_menu, image):
@@ -93,24 +94,24 @@ class LoadingMenu(Menu):
         self.game_menu.current_menu = self
         self.sprite = pygame.image.load(self.image).convert()
         rect = self.sprite.get_rect()
-        self.center = (self.w-rect.width)/2,(self.h-rect.height)/2
         self.display.fill((255,255, 255))
-        self.display.blit(self.sprite,self.center)
+        self.display.blit(self.sprite,(0,0))
         pygame.mixer.music.load(self.sound)
         pygame.mixer.music.play()
-        draw_text(self.display, 'Loading...', self.font_name,30, WHITE, 1050,640)
+        self.draw_text(self.display, 'Loading...', self.font_name,30, WHITE, 1050,640)
         self.percentage = 1
 
     def update(self):
         now = pygame.time.get_ticks()
         self.display.fill((255,255, 255))
-        self.display.blit(self.sprite,self.center)
-        draw_text(self.display, 'Loading...', self.font_name,30, WHITE, 1050,640)
-        draw_text(self.display, self.percentage, self.font_name,30, WHITE, 1140,640)
+        self.display.blit(self.sprite,(0,0))
+        self.draw_text(self.display, 'Loading...', self.font_name,30, WHITE, 990,640)
+        self.draw_text(self.display, self.percentage, self.font_name,30, WHITE, 1140,640)
         if self.percentage < 100 :
             self.percentage +=1
-            pygame.time.delay(100)
+            pygame.time.delay(50)
         else:
+            pygame.time.delay(300)
             self.run_display = False
             pygame.mixer.music.stop()
             self.game_menu.main_menu.show()
@@ -128,10 +129,10 @@ class MainMenu(Menu):
 
     def update(self):
         self.display.fill((0, 0, 0))
-        draw_text(self.display, 'Main Menu', self.font_name,self.font_size, WHITE, self.mid_w, self.mid_h - 20)
-        draw_text(self.display, "Start Game", self.font_name,self.font_size,  WHITE, self.startx, self.starty)
-        draw_text(self.display, "Options", self.font_name,self.font_size,  WHITE, self.optionsx, self.optionsy)
-        draw_text(self.display, "Credits", self.font_name, self.font_size,  WHITE, self.creditsx, self.creditsy)
+        self.draw_text(self.display, 'Main Menu', self.font_name,self.font_size, WHITE, self.mid_w, self.mid_h - 20)
+        self.draw_text(self.display, "Start Game", self.font_name,self.font_size,  WHITE, self.startx, self.starty)
+        self.draw_text(self.display, "Options", self.font_name,self.font_size,  WHITE, self.optionsx, self.optionsy)
+        self.draw_text(self.display, "Credits", self.font_name, self.font_size,  WHITE, self.creditsx, self.creditsy)
         self.draw_cursor()
 
     def move_cursor_up(self):
@@ -184,9 +185,9 @@ class OptionsMenu(Menu):
 
     def update(self):
         self.display.fill((0, 0, 0))
-        draw_text(self.display, 'Options', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 30)
-        draw_text(self.display, 'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
-        draw_text(self.display, 'Controls', self.font_name, 15, WHITE, self.controlsx, self.controlsy)
+        self.draw_text(self.display, 'Options', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 30)
+        self.draw_text(self.display, 'Volume', self.font_name, self.font_size, WHITE, self.volx, self.voly)
+        self.draw_text(self.display, 'Controls', self.font_name, self.font_size, WHITE, self.controlsx, self.controlsy)
         self.draw_cursor()
 
 
@@ -214,8 +215,8 @@ class CreditsMenu(Menu):
 
     def update(self):
         self.display.fill((0, 0, 0))
-        draw_text(self.display, 'Credits', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 20)
-        draw_text(self.display, 'AngelStreet @2021', self.font_name,15, WHITE, self.mid_w, self.mid_h + 10)
+        self.draw_text(self.display, 'Credits', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 20)
+        self.draw_text(self.display, 'AngelStreet @2021', self.font_name,15, WHITE, self.mid_w, self.mid_h + 10)
 
     def go_back(self):
         self.run_display = False
@@ -238,10 +239,10 @@ class GameOptionsMenu(Menu):
 
     def update(self):
         self.display.fill((0, 0, 0))
-        draw_text(self.display, 'Options', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 30)
-        draw_text(self.display, 'Resume', self.font_name, 15, WHITE, self.resumex, self.resumey)
-        draw_text(self.display, 'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
-        draw_text(self.display, 'Controls', self.font_name,15, WHITE, self.controlsx, self.controlsy)
+        self.draw_text(self.display, 'Options', self.font_name, self.font_size, WHITE, self.mid_w, self.mid_h - 30)
+        self.draw_text(self.display, 'Resume', self.font_name, 15, WHITE, self.resumex, self.resumey)
+        self.draw_text(self.display, 'Volume', self.font_name, 15, WHITE, self.volx, self.voly)
+        self.draw_text(self.display, 'Controls', self.font_name,15, WHITE, self.controlsx, self.controlsy)
         self.draw_cursor()
 
     def go_back(self):

@@ -1,6 +1,6 @@
 {"tilemap": {
-  "tilesheet_name" :"assets/image/tilesheet1.png",
-	"colorkey" :[0,255,0],
+  "tilesheet_name" :"assets/image/tilesheet.png",
+	"colorkey" :null,
   "_comment": "Multidimensionnal isometric tilemap",
   "map_data" :[
                 [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],

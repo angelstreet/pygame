@@ -1,5 +1,5 @@
 import pygame
-from src.utility import FPS, WHITE, BLACK, draw_text, resize_screen
+from src.utility import FPS, WHITE, BLACK, resize_screen
 from src.ui import ColorGameBar, ImageGameBar, HeartGameBar
 from src.isotilemap import IsoTileMap
 from src.player import Player
@@ -78,8 +78,8 @@ class Game(pygame.sprite.Sprite):
         return player
 # ISOTILEMAP-----------------------------------------------------
 
-    def create_isotilemap(self, x, y, json, scale):
-        isotilemap = IsoTileMap(x, y, json, scale)
+    def create_isotilemap(self, map_w, map_h,x, y, json, scale):
+        isotilemap = IsoTileMap(map_w, map_h,x, y, json, scale)
         self.bg_sprites.add(isotilemap.getBackground())
         self.game_sprites.add(isotilemap.getTiles())
         return isotilemap

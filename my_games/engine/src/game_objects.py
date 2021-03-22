@@ -1,5 +1,5 @@
 import pygame
-from src.utility import FPS, WHITE, BLACK, draw_text, resize_screen,draw_image
+from src.utility import FPS, WHITE, BLACK, resize_screen,draw_image
 from types import MethodType
 
 class Text(pygame.sprite.Sprite):
@@ -30,8 +30,13 @@ class Text(pygame.sprite.Sprite):
         else:
             self.layer.add(self)
 
+    def draw_text(text, font_name, size, color):
+        font = pygame.font.Font(font_name, size)
+        text_surface = font.render(str(text), True, color)
+        return text_surface
+
     def draw(self):
-        font = draw_text(self.text, self.font_name, self.size, self.color)
+        font =self.draw_text(self.text, self.font_name, self.size, self.color)
         font_rect = font.get_rect()
         self.image = pygame.transform.scale(self.image, font_rect.size)
         if self.bg_color:

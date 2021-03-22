@@ -17,7 +17,7 @@ def main():
     display = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT,False)
-    tilemap = game.create_isotilemap(0,100,'assets/data/isotilemap.json',0.5)
+    tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap.json',0.5)
     game_menu = game.create_game_menu(GAME_WIDTH, GAME_HEIGHT, game)
     game_menu.first_screen_menu = FirstScreenMenu(game_menu, 'assets/image/fortnite.jpg')
     game_menu.loading_menu = LoadingMenu(game_menu, 'assets/image/fortnite_loading.jpg', 'assets/sound/fortnite_loading.mp3')
@@ -25,7 +25,7 @@ def main():
     game_menu.options_menu = OptionsMenu(game_menu)
     game_menu.credits_menu = CreditsMenu(game_menu)
     game_menu.game_options_menu = GameOptionsMenu(game_menu)
-    game_menu.current_menu = game_menu.first_screen_menu
+    game_menu.current_menu = game_menu.main_menu
     game_menu.current_menu.show()
 
     # LOOP----------------------
@@ -61,7 +61,7 @@ def main():
                         game_menu.current_menu.move_cursor_down()
                     if event.key == pygame.K_UP:
                         game_menu.current_menu.move_cursor_up()
-        game.draw_screen(clock)
+        game.draw_screen()
         clock.tick(FPS)
 
 if __name__ == "__main__":

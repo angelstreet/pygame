@@ -2,7 +2,7 @@
 ####################################################
 import sys,os,pygame
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.game import Game
+from src.game import Game, GREEN
 
 
 FPS = 60
@@ -24,8 +24,9 @@ def main():
     display = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
+    #game.image.fill(GREEN)
     #tilemap = game.create_isotilemap(0,100,'assets/data/isotilemap.json',0.5)
-    tilemap = game.create_isotilemap(0,100,'assets/data/bigtilemap.json',0.5)
+    tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap.json',0.5)
     player = game.create_player('assets/data/player.json',2)
     player.move(530,100)
     K_LEFT, K_RIGHT,K_UP,K_DOWN = get_keyboard_keys()
@@ -63,7 +64,7 @@ def main():
                     player.K_SPACE = False
                 if event.key == pygame.K_RETURN:
                     player.K_RETURN = False
-        game.draw_screen(clock)
+        game.draw_screen()
         clock.tick(FPS)
 
 if __name__ == "__main__":
