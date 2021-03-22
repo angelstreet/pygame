@@ -3,8 +3,8 @@
 	"colorkey" :null,
   "_comment": "Multidimensionnal isometric tilemap",
   "map_data" :[
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
+                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
+                [[{"tile_frame":4,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
                 [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":4,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
                 [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
                 [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
@@ -22,7 +22,7 @@
 			"x":0,
 			"y":0,
 			"offsetx" : 0,
-			"offsety" : 40
+			"offsety" : -40
 	},
 	{
 			"name": "tile2",
@@ -31,7 +31,7 @@
 			"x":160,
 			"y":0,
 			"offsetx" : 0,
-			"offsety" : 40
+			"offsety" : -40
 	},
 	{
 			"name": "tile3",
@@ -40,7 +40,7 @@
 			"x":320,
 			"y":0,
 			"offsetx" : 0,
-			"offsety" : 40
+			"offsety" : -40
 	},
 	{
 			"name": "tile4",
@@ -49,7 +49,7 @@
 			"x":480,
 			"y":0,
 			"offsetx" : 0,
-			"offsety" : 40
+			"offsety" : -40
 	},
 	{
 			"name": "tile5",
@@ -58,7 +58,7 @@
 			"x":640,
 			"y":0,
 			"offsetx" : 0,
-			"offsety" : 40
+			"offsety" : -40
 	}]
 	}
 }

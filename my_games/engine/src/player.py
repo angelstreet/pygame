@@ -185,7 +185,6 @@ class Player(pygame.sprite.Sprite):
                 self.set_state('idle')
 
     def get_frame_rate(self):
-        # +1 to skip midbottm
         frame_rate = self.frames_data[self.current_frame][self.current_frame_id+1]['frame_rate']
         return frame_rate
 
@@ -216,10 +215,8 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.check_event()  # check key press event
         self.move_player()
-        #self.set_frame()  # attack_right_down_1, hurt_right_up_1, etc..
-        #self.set_state()  # idle, move or attack
         self.animate()  # animate player by updating frame
 
     def zsort(self):
-        depth = round(self.rect.y+self.rect.h-self.z+54)
+        depth = round(self.rect.y+self.rect.h-self.z+50)
         return depth
