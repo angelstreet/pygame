@@ -2,7 +2,7 @@
 ####################################################
 import sys,os,pygame
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from src.game import Game
+from src.game import Game,FONT_NAME,FONT_SIZE,BLACK
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 1200, 600
 TITLE = "HealthBar!"
@@ -18,6 +18,7 @@ def main():
     colorgamebar = game.create_colorgamebar(70, 100, 10, 10, 200, 40)
     imagegamebar = game.create_imagegamebar(80, 100, 10, 120,'assets/image/healthbar_bg.png','assets/image/healthbar_fill.png',84,0.5, (0,0,0))
     heartgamebar = game.create_heartgamebar(6, 6, 10, 250,'assets/data/heart.json',0.2,10)
+    game.draw_text('HP', FONT_NAME,20,BLACK,100,110)
     # LOOP----------------------
     running = True
     clock = pygame.time.Clock()

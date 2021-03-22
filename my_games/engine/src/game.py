@@ -11,17 +11,19 @@ WHITE = (255, 255, 255)
 FONT_NAME = pygame.font.get_default_font()
 FONT_SIZE = 14
 
-class Game():
-    def __init__(self, screen, display, WIDTH, HEIGHT, isplaying=True):
+class Game(pygame.sprite.Sprite):
+    def __init__(self, screen, display, w, h, isplaying=True):
+        pygame.sprite.Sprite.__init__(self)
         self.screen = screen
         self.display = display
-        self.w, self.h = WIDTH, HEIGHT
-        self.mid_w, self.mid_h = WIDTH / 2, HEIGHT / 2
+        self.w, self.h = w, h
+        self.mid_w, self.mid_h = w / 2, h / 2
         self.isplaying = isplaying
-        self.game_menu = None
-        self.screen = screen
-        self.current_game_menu = "game_menu_world"
-        self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY, self.K_ESCAPE = False, False, False, False, False
+        self.init_game()
+
+    def init_game(self):
+        self.image = pygame.Surface((self.w, self.h))
+        self.rect = self.image.get_rect()
         self.font_name = pygame.font.get_default_font()
         self.font_size = 20
         self.bg = pygame.Surface((self.w, self.h))
@@ -31,11 +33,19 @@ class Game():
         self.game_sprites = pygame.sprite.OrderedUpdates()
         self.fx_sprites = pygame.sprite.Group()
         self.ui_sprites = pygame.sprite.OrderedUpdates()
+        self.image.fill((255,255,255))
+        self.bg_sprites.add(self)
 
+#GAME-----------------------------------------------------
+    def resize_screen(self,w,h,resizable=False):
+        self.screen, self.display = resize_screen(w,h,resizable)
+
+    def draw_text(self,text, font_name=FONT_NAME, size=FONT_SIZE, color=BLACK, x=0, y=0):
+        draw_text(self.image, text, font_name, size, color, x, y)
 #PLAYER-----------------------------------------------------
     def create_game_menu(self,w,h,game):
          self.game_menu = GameMenu(w,h,game)
-         self.ui_sprites.add( self.game_menu)
+         self.ui_sprites.add(self.game_menu)
          return  self.game_menu
     def hide_game_menu(self):
          self.ui_sprites.remove(self.game_menu)
@@ -113,6 +123,3 @@ class Game():
     def resume(self):
         self.isplaying = True
         self.resize_screen(self.w,self.h,True)
-
-    def resize_screen(self,w,h,resizable=False):
-        self.screen, self.display = resize_screen(w,h,resizable)

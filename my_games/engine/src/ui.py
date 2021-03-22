@@ -17,7 +17,6 @@ class GameBar(pygame.sprite.Sprite):
         self.draw_bar()
 
 
-
 class ColorGameBar(GameBar):
     def __init__(self, value, total, x, y, w, h, color=None, border=None):
         GameBar.__init__(self,value, total, x, y)

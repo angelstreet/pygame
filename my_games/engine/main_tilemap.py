@@ -37,32 +37,32 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 return pygame.quit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT or event.key == K_LEFT:
-                 player.K_LEFT = True
-            elif event.key == pygame.K_RIGHT or event.key == K_RIGHT:
-                 player.K_RIGHT = True
-            if event.key == pygame.K_UP or event.key == K_UP:
-                player.K_UP = True
-            elif event.key == pygame.K_DOWN or event.key == K_DOWN:
-                player.K_DOWN = True
-            if event.key == pygame.K_SPACE:
-                player.K_SPACE = True
-            if event.key == pygame.K_RETURN:
-                player.K_RETURN = True
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT or event.key == K_LEFT:
-                 player.K_LEFT = False
-            elif event.key == pygame.K_RIGHT or event.key == K_RIGHT:
-                 player.K_RIGHT = False
-            if event.key == pygame.K_UP or event.key == K_UP:
-                player.K_UP = False
-            elif event.key == pygame.K_DOWN or event.key == K_DOWN:
-                player.K_DOWN = False
-            if event.key == pygame.K_SPACE:
-                player.K_SPACE = False
-            if event.key == pygame.K_RETURN:
-                player.K_RETURN = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT or event.key == K_LEFT:
+                     player.K_LEFT = True
+                elif event.key == pygame.K_RIGHT or event.key == K_RIGHT:
+                     player.K_RIGHT = True
+                if event.key == pygame.K_UP or event.key == K_UP:
+                    player.K_UP = True
+                elif event.key == pygame.K_DOWN or event.key == K_DOWN:
+                    player.K_DOWN = True
+                if event.key == pygame.K_SPACE:
+                    player.K_SPACE = True
+                if event.key == pygame.K_RETURN:
+                    player.K_RETURN = True
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == K_LEFT:
+                     player.K_LEFT = False
+                elif event.key == pygame.K_RIGHT or event.key == K_RIGHT:
+                     player.K_RIGHT = False
+                if event.key == pygame.K_UP or event.key == K_UP:
+                    player.K_UP = False
+                elif event.key == pygame.K_DOWN or event.key == K_DOWN:
+                    player.K_DOWN = False
+                if event.key == pygame.K_SPACE:
+                    player.K_SPACE = False
+                if event.key == pygame.K_RETURN:
+                    player.K_RETURN = False
         game.draw_screen(clock)
         clock.tick(FPS)
 

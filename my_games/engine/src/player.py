@@ -32,6 +32,7 @@ class Player(pygame.sprite.Sprite):
         self.first_frame = data['player']['first_frame']
         self.resolution = data['player']['resolution']
         self.frames_data = data['player']['frames']
+        self.sound_data = data['player']['sound']
 
     def get_frame_sprite_data(self, frame):
         return frame['x'], frame['y'], frame['w'], frame['h'], frame['offsetx'], frame['offsety']
@@ -124,14 +125,18 @@ class Player(pygame.sprite.Sprite):
                 self.reset_velocity()
 
     def attack(self):
-        pygame.mixer.music.load('sword.mp3')
-        pygame.mixer.music.play()
+        if 'attack' in self.sound_data :
+            attack_sound = self.sound_data['attack']
+            pygame.mixer.music.load(attack_sound)
+            pygame.mixer.music.play()
 
     def jump(self):
         self.z = 0
         self.velocity_z = self.jump_force
-        pygame.mixer.music.load('jump.mp3')
-        pygame.mixer.music.play()
+        if 'jump' in self.sound_data :
+            jump_sound = self.sound_data['jump']
+            pygame.mixer.music.load(jump_sound)
+            pygame.mixer.music.play()
 
     def fall(self):
         pass
