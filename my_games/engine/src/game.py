@@ -4,10 +4,14 @@ from src.ui import ColorGameBar, ImageGameBar, HeartGameBar
 from src.isotilemap import IsoTileMap
 from src.player import Player
 from src.game_menu import GameMenu
+from src.game_objects import *
+from pygame.locals import Color
 
 FPS = 60
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+BLACK =Color('black')
+WHITE = Color('white')
+RED = Color('red')
+GREEN = Color('green')
 FONT_NAME = pygame.font.get_default_font()
 FONT_SIZE = 14
 
@@ -43,13 +47,17 @@ class Game(pygame.sprite.Sprite):
     def resize_screen(self, w, h, resizable=False):
         self.screen, self.display = resize_screen(w, h, resizable)
 
-    def add_text(self, text, font_name, size, color, bg_color, colorkey, x, y, layer, sprite=None, behind=False):
-        text = Text(text, font_name, size, color, bg_color, colorkey, x, y, layer, sprite, behind)
+    def add_text(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+        text = Text(text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
         return text
 
-    def add_dynamic_text(self, text, font_name, size, color, bg_color, colorkey, x, y, layer, sprite=None, behind=False):
-        text = DynamicText(text, font_name, size, color, bg_color, colorkey, x, y, layer, sprite, behind)
+    def add_dynamic_text(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+        text = DynamicText(text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
         return text
+
+    def add_image(self, img_path,alpha, colorkey, x, y, scale, layer, sprite=None, behind=False):
+        img = Image(img_path, alpha,colorkey, x, y, scale, layer, sprite, behind)
+        return img
 
 # PLAYER-----------------------------------------------------
     def create_game_menu(self, w, h, game):
@@ -82,9 +90,8 @@ class Game(pygame.sprite.Sprite):
         self.ui_sprites.add(colorgamebar)
         return colorgamebar
 
-    def create_imagegamebar(self, value, total, x, y, bg_img, fill_img, fill_offset, scale, keycolor):
-        imagegamebar = ImageGameBar(value, total, x, y, bg_img,
-                                    fill_img, fill_offset, scale, keycolor)
+    def create_imagegamebar(self, value, total, x, y, bg_img, fill_img, fill_offset, scale, alpha=True,keycolor=False):
+        imagegamebar = ImageGameBar(value, total, x, y, bg_img,fill_img, fill_offset, scale,alpha, keycolor)
         self.ui_sprites.add(imagegamebar)
         return imagegamebar
 
@@ -133,53 +140,3 @@ class Game(pygame.sprite.Sprite):
     def resume(self):
         self.isplaying = True
         self.resize_screen(self.w, self.h, True)
-
-class Text(pygame.sprite.Sprite):
-    def __init__(self, text, font_name, size, color, bg_color, colorkey, x, y, layer, sprite=None, behind=False):
-        pygame.sprite.Sprite.__init__(self)
-        self.x = x
-        self.y = y
-        self.layer = layer
-        self.text = text
-        self.font_name = font_name
-        self.size = size
-        self.color = color
-        self.bg_color = bg_color
-        self.colorkey = colorkey
-        self.sprite = sprite
-        self.behind = behind
-        self.image = pygame.Surface((100, 50))
-        self.rect = self.image.get_rect()
-        self.init_text()
-        self.draw_text()
-
-    def init_text(self):
-        if self.sprite:
-            self.x += self.sprite.x
-            self.y += self.sprite.y
-        if self.behind:
-            # TODO: Find sprite position in layer then ad font before sprite [sort]
-            pass
-        else:
-            self.layer.add(self)
-
-
-    def draw_text(self):
-        font = draw_text(self.text, self.font_name, self.size, self.color)
-        font_rect = font.get_rect()
-        self.image = pygame.transform.scale(self.image, font_rect.size)
-        self.image.fill(self.bg_color)
-        if self.colorkey :
-            self.image.set_colorkey(self.colorkey)
-        self.image.blit(font, (0, 0))
-        self.rect = self.image.get_rect()
-        self.rect.x= self.x
-        self.rect.y= self.y
-
-
-class DynamicText(Text):
-    def __init__(self, text, font_name, size, color, bg_color, colorkey, x, y, layer, sprite=None, behind=False):
-        Text.__init__(self,text, font_name, size, color, bg_color, colorkey, x, y, layer, sprite, behind)
-    #Dynamic text is a text than need to be refreshed, redrawn on the sreen
-    def update(self):
-        self.draw_text()

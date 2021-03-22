@@ -1,7 +1,7 @@
 #AngelStreet @2021
 ####################################################
 import pygame
-from src.utility import load_json
+from src.utility import load_json,draw_image
 DEFAULT_COLOR = (255, 0, 0)
 DEFAULT_BORDER = {'color': (0, 0, 0), 'size': 1, 'radius': 0}
 
@@ -14,7 +14,7 @@ class GameBar(pygame.sprite.Sprite):
         self.y = y
 
     def update(self):
-        self.draw_bar()
+        self.draw()
 
 
 class ColorGameBar(GameBar):
@@ -25,7 +25,7 @@ class ColorGameBar(GameBar):
         self.color = color or DEFAULT_COLOR
         self.border = border or DEFAULT_BORDER
         self.init_bar()
-        self.draw_bar()
+        self.draw()
 
 
     def init_bar(self):
@@ -39,7 +39,7 @@ class ColorGameBar(GameBar):
         self.rect.x = self.x
         self.rect.y = self.y
 
-    def draw_bar(self) :
+    def draw(self) :
         pygame.draw.rect(self.image, self.border_color, (0,0,self.bg_rect_w, self.bg_rect_w), self.border_radius)
         self.bar_percentage = self.value/self.total
         self.fill_rect_w = self.w*self.bar_percentage
@@ -48,52 +48,53 @@ class ColorGameBar(GameBar):
 
 
 class ImageGameBar(GameBar):
-    def __init__(self, value, total, x, y, bg_image, fill_image,fill_offset,scale, colorkey=(0,0,0)):
+    def __init__(self, value, total, x, y, bg_image, fill_image,fill_offset,scale, alpha=True, colorkey=None):
         GameBar.__init__(self,value, total, x, y)
         self.bg_image = bg_image
         self.fill_image = fill_image
         self.fill_offset = fill_offset
         self.scale = scale
+        self.alpha = alpha
         self.colorkey = colorkey
         self.init_bar()
-        self.draw_bar()
+        self.draw()
 
     def init_bar(self):
-        if self.colorkey == (0,0,0) :
+        if self.alpha :
             self.bg_sprite = pygame.image.load(self.bg_image).convert_alpha()
             self.fill_sprite = pygame.image.load(self.fill_image).convert_alpha()
         else :
             self.bg_sprite = pygame.image.load(self.bg_image).convert()
             self.fill_sprite = pygame.image.load(self.fill_image).convert()
+
+        if self.colorkey :
             self.bg_sprite.set_colorkey(self.colorkey)
             self.fill_sprite.set_colorkey(self.colorkey)
 
-        self.bg_sprite_w = self.bg_sprite.get_rect().width
-        self.bg_sprite_h = self.bg_sprite.get_rect().height
-        self.fill_sprite_w = self.fill_sprite.get_rect().width
-        self.fill_sprite_h = self.fill_sprite.get_rect().height
-        self.image = pygame.Surface((self.bg_sprite_w, self.bg_sprite_h))
+        rect = self.fill_sprite.get_rect()
+        dimension = round(rect.width*self.scale),round(rect.height*self.scale)
+        self.fill_sprite = pygame.transform.scale(self.fill_sprite,dimension)
+        self.fill_sprite_rect = self.fill_sprite.get_rect()
+
+        rect = self.bg_sprite.get_rect()
+        dimension = round(rect.width*self.scale),round(rect.height*self.scale)
+        self.bg_sprite = pygame.transform.scale(self.bg_sprite,dimension)
+
+        if self.alpha :
+            self.image = pygame.Surface(rect.size, pygame.SRCALPHA, 32).convert_alpha()
+        else :
+            self.image = pygame.Surface(rect.size)
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        self.w = self.rect.width
-        self.h = self.rect.height
-        if not self.colorkey == (0,0,0) :
-            self.image.set_colorkey(self.colorkey)
 
-    def draw_bar(self) :
+    def draw(self) :
         bar_percentage = self.value/self.total
-        fill_bar_w = bar_percentage*self.fill_sprite_w
-        dimension = self.w,self.h
-        scaled_dimension = round(self.w*self.scale),round(self.h*self.scale)
-        unscaled_img = pygame.Surface(dimension)
-        unscaled_img.fill((255,255,255))
-        unscaled_img.blit(self.fill_sprite,(self.fill_offset,0), (0,0,fill_bar_w,self.fill_sprite_h))
-        unscaled_img.blit(self.bg_sprite,(0,0))
-        unscaled_img = pygame.transform.scale(unscaled_img, scaled_dimension)
-        self.image.fill((255,255,255))
-        self.image.blit(unscaled_img,(0,0))
-
+        fill_bar_w= int(bar_percentage*self.fill_sprite_rect.width)
+        dimension = fill_bar_w,self.fill_sprite_rect.height
+        offset = int(self.fill_offset*self.scale)
+        self.image.blit(self.fill_sprite,(offset,0), (0,0,fill_bar_w,self.fill_sprite_rect.height))
+        self.image.blit(self.bg_sprite,(0,0))
 
 class HeartGameBar(ImageGameBar):
     def __init__(self, value, total, x, y, json,scale=1,offset=0):
@@ -102,7 +103,7 @@ class HeartGameBar(ImageGameBar):
         self.scale = scale
         self.offset = offset
         self.init_bar()
-        self.draw_bar()
+        self.draw()
 
     def parse_data(self):
         self.sprite_name = self.data['heart']['sprite_name']
@@ -117,19 +118,15 @@ class HeartGameBar(ImageGameBar):
     def init_bar(self):
         self.data = load_json(self.json)
         self.parse_data()
-        if self.colorkey == (0,0,0) :
-            self.spritesheet = pygame.image.load(self.sprite_name).convert_alpha()
-        else :
-            self.spritesheet = pygame.image.load(self.sprite_name).convert()
-            self.spritesheet.set_colorkey(self.colorkey)
-        self.image = pygame.Surface((self.w*self.max_heart, self.h))
+        self.spritesheet = pygame.image.load(self.sprite_name).convert_alpha()
+        rect = self.spritesheet.get_rect()
+        dimension = round(rect.width*self.scale), round(rect.height*self.scale)
+        self.spritesheet = pygame.transform.scale(self.spritesheet, dimension)
+        rect = self.spritesheet.get_rect()
+        self.image = pygame.Surface((rect.width*self.max_heart, rect.height), pygame.SRCALPHA, 32).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        dimension = round(self.spritesheet.get_rect().width*self.scale), round(self.spritesheet.get_rect().height*self.scale)
-        self.spritesheet = pygame.transform.scale(self.spritesheet, dimension)
-        if not self.colorkey == (0,0,0) :
-            self.image.set_colorkey(self.colorkey)
 
     def draw_heart(self,i,sprite_id) :
         dest = (round(i*self.w*self.scale)+i*self.offset,0)
@@ -137,8 +134,7 @@ class HeartGameBar(ImageGameBar):
         self.image.blit(self.spritesheet,(dest),area)
         self.image.blit(self.spritesheet,((0,0)),area)
 
-    def draw_bar(self) :
-        self.image.fill((255,255,255))
+    def draw(self) :
         nb_hearts = int(self.total/2)
         for i in range(0,nb_hearts) :
             if i*2+2<=self.value :
