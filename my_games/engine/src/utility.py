@@ -35,7 +35,7 @@ def cartesian_to_iso(x, y, w, h):
     iso_y = int((x + y) * h/2)
     return iso_x, iso_y
 
-def iso_to_cartesian(isox, isoy, w, h):
+def iso_to_cartesian(isox, isoy):
     x = int((2*isoy + isox)/2)
     y = int((2*isoy-isox)/2)
     return x, y

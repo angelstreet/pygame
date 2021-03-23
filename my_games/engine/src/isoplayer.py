@@ -278,15 +278,22 @@ class IsoPlayer(pygame.sprite.Sprite):
         self.animate()  # animate player by updating frame
 
     def zsort(self):
-        #return round(self.rect.y+self.rect.h-self.z+50)
-        #return round(self.rect.y+self.rect.h+30)
-        x,y = iso_to_cartesian(self.rect.x,self.rect.y+self.rect.height,self.tile_w,self.tile_h)
-        return int(200+x *100+1000*y-self.z+50)
+        isox,isoy = self.rect.x+self.rect.width/2-self.map_x-90,self.rect.y+self.rect.height-self.map_y+15
+        x,y = iso_to_cartesian(isox,isoy)
+        i=round(x/self.tile_w*self.scale)
+        j=round(y/self.tile_h*self.scale)
+        return int(200+i*100+1000*j-self.z)
 
     def is_moving(self) :
         if self.velocity_x!=0 or self.velocity_y!=0 or self.velocity_z!=0:
             return True
         return False
+
+    def get_collision_sprite_center(self) :
+        self.get_collision_sprite()
+        x = self.collision_sprite.rect.x + self.collision_sprite.rect.width/2
+        y = self.collision_sprite.rect.y+ self.collision_sprite.rect.height/2
+        return x, y
 
     def get_collision_sprite(self) :
         w,h = self.collision_losange_w,self.collision_losange_h

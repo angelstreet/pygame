@@ -79,10 +79,14 @@ class Game(pygame.sprite.Sprite):
         return isoplayer
 # ISOTILEMAP-----------------------------------------------------
 
-    def create_isotilemap(self, map_w, map_h,x, y, json, scale, debug = False):
-        isotilemap = IsoTileMap(map_w, map_h,x, y, json, scale,debug)
+    def create_isotilemap(self, x, y,map_w, map_h, json, scale, debug = False):
+        isotilemap = IsoTileMap(x, y,map_w, map_h, json, scale,debug)
         self.bg_sprites.add(isotilemap.getBackground())
-        self.game_sprites.add(isotilemap.getTiles())
+        tiles = isotilemap.getTiles()
+        for tile in tiles :
+            tile.rect.x+=x
+            tile.rect.y+=y
+        self.game_sprites.add(tiles)
         return isotilemap
 # HEALTHBAR-----------------------------------------------------
 
@@ -157,9 +161,8 @@ class Game(pygame.sprite.Sprite):
 
     def draw_game(self):
         self.game_sprites.update()
-        self.check_collision()
-        self.game_sprites = self.sort_game_sprite(self.game_sprites)
 
+        self.game_sprites = self.sort_game_sprite(self.game_sprites)
         self.game_sprites.draw(self.display)
 
     def draw_fx(self):

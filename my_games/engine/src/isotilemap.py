@@ -35,13 +35,13 @@ class IsoTileMap(pygame.sprite.Sprite):
         else:
             self.dynamic_tiles.append(tile)
 
-    def draw_tile(self, x, y, z, tile_frame,sort,rigid):
+    def draw_tile(self, i, j, z, tile_frame,sort,rigid):
         tile_data = self.tileset[tile_frame-1]
         tile_sprite, w, h, offsetx, offsety = tile_data
-        isox, isoy = cartesian_to_iso(x, y, w, h+offsety)
-        tile = Tile(self,tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,sort,rigid)
+        isox, isoy = cartesian_to_iso(i, j, w, h+offsety)
+        tile = Tile(self,tile_sprite, tile_frame,i,j,z,w,h,isox,isoy,offsetx,offsety,sort,rigid)
         self.sort_tile(tile)
-        #print (x,y,z,int(200+x*100+1000*y-z))
+        print (i,j,z,isox,isoy,tile.rect.x,tile.rect.y,int(200+i*100+1000*j-z))
 
     def zsort(self, tile):
         return tile['z']
@@ -83,7 +83,8 @@ class IsoTileMap(pygame.sprite.Sprite):
             x,y,offsetx,offsety = [int(elt*self.scale) for elt in (x,y,offsetx,offsety)]
             tile_sprite = pygame.Surface((self.tile_w, self.tile_h),pygame.SRCALPHA, 32).convert_alpha()
             tile_sprite.blit(self.tilesheet_img, (0, 0), (x, y, self.tile_w, self.tile_h))
-            if self.debug:self.image.blit(tile_sprite,(x,y))
+
+            if self.debug:self.image.blit(tile_sprite,(x+180,y))
             self.tileset.append((tile_sprite,self.tile_w,self.tile_h,offsetx,offsety))
         #Draw the tilemap
         for y, row in enumerate(self.map_data):
@@ -93,7 +94,6 @@ class IsoTileMap(pygame.sprite.Sprite):
     def draw_map(self) :
         #self.image.fill(RED)
         for tile in self.static_tiles :
-            #print(tile.y,tile.offsety,self.scale,tile.isox,tile.isoy)
             x = tile.isox+tile.offsetx+self.map_w/2
             y = tile.isoy+tile.z+120 #100 is security based on average offsety
             self.image.blit(tile.image,(x,y))

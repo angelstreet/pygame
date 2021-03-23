@@ -27,7 +27,7 @@ def main():
     #game.image.fill(GREEN)
     fpstext = game.add_dynamic_text('',FONT_NAME,20,BLACK,None, GAME_WIDTH-70,20, game.ui_sprites)
     #tilemap = game.create_isotilemap(0,100,'assets/data/isotilemap.json',0.5)
-    tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap.json',0.5)
+    tilemap = game.create_isotilemap(600,100,1400,800,'assets/data/isotilemap.json',0.5)
     tilemap.game=game
     player = game.create_isoplayer('assets/data/isoplayer.json',tilemap.rect.x,tilemap.rect.y,tilemap.tile_w,tilemap.tile_h,2)
     player.tilemap = tilemap
@@ -70,7 +70,8 @@ def main():
                     player.K_RETURN = False
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw_screen()
-        #game.hide_sprites_for_player(player)
+        game.check_collision()
+        game.hide_sprites_for_player(player)
         clock.tick(FPS)
 
 if __name__ == "__main__":
