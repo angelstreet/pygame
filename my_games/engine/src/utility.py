@@ -31,9 +31,15 @@ def load_json(json_file):
     return data
 
 def cartesian_to_iso(x, y, w, h):
-    iso_x = round((x - y) * w/2)
-    iso_y = round((x + y) * h/2)
+    iso_x = int((x - y) * w/2)
+    iso_y = int((x + y) * h/2)
     return iso_x, iso_y
+
+def iso_to_cartesian(isox, isoy, w, h):
+    x = int((2*isoy + isox)/2)
+    y = int((2*isoy-isox)/2)
+    return x, y
+
 
 def move_sprite(rect, x, y) :
     rect.x += x

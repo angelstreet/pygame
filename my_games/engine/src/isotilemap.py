@@ -2,62 +2,8 @@
 ####################################################
 import pygame
 from src.utility import load_json, cartesian_to_iso
+from src.isotile import Tile
 RED = (255, 0, 0)
-
-class Tile(pygame.sprite.Sprite):
-    def __init__(self,tilemap, tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,sort,rigid):
-        pygame.sprite.Sprite.__init__(self)
-        self.tilemap=tilemap
-        self.tile_sprite=tile_sprite
-        self.tile_frame = tile_frame
-        self.x = x
-        self.y = y
-        self.z = z
-        self.w = w
-        self.h = h
-        self.isox = isox
-        self.isoy = isoy
-        self.offsetx = offsetx
-        self.offsety = offsety
-        self.sort = sort
-        self.rigid= rigid
-        self.collision_list = []
-        self.init_tile()
-
-    def init_tile(self):
-        self.image = pygame.Surface((self.w, self.h),pygame.SRCALPHA, 32).convert_alpha()
-        self.image.blit(self.tile_sprite , (0, 0))
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.x = self.isox+self.offsetx+self.tilemap.map_w/2+self.tilemap.x
-        self.rect.y = self.isoy+self.z+self.offsety+self.tilemap.y
-
-    def is_static(self):
-        return not self.sort
-
-    def zsort(self):
-        depth = round(self.rect.y+self.rect.h-self.z)
-        return depth
-
-    def is_moving(self) :
-        return False
-
-    def get_collision_sprite(self) :
-        sprite = pygame.sprite.Sprite()
-        sprite.image = pygame.Surface((self.rect.size),pygame.SRCALPHA, 32).convert_alpha()
-        w,h = self.w,self.h
-        polygon_b=[(0,h-h/3), (w/2, h-h/3*2), (w, h-h/3),(w/2, h)]
-        pygame.draw.polygon(sprite.image,(255,255,0),polygon_b)
-        sprite.mask = pygame.mask.from_surface(sprite.image)
-        sprite.rect = self.image.get_rect()
-        sprite.rect.x=self.rect.x
-        sprite.rect.y=self.rect.y-self.z+self.offsety
-        #self.image.blit(sprite.image,(0,0))
-        sprite.parent = self
-        return sprite
-
-    def update(self):
-        pass
 
 class IsoTileMap(pygame.sprite.Sprite):
     def __init__(self,x,y,map_w,map_h, json, scale=1, debug = False):
@@ -95,6 +41,7 @@ class IsoTileMap(pygame.sprite.Sprite):
         isox, isoy = cartesian_to_iso(x, y, w, h+offsety)
         tile = Tile(self,tile_sprite, tile_frame,x,y,z,w,h,isox,isoy,offsetx,offsety,sort,rigid)
         self.sort_tile(tile)
+        #print (x,y,z,int(200+x*100+1000*y-z))
 
     def zsort(self, tile):
         return tile['z']
@@ -146,7 +93,7 @@ class IsoTileMap(pygame.sprite.Sprite):
     def draw_map(self) :
         #self.image.fill(RED)
         for tile in self.static_tiles :
-            print(tile.y,tile.offsety,self.scale,tile.isox,tile.isoy)
+            #print(tile.y,tile.offsety,self.scale,tile.isox,tile.isoy)
             x = tile.isox+tile.offsetx+self.map_w/2
             y = tile.isoy+tile.z+120 #100 is security based on average offsety
             self.image.blit(tile.image,(x,y))

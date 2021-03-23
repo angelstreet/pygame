@@ -42,6 +42,7 @@ class Game(pygame.sprite.Sprite):
         # ------------------------------------------------------
         self.image.fill((255, 255, 255))
         self.bg_sprites.add(self)
+        self.hided_sprites = []
 
 # GAME-----------------------------------------------------
     def resize_screen(self, w, h, resizable=False):
@@ -72,8 +73,8 @@ class Game(pygame.sprite.Sprite):
         self.ui_sprites.add(self.game_menu)
 # ISOPLAYER-----------------------------------------------------
 
-    def create_player(self, json, scale=1):
-        isoplayer = IsoPlayer(json, scale)
+    def create_isoplayer(self, json, map_x,map_y,tile_w,tile_h,scale=1):
+        isoplayer = IsoPlayer(json, map_x,map_y,tile_w,tile_h,scale)
         self.game_sprites.add(isoplayer)
         return isoplayer
 # ISOTILEMAP-----------------------------------------------------
@@ -101,7 +102,7 @@ class Game(pygame.sprite.Sprite):
         return healthbar
 # COLLISION-----------------------------------------------------
     def check_collision(self):
-        moving_list, hit_list = [], []
+        moving_list = []
         non_moving_list = pygame.sprite.Group()
 
         for sprite in self.game_sprites.sprites() :
@@ -112,18 +113,34 @@ class Game(pygame.sprite.Sprite):
                     non_moving_list.add(sprite.get_collision_sprite())
 
         for collision_sprite in moving_list :
-            #self.image.blit(collision_sprite.image,(collision_sprite.rect.x,collision_sprite.rect.y))
+            #Side collision between 2 losange at z=0
             collision_list = pygame.sprite.spritecollide(collision_sprite, non_moving_list, False, pygame.sprite.collide_mask)
-            #print("Check Collision")
-            if len(collision_list)>0 :
-                #collision_sprite.parent.image.blit(collision_sprite.image,(0,0))
-                for sprite in collision_list:
-                    #print(sprite.parent, sprite)
-                    #sprite.parent.image.blit(sprite.image,(0,0))
+            for sprite in collision_list:
+                #Z collision
+                #print (sprite.parent.z,sprite.parent.offsety,collision_sprite.parent.z,collision_sprite.parent.rect.height)
+                if sprite.parent.z<=collision_sprite.parent.z and sprite.parent.z>=collision_sprite.parent.z-collision_sprite.parent.rect.height:
+                    collision_sprite.parent.collision_list.append(sprite)
+                if sprite.parent.z-sprite.parent.rect.height<=collision_sprite.parent.z and sprite.parent.z>=collision_sprite.parent.z-collision_sprite.parent.rect.height:
                     collision_sprite.parent.collision_list.append(sprite)
 
 
 # GAME-----------------------------------------------------
+    def hide_sprites_for_player(self,player):
+        for sprite in self.hided_sprites :
+            sprite.image.blit(sprite.copy,(0,0))
+        sprites = self.game_sprites.sprites().copy()
+        sprites.remove(player)
+        collision_list = pygame.sprite.spritecollide(player, sprites, False, pygame.sprite.collide_mask)
+        player.mask = pygame.mask.from_surface(player.image)
+        for sprite in collision_list:
+            sprite.image.blit(sprite.copy,(0,0))
+
+            if 'zsort' in dir(sprite) and player.zsort()<sprite.zsort():
+                #print("zsort----------------")
+                #print(player.rect.y,player.rect.height, player.z, player.zsort())
+                #print(sprite.rect.y, sprite.rect.height,sprite.z, sprite.offsety, sprite.zsort())
+                sprite.image.fill((255, 0, 0, 220), None, pygame.BLEND_RGBA_MULT)
+                self.hided_sprites.append(sprite)
     def draw_bg(self):
         self.display.fill(WHITE)
         self.bg_sprites.draw(self.display)
@@ -142,6 +159,7 @@ class Game(pygame.sprite.Sprite):
         self.game_sprites.update()
         self.check_collision()
         self.game_sprites = self.sort_game_sprite(self.game_sprites)
+
         self.game_sprites.draw(self.display)
 
     def draw_fx(self):

@@ -1,14 +1,17 @@
 #AngelStreet @2021
 ####################################################
-from src.utility import load_json, move_sprite
+from src.utility import load_json, move_sprite,iso_to_cartesian
 import pygame
 
 class IsoPlayer(pygame.sprite.Sprite):
-    def __init__(self, json, scale=1):
+    def __init__(self, json, map_x,map_y, tile_w, tile_h,scale=1):
         pygame.sprite.Sprite.__init__(self)
         self.json = json
+        self.map_x = map_x
+        self.map_y = map_y
+        self.tile_w = tile_w
+        self.tile_h = tile_h
         self.scale = scale
-
         self.K_LEFT, self.K_RIGHT, self.K_DOWN, self.K_UP, self.K_SPACE, self.K_RETURN = False, False, False, False, False, False
         self.current_frame_id = 0
         self.last_updated = 0
@@ -134,6 +137,13 @@ class IsoPlayer(pygame.sprite.Sprite):
             self.collision_list.sort(key=self.vsort_collision_list)
             for c_sprite in self.collision_list:
                 if self.debug : self.tilemap.game.ui_sprites.add(c_sprite)
+                #print(self.current_state,self.z)
+                if self.current_state == 'fall' and abs(self.z-c_sprite.parent.z-c_sprite.parent.rect.height)<4 :
+                    if self.debug :print("Bottom Collision", self.z,c_sprite.parent.z,c_sprite.parent.rect.height)
+                    c_bottom=-1
+                    self.velocity_x,self.velocity_y,self.velocity_z = 0,0,0
+                    self.set_state("idle")
+                    break
                 if self.collision_sprite.rect.x< c_sprite.rect.x+c_sprite.rect.width/2 :
                     if self.debug :print("Right Collision", self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
                     c_right=-1
@@ -146,7 +156,7 @@ class IsoPlayer(pygame.sprite.Sprite):
                 else:
                     if self.debug :print("Up Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
                     c_up=1
-            if self.debug :print(self.collision_sprite.rect,c_sprite.rect)
+            #if self.debug :print(self.collision_sprite.rect,c_sprite.rect)
         self.collision_list = []
         return c_left,c_right,c_up,c_down,0,0
 
@@ -155,6 +165,7 @@ class IsoPlayer(pygame.sprite.Sprite):
         vx = self.velocity_x+(c_left+c_right)*self.velocity
         vy = self.velocity_y+(c_up+c_down)*self.velocity
         vz = self.velocity_z
+        if vz>0:print(vz,self.z)
         if vx!=0 and vy!=0 :
             vx*=0.8
 
@@ -267,9 +278,10 @@ class IsoPlayer(pygame.sprite.Sprite):
         self.animate()  # animate player by updating frame
 
     def zsort(self):
-        #depth = round(self.rect.y+self.rect.h-self.z+50)
-        depth = round(self.rect.y+self.rect.h+50)
-        return depth
+        #return round(self.rect.y+self.rect.h-self.z+50)
+        #return round(self.rect.y+self.rect.h+30)
+        x,y = iso_to_cartesian(self.rect.x,self.rect.y+self.rect.height,self.tile_w,self.tile_h)
+        return int(200+x *100+1000*y-self.z+50)
 
     def is_moving(self) :
         if self.velocity_x!=0 or self.velocity_y!=0 or self.velocity_z!=0:
