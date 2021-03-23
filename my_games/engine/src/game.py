@@ -112,13 +112,13 @@ class Game(pygame.sprite.Sprite):
                     non_moving_list.add(sprite.get_collision_sprite())
 
         for collision_sprite in moving_list :
-            self.image.blit(collision_sprite.image,(collision_sprite.rect.x,collision_sprite.rect.y))
+            #self.image.blit(collision_sprite.image,(collision_sprite.rect.x,collision_sprite.rect.y))
             collision_list = pygame.sprite.spritecollide(collision_sprite, non_moving_list, False, pygame.sprite.collide_mask)
-            print("Check Collision")
+            #print("Check Collision")
             if len(collision_list)>0 :
                 #collision_sprite.parent.image.blit(collision_sprite.image,(0,0))
                 for sprite in collision_list:
-                    print(sprite.parent, sprite)
+                    #print(sprite.parent, sprite)
                     #sprite.parent.image.blit(sprite.image,(0,0))
                     collision_sprite.parent.collision_list.append(sprite)
 
