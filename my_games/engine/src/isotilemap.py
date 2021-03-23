@@ -16,6 +16,7 @@ class IsoTileMap(pygame.sprite.Sprite):
         self.scale = scale
         self.static_tiles = []
         self.dynamic_tiles = []
+        self.tiles = []
         self.debug = debug
         self.init_map()
         self.draw_map()
@@ -41,14 +42,16 @@ class IsoTileMap(pygame.sprite.Sprite):
         isox, isoy = cartesian_to_iso(i, j, w, h+offsety)
         tile = Tile(self,tile_sprite, tile_frame,i,j,z,w,h,isox,isoy,offsetx,offsety,sort,rigid)
         self.sort_tile(tile)
-        print (i,j,z,isox,isoy,tile.rect.x,tile.rect.y,int(200+i*100+1000*j-z))
+        return tile
+
 
     def zsort(self, tile):
         return tile['z']
 
-    def draw_tiles(self, x, y, tile_list):
+    def draw_tiles(self, i, j, tile_list):
         #if self.debug and (x>3 or y >3) : return
         tile_list.sort(key=self.zsort,reverse=True)
+        tiles = []
         for tile in tile_list:
             tile_frame = tile['tile_frame']
             z = tile['z']*self.scale
@@ -57,7 +60,9 @@ class IsoTileMap(pygame.sprite.Sprite):
                 sort = True
             if 'rigid' in tile :
                 rigid = True
-            self.draw_tile(x, y, z, tile_frame,sort,rigid)
+            tile = self.draw_tile(i, j, z, tile_frame,sort,rigid)
+            tiles.append(tile)
+        return tiles
 
     def init_map(self):
         self.image = pygame.Surface((self.map_w*self.scale, self.map_h*self.scale),pygame.SRCALPHA, 32).convert_alpha()
@@ -87,9 +92,11 @@ class IsoTileMap(pygame.sprite.Sprite):
             if self.debug:self.image.blit(tile_sprite,(x+180,y))
             self.tileset.append((tile_sprite,self.tile_w,self.tile_h,offsetx,offsety))
         #Draw the tilemap
-        for y, row in enumerate(self.map_data):
-            for x, tile_list in enumerate(row):
-                self.draw_tiles(x,y,tile_list)
+        for j, row in enumerate(self.map_data):
+            col = []
+            for i, tile_list in enumerate(row):
+                col.append(self.draw_tiles(i,j,tile_list) )
+            self.tiles.append(col)
 
     def draw_map(self) :
         #self.image.fill(RED)
@@ -105,3 +112,31 @@ class IsoTileMap(pygame.sprite.Sprite):
 
     def getTiles(self):
         return self.dynamic_tiles
+
+    def check_path(self, paths, src_i, src_j, dst_i, dst_j) :
+        if src_i==dst_i and src_j==dst_j :
+            print ("Found a path :",paths)
+            paths.append((dst_i, dst_j))
+            return 
+        if src_i<dst_i :
+            print("right",src_i,src_j, dst_i, dst_j,paths)
+            paths.append((src_i, src_j))
+            self.check_path(paths,src_i+1,src_j, dst_i, dst_j)
+        elif src_i>dst_i :
+            print("left",src_i,src_j, dst_i, dst_j,paths)
+            paths.append((src_i, src_j))
+            self.check_path(paths,src_i-1,src_j, dst_i, dst_j)
+        if src_j<dst_j :
+            print("up",src_i,src_j, dst_i, dst_j,paths)
+            paths.append((src_i, src_j))
+            self.check_path(paths,src_i,src_j+1, dst_i, dst_j)
+        elif src_j>dst_j:
+            print("down",src_i,src_j, dst_i, dst_j,paths)
+            paths.append((src_i, src_j))
+            self.check_path(paths,src_i,src_j-1, dst_i, dst_j)
+        return paths
+
+    def get_path(self,src, dst) :
+        print("Source",src.i,src.j,"Destination",dst.i,dst.j)
+        paths = self.check_path([],src.i, src.j, dst.i, dst.j)
+        print(paths)

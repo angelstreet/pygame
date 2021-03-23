@@ -5,13 +5,13 @@ from src.utility import load_json, cartesian_to_iso
 RED = (255, 0, 0)
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self,tilemap, tile_sprite, tile_frame,isox,isoy,z,w,h,x,y,offsetx,offsety,sort,rigid):
+    def __init__(self,tilemap, tile_sprite, tile_frame,i,j,z,w,h,x,y,offsetx,offsety,sort,rigid):
         pygame.sprite.Sprite.__init__(self)
         self.tilemap=tilemap
         self.tile_sprite=tile_sprite
         self.tile_frame = tile_frame
-        self.isox = isox
-        self.isoy = isoy
+        self.i = i
+        self.j = j
         self.x = x
         self.y = y
         self.z = z
@@ -39,7 +39,7 @@ class Tile(pygame.sprite.Sprite):
 
     def zsort(self):
         #return round(self.rect.y+self.rect.h-self.z+self.offsety)
-        return int(200+self.isox*100+1000*self.isoy-self.z)
+        return int(200+self.i*100+1000*self.j-self.z)
 
     def is_moving(self) :
         return False
