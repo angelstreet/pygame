@@ -2,7 +2,7 @@ import pygame
 from src.utility import FPS, WHITE, BLACK, resize_screen
 from src.ui import ColorGameBar, ImageGameBar, HeartGameBar
 from src.isotilemap import IsoTileMap
-from src.player import Player
+from src.isoplayer import IsoPlayer
 from src.game_menu import GameMenu
 from src.game_objects import *
 from pygame.locals import Color
@@ -70,16 +70,16 @@ class Game(pygame.sprite.Sprite):
 
     def show_game_menu(self):
         self.ui_sprites.add(self.game_menu)
-# PLAYER-----------------------------------------------------
+# ISOPLAYER-----------------------------------------------------
 
-    def create_player(self, json, scale):
-        player = Player(json, scale)
-        self.game_sprites.add(player)
-        return player
+    def create_player(self, json, scale=1):
+        isoplayer = IsoPlayer(json, scale)
+        self.game_sprites.add(isoplayer)
+        return isoplayer
 # ISOTILEMAP-----------------------------------------------------
 
-    def create_isotilemap(self, map_w, map_h,x, y, json, scale):
-        isotilemap = IsoTileMap(map_w, map_h,x, y, json, scale)
+    def create_isotilemap(self, map_w, map_h,x, y, json, scale, debug = False):
+        isotilemap = IsoTileMap(map_w, map_h,x, y, json, scale,debug)
         self.bg_sprites.add(isotilemap.getBackground())
         self.game_sprites.add(isotilemap.getTiles())
         return isotilemap

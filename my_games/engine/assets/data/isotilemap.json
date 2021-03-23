@@ -1,10 +1,12 @@
 {"tilemap": {
-  "tilesheet_name" :"assets/image/tilesheet1.png",
-	"colorkey" :[0,255,0],
+  "tilesheet_name" :"assets/image/tilesheet.png",
+	"colorkey" :null,
+  "tile_w" : 160,
+  "tile_h" : 120,
   "_comment": "Multidimensionnal isometric tilemap",
   "map_data" :[
                 [
-                  [{"tile_frame":1,"z":0,"sort":true,"rigid":true}, {"tile_frame":3,"z":-40,"sort":true,"rigid":true},{"tile_frame":3,"z":-80,"sort":true,"rigid":true},{"tile_frame":2,"z":-120,"sort":true,"rigid":true}],
+                  [{"tile_frame":1,"z":0,"sort":true}, {"tile_frame":3,"z":-40,"sort":true,"rigid":true},{"tile_frame":3,"z":-80,"sort":true,"rigid":true},{"tile_frame":2,"z":-120,"sort":true,"rigid":true}],
                   [{"tile_frame":1,"z":0,"sort":true}],
                   [{"tile_frame":3,"z":0,"sort":true}],
                   [{"tile_frame":1,"z":0,"sort":true}],
@@ -42,8 +44,6 @@
 	"tiles_data" :[
 	{
 			"name": "tile1",
-			"w": 160,
-			"h": 120,
 			"x":0,
 			"y":0,
 			"offsetx" : 0,
@@ -51,8 +51,6 @@
 	},
 	{
 			"name": "tile2",
-			"w": 160,
-			"h": 120,
 			"x":160,
 			"y":0,
 			"offsetx" : 0,
@@ -60,8 +58,6 @@
 	},
 	{
 			"name": "tile3",
-			"w": 160,
-			"h": 120,
 			"x":320,
 			"y":0,
 			"offsetx" : 0,
@@ -69,8 +65,6 @@
 	},
 	{
 			"name": "tile4",
-			"w": 160,
-			"h": 120,
 			"x":480,
 			"y":0,
 			"offsetx" : 0,
@@ -78,8 +72,6 @@
 	},
 	{
 			"name": "tile5",
-			"w": 160,
-			"h": 120,
 			"x":640,
 			"y":0,
 			"offsetx" : 0,

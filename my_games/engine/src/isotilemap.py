@@ -51,8 +51,8 @@ class Tile(pygame.sprite.Sprite):
         sprite.mask = pygame.mask.from_surface(sprite.image)
         sprite.rect = self.image.get_rect()
         sprite.rect.x=self.rect.x
-        sprite.rect.y=self.rect.y
-        self.image.blit(sprite.image,(0,0))
+        sprite.rect.y=self.rect.y-self.z+self.offsety
+        #self.image.blit(sprite.image,(0,0))
         sprite.parent = self
         return sprite
 
@@ -60,7 +60,7 @@ class Tile(pygame.sprite.Sprite):
         pass
 
 class IsoTileMap(pygame.sprite.Sprite):
-    def __init__(self,x,y,map_w,map_h, json, scale=1):
+    def __init__(self,x,y,map_w,map_h, json, scale=1, debug = False):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -70,7 +70,7 @@ class IsoTileMap(pygame.sprite.Sprite):
         self.scale = scale
         self.static_tiles = []
         self.dynamic_tiles = []
-        self.sort=True # for debug issues
+        self.debug = debug
         self.init_map()
         self.draw_map()
 
@@ -80,9 +80,11 @@ class IsoTileMap(pygame.sprite.Sprite):
         self.colorkey = data['tilemap']['colorkey']
         self.tiles_data = data['tilemap']['tiles_data']
         self.map_data = data['tilemap']['map_data']
+        self.tile_w = data['tilemap']['tile_w']
+        self.tile_h = data['tilemap']['tile_h']
 
     def sort_tile(self,tile):
-        if not self.sort or tile.is_static() :
+        if tile.is_static() :
             self.static_tiles.append(tile)
         else:
             self.dynamic_tiles.append(tile)
@@ -98,7 +100,7 @@ class IsoTileMap(pygame.sprite.Sprite):
         return tile['z']
 
     def draw_tiles(self, x, y, tile_list):
-        #if x>1 or y >1 : return
+        #if self.debug and (x>3 or y >3) : return
         tile_list.sort(key=self.zsort,reverse=True)
         for tile in tile_list:
             tile_frame = tile['tile_frame']
@@ -108,14 +110,14 @@ class IsoTileMap(pygame.sprite.Sprite):
                 sort = True
             if 'rigid' in tile :
                 rigid = True
-            if tile_frame > 0:
-                self.draw_tile(x, y, z, tile_frame,sort,rigid)
+            self.draw_tile(x, y, z, tile_frame,sort,rigid)
 
     def init_map(self):
         self.image = pygame.Surface((self.map_w*self.scale, self.map_h*self.scale),pygame.SRCALPHA, 32).convert_alpha()
         self.image = pygame.Surface((self.map_w,self.map_h),pygame.SRCALPHA, 32).convert_alpha()
         self.rect = self.image.get_rect()
         self.load_map_data_from_json()
+        #Draw spritesheet with all tiles
         if self.colorkey:
             self.tilesheet_img = pygame.image.load(self.tilesheet_name).convert()
             self.tilesheet_img.set_colorkey(self.colorkey)
@@ -123,17 +125,20 @@ class IsoTileMap(pygame.sprite.Sprite):
             self.tilesheet_img = pygame.image.load(self.tilesheet_name).convert_alpha()
         rect = self.tilesheet_img.get_rect()
         self.tilesheet_img = pygame.transform.scale(self.tilesheet_img, (round(rect.width*self.scale), round(rect.height*self.scale)))
+        #Draw each tiles on a sprite
         self.tileset = []
         self.tiles = []
+        self.tile_w =int(self.tile_w*self.scale)
+        self.tile_h = int(self.tile_h*self.scale)
         for tile_data in self.tiles_data:
             x,y = tile_data['x'], tile_data['y']
-            w,h = tile_data['w'], tile_data['h']
             offsetx,offsety = tile_data['offsetx'], tile_data['offsety']
-            x,y,w,h,offsetx,offsety = [int(elt*self.scale) for elt in (x,y,w,h,offsetx,offsety)]
-            tile_sprite = pygame.Surface((w, h),pygame.SRCALPHA, 32).convert_alpha()
-            tile_sprite.blit(self.tilesheet_img, (0, 0), (x, y, w, h))
-            self.tileset.append((tile_sprite,w,h,offsetx,offsety))
-
+            x,y,offsetx,offsety = [int(elt*self.scale) for elt in (x,y,offsetx,offsety)]
+            tile_sprite = pygame.Surface((self.tile_w, self.tile_h),pygame.SRCALPHA, 32).convert_alpha()
+            tile_sprite.blit(self.tilesheet_img, (0, 0), (x, y, self.tile_w, self.tile_h))
+            if self.debug:self.image.blit(tile_sprite,(x,y))
+            self.tileset.append((tile_sprite,self.tile_w,self.tile_h,offsetx,offsety))
+        #Draw the tilemap
         for y, row in enumerate(self.map_data):
             for x, tile_list in enumerate(row):
                 self.draw_tiles(x,y,tile_list)

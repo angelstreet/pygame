@@ -3,11 +3,12 @@
 from src.utility import load_json, move_sprite
 import pygame
 
-class Player(pygame.sprite.Sprite):
+class IsoPlayer(pygame.sprite.Sprite):
     def __init__(self, json, scale=1):
         pygame.sprite.Sprite.__init__(self)
         self.json = json
         self.scale = scale
+
         self.K_LEFT, self.K_RIGHT, self.K_DOWN, self.K_UP, self.K_SPACE, self.K_RETURN = False, False, False, False, False, False
         self.current_frame_id = 0
         self.last_updated = 0
@@ -21,10 +22,10 @@ class Player(pygame.sprite.Sprite):
         self.rigid = True
         self.collision_list = []
         self.current_state = None
+        self.debug = False
         pygame.mixer.init()
         pygame.mixer.music.set_volume(0.1)
         self.init_player()
-        self.debug = True
 
 
     def load_player_data_from_json(self):
@@ -36,6 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.resolution = data['player']['resolution']
         self.frames_data = data['player']['frames']
         self.sound_data = data['player']['sound']
+        self.collision_losange = data['player']['collision_losange']
 
     def get_frame_sprite_data(self, frame):
         return frame['x'], frame['y'], frame['w'], frame['h'], frame['offsetx'], frame['offsety']
@@ -102,9 +104,16 @@ class Player(pygame.sprite.Sprite):
         self.prev_frame = None
         self.current_frame = self.first_frame
         self.init_direction_from_frame()
+        self.init_collision_losange()
         self.set_state()
         self.set_frame()
         self.load_player_frames()
+
+    def init_collision_losange(self):
+        self.collision_losange_w = self.collision_losange["w"]*self.scale
+        self.collision_losange_h = self.collision_losange["h"]*self.scale
+        self.collision_losange_offsetx = self.collision_losange["offsetx"]*self.scale
+        self.collision_losange_offsety = self.collision_losange["offsety"]*self.scale
 
     def reset_velocity(self):
         self.velocity_x, self.velocity_y = 0, 0
@@ -112,25 +121,33 @@ class Player(pygame.sprite.Sprite):
     def move(self, x, y):
         move_sprite(self.rect,x, y)
 
+    def vsort_collision_list(self, sprite):
+        if 'z' in dir(sprite):
+            return sprite.z
+        return 0
+
     def check_collision(self):
-        c_left,c_right,c_up,c_down,c_top,c_bottom = False,False,False,False,False,False
+        c_left,c_right,c_up,c_down,c_top,c_bottom = 0,0,0,0,0,0
+        if self.debug : self.tilemap.game.ui_sprites = pygame.sprite.OrderedUpdates()
         if len(self.collision_list)>0:
+            if self.debug :self.tilemap.game.ui_sprites.add(self.collision_sprite)
+            self.collision_list.sort(key=self.vsort_collision_list)
             for c_sprite in self.collision_list:
-                if self.collision_sprite.rect.x< c_sprite.rect.x :
-                    print("1")
-                    c_right,c_left=0,-1
+                if self.debug : self.tilemap.game.ui_sprites.add(c_sprite)
+                if self.collision_sprite.rect.x< c_sprite.rect.x+c_sprite.rect.width/2 :
+                    if self.debug :print("Right Collision", self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
+                    c_right=-1
                 else :
-                    print("2")
-                    c_right,c_left=1,0
-                if self.collision_sprite.rect.y< c_sprite.rect.y :
-                    print("3")
-                    c_down,c_up=0,-1
+                    if self.debug :print("Left Collision",  self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
+                    c_left=1
+                if self.collision_sprite.rect.y< c_sprite.rect.y+c_sprite.rect.height/2 :
+                    if self.debug :print("Down Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
+                    c_down=-1
                 else:
-                    print("4")
-                    c_down,c_up=1,0
-            print(self.collision_sprite.rect,c_sprite.rect)
+                    if self.debug :print("Up Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
+                    c_up=1
+            if self.debug :print(self.collision_sprite.rect,c_sprite.rect)
         self.collision_list = []
-        #print(c_left,c_right,c_up,c_down)
         return c_left,c_right,c_up,c_down,0,0
 
     def move_player(self):
@@ -228,15 +245,7 @@ class Player(pygame.sprite.Sprite):
             self.image = self.frames_data[self.current_frame][self.current_frame_id+1]['sprite']
         else:
             self.image = self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip']
-        if self.debug :
-            self.displayCollisionLosange()
-            self.displayRadius()
 
-    def displayCollisionLosange(self):
-        self.image.blit(self.get_collision_sprite().image,(0,0))
-
-    def displayRadius(self):
-        pass
 
     def animate(self):
         frame_rate = self.get_frame_rate()
@@ -258,7 +267,8 @@ class Player(pygame.sprite.Sprite):
         self.animate()  # animate player by updating frame
 
     def zsort(self):
-        depth = round(self.rect.y+self.rect.h-self.z+50)
+        #depth = round(self.rect.y+self.rect.h-self.z+50)
+        depth = round(self.rect.y+self.rect.h+50)
         return depth
 
     def is_moving(self) :
@@ -267,16 +277,16 @@ class Player(pygame.sprite.Sprite):
         return False
 
     def get_collision_sprite(self) :
+        w,h = self.collision_losange_w,self.collision_losange_h
+        offsetx,offsety = self.collision_losange_offsetx,self.collision_losange_offsety
         self.collision_sprite = pygame.sprite.Sprite()
-        self.collision_sprite.image = pygame.Surface((self.rect.size),pygame.SRCALPHA, 32).convert_alpha()
-        w,h = int(100*0.43),int(60*0.43)
-        x,y,z=40,54,40
-        polygon_b=[(w/2+x, y), (w+x, h/2+y), (w/2+x, h+y),(x, h/2+y)]
+        self.collision_sprite.image = pygame.Surface((w,h),pygame.SRCALPHA, 32).convert_alpha()
+        polygon_b=[(w/2, 0), (w, h/2), (w/2, h),(0, h/2)]
         pygame.draw.polygon(self.collision_sprite.image,(0,0,255),polygon_b)
         self.collision_sprite.mask = pygame.mask.from_surface(self.collision_sprite.image)
         self.collision_sprite.rect = self.image.get_rect()
-        self.collision_sprite.rect.x=self.rect.x
-        self.collision_sprite.rect.y=self.rect.y
+        self.collision_sprite.rect.x=self.rect.x+offsetx
+        self.collision_sprite.rect.y=self.rect.y+self.rect.height+offsety
         #polygon_t=[(w/2+x, y-z), (w+x, h/2+y-z), (w/2+x, h+y-z),(x, h/2+y-z)]
         #pygame.draw.polygon(collision_sprite,(255,0,0),polygon_t)
         #pygame.draw.line(collision_sprite,(0,0,255),polygon_t[1],polygon_b[1] )

@@ -24,12 +24,13 @@ def main():
     display = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
-    game.image.fill(GREEN)
+    #game.image.fill(GREEN)
     fpstext = game.add_dynamic_text('',FONT_NAME,20,BLACK,None, GAME_WIDTH-70,20, game.ui_sprites)
-    #tilemap = game.create_isotilemap(0,100,'assets/data/isotilemap.json',0.5)
-    tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap.json',0.5)
-    player = game.create_player('assets/data/player.json',2)
-    player.move(530,100)
+    #tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap.json',0.5)
+    tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap2.json',0.5, True)
+    tilemap.game=game
+    isoplayer = game.create_player('assets/data/isoplayer.json',2)
+    isoplayer.move(530,100)
     K_LEFT, K_RIGHT,K_UP,K_DOWN = get_keyboard_keys()
     # LOOP ---------------------
     running = True
@@ -41,30 +42,30 @@ def main():
                 return pygame.quit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == K_LEFT:
-                     player.K_LEFT = True
+                     isoplayer.K_LEFT = True
                 elif event.key == pygame.K_RIGHT or event.key == K_RIGHT:
-                     player.K_RIGHT = True
+                     isoplayer.K_RIGHT = True
                 if event.key == pygame.K_UP or event.key == K_UP:
-                    player.K_UP = True
+                    isoplayer.K_UP = True
                 elif event.key == pygame.K_DOWN or event.key == K_DOWN:
-                    player.K_DOWN = True
+                    isoplayer.K_DOWN = True
                 if event.key == pygame.K_SPACE:
-                    player.K_SPACE = True
+                    isoplayer.K_SPACE = True
                 if event.key == pygame.K_RETURN:
-                    player.K_RETURN = True
+                    isoplayer.K_RETURN = True
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == K_LEFT:
-                     player.K_LEFT = False
+                     isoplayer.K_LEFT = False
                 elif event.key == pygame.K_RIGHT or event.key == K_RIGHT:
-                     player.K_RIGHT = False
+                     isoplayer.K_RIGHT = False
                 if event.key == pygame.K_UP or event.key == K_UP:
-                    player.K_UP = False
+                    isoplayer.K_UP = False
                 elif event.key == pygame.K_DOWN or event.key == K_DOWN:
-                    player.K_DOWN = False
+                    isoplayer.K_DOWN = False
                 if event.key == pygame.K_SPACE:
-                    player.K_SPACE = False
+                    isoplayer.K_SPACE = False
                 if event.key == pygame.K_RETURN:
-                    player.K_RETURN = False
+                    isoplayer.K_RETURN = False
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw_screen()
         clock.tick(FPS)
