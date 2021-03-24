@@ -38,7 +38,6 @@ def main():
                 return pygame.quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if src and dst :
-                    print("Clean path")
                     src.remove_blend()
                     dst.remove_blend()
                     src , dst = None , None

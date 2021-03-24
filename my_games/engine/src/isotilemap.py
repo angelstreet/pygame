@@ -114,6 +114,11 @@ class IsoTileMap(GameSprite):
         return self.dynamic_tiles
 
     def check_path(self, paths,tree, src_i, src_j, dst_i, dst_j) :
+        tile = self.tiles[src_j][src_i]
+        print(src_i,src_j)
+        if tile==[] or tile[0].rigid :
+            return paths,tree
+        print(src_i,src_j)
         paths.append((src_i, src_j))
         if src_i==dst_i and src_j==dst_j :
             #print ("Found a path :",paths)
@@ -147,6 +152,8 @@ class IsoTileMap(GameSprite):
         print("Source",src.i,src.j,"Destination",dst.i,dst.j)
         _ ,tree = self.check_path([],[],src.i, src.j, dst.i, dst.j)
         print("Paths found :",len(tree),"---------------------")
+        if tree==[] :
+            return tree
         best_path_score,best_paths = None,None
         for path  in tree :
             if not best_paths or len(path)<best_path_score :
@@ -159,6 +166,7 @@ class IsoTileMap(GameSprite):
             print(path)
             col = []
             for t in path :
+                print(self.tiles[t[1]][t[0]],t[0],t[1])
                 tile = self.tiles[t[1]][t[0]][0]
                 col.append(tile)
             tile_list.append(col)
