@@ -12,6 +12,7 @@ TITLE = "TileMap A*"
 def sort(sprite):
     return sprite.zsort()
 
+
 def main():
     # INIT PYGAME----------------------
     pygame.init()  # initiates pygame
@@ -22,8 +23,8 @@ def main():
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
     fpstext = game.add_dynamic_text(FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20,
                                     game.ui_sprites)
-    mouseclicktext = game.add_dynamic_text(FONT_NAME, 20, BLACK, None, 50, 20,
-                                           game.ui_sprites)
+    pathtext = game.add_dynamic_text(FONT_NAME, 20, BLACK, None, 50, 20,
+                                     game.ui_sprites)
     tilemap = game.create_isotilemap(600, 100, 1400, 800,
                                      '../assets/data/isotilemap2.json', 0.5)
     tilemap.game = game
@@ -61,10 +62,15 @@ def main():
                         elif not dst:
                             dst = sprite_list[-1]
                             dst.blend((0, 0, 255, 255))
-                            paths = tilemap.get_path(src, dst)
+                            paths, score = tilemap.get_path(src, dst)
+
                             if len(paths) > 0:
+                                pathtext = "Best"
                                 for tile in paths[0]:
                                     tile.blend((255, 0, 0, 255))
+                            else:
+                                pathtext.text = "No path found"
+
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw_screen()
         clock.tick(FPS)
