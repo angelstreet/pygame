@@ -1,13 +1,13 @@
 #AngelStreet @2021
 ####################################################
 import pygame
-from src.utility import load_json, cartesian_to_iso
+from src.utility import *
 from src.isotile import Tile
-RED = (255, 0, 0)
+from src.gamesprite import GameSprite
 
-class IsoTileMap(pygame.sprite.Sprite):
+class IsoTileMap(GameSprite):
     def __init__(self,x,y,map_w,map_h, json, scale=1, debug = False):
-        pygame.sprite.Sprite.__init__(self)
+        GameSprite.__init__(self)
         self.x = x
         self.y = y
         self.map_w = map_w
@@ -116,12 +116,14 @@ class IsoTileMap(pygame.sprite.Sprite):
     def check_path(self, paths, src_i, src_j, dst_i, dst_j) :
         if src_i==dst_i and src_j==dst_j :
             print ("Found a path :",paths)
-            paths.append((dst_i, dst_j))
-            return 
+            paths.append([dst_i, dst_j])
+            return paths
         if src_i<dst_i :
             print("right",src_i,src_j, dst_i, dst_j,paths)
-            paths.append((src_i, src_j))
-            self.check_path(paths,src_i+1,src_j, dst_i, dst_j)
+            rpath = []
+            rpath.append([src_i,src_j])
+            self.check_path(rpath,src_i+1,src_j, dst_i, dst_j)
+            paths.append(rpath)
         elif src_i>dst_i :
             print("left",src_i,src_j, dst_i, dst_j,paths)
             paths.append((src_i, src_j))

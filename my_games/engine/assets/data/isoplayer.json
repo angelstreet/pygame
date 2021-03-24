@@ -1,10 +1,10 @@
 {"player": {
-  "playersheet_name" :"assets/image/templeknight.png",
+  "playersheet_name" :"../assets/image/templeknight.png",
 	"colorkey" :[0,0,0],
   "attributes" : {	"hp" :1000,  "mp" :200,"ad" :30,"ap" :4,"as" :3,"p_armor" :5,"m_armor" :5, "regen" :1},
   "first_frame":"idle_right_down",
   "resolution":{"max_w":60,"max_h":40},
-  "sound":{"jump":"assets/sound/jump.mp3","attack":"assets/sound/sword.mp3"},
+  "sound":{"jump":"../assets/sound/jump.mp3","attack":"../assets/sound/sword.mp3"},
   "collision_losange" :{"w":35,"h":20,"offsetx":15,"offsety":-20},
   "frames" : {
     "idle_right_down" :	[

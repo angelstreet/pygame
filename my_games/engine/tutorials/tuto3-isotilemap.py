@@ -25,12 +25,11 @@ def main():
     # GAME ---------------------
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
     #game.image.fill(GREEN)
-    fpstext = game.add_dynamic_text('',FONT_NAME,20,BLACK,None, GAME_WIDTH-70,20, game.ui_sprites)
+    fpstext = game.add_dynamic_text(FONT_NAME,20,BLACK,None, GAME_WIDTH-70,20, game.ui_sprites)
     #tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap.json',0.5)
-    tilemap = game.create_isotilemap(600,100,1400,800,'assets/data/isotilemap.json',0.5, True)
+    tilemap = game.create_isotilemap(600,100,1400,800,'../assets/data/isotilemap.json',0.5, True)
     tilemap.game=game
-    player = game.create_isoplayer('assets/data/isoplayer.json',tilemap.rect.x,tilemap.rect.y,tilemap.tile_w,tilemap.tile_h,2)
-    player.move(530,100)
+    player = game.create_isoplayer(530,110,'../assets/data/isoplayer.json',tilemap.rect.x,tilemap.rect.y,tilemap.tile_w,tilemap.tile_h,2)
     K_LEFT, K_RIGHT,K_UP,K_DOWN = get_keyboard_keys()
     # LOOP ---------------------
     running = True
@@ -68,7 +67,6 @@ def main():
                     player.K_RETURN = False
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw_screen()
-        #game.check_collision()
         game.hide_sprites_for_player(player)
         clock.tick(FPS)
 

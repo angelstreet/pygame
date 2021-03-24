@@ -1,11 +1,12 @@
 #AngelStreet @2021
 ####################################################
-from src.utility import load_json, move_sprite,iso_to_cartesian
 import pygame
+from src.gamesprite import GameSprite
+from src.utility import load_json, move_sprite,iso_to_cartesian
 
-class IsoPlayer(pygame.sprite.Sprite):
+class IsoPlayer(GameSprite):
     def __init__(self, json, map_x,map_y, tile_w, tile_h,scale=1):
-        pygame.sprite.Sprite.__init__(self)
+        GameSprite.__init__(self)
         self.json = json
         self.map_x = map_x
         self.map_y = map_y
@@ -106,6 +107,7 @@ class IsoPlayer(pygame.sprite.Sprite):
         self.image.set_colorkey(self.colorkey)
         self.prev_frame = None
         self.current_frame = self.first_frame
+        self.last_collision_list =[]
         self.init_direction_from_frame()
         self.init_collision_losange()
         self.set_state()
@@ -130,14 +132,16 @@ class IsoPlayer(pygame.sprite.Sprite):
         return 0
 
     def check_collision(self):
+        for c_sprite in self.last_collision_list :
+            c_sprite.parent.clear_front()
+        self.last_collision_list = []
         c_left,c_right,c_up,c_down,c_top,c_bottom = 0,0,0,0,0,0
-        if self.debug : self.tilemap.game.ui_sprites = pygame.sprite.OrderedUpdates()
         if len(self.collision_list)>0:
-            if self.debug :self.tilemap.game.ui_sprites.add(self.collision_sprite)
             self.collision_list.sort(key=self.vsort_collision_list)
             for c_sprite in self.collision_list:
-                if self.debug : self.tilemap.game.ui_sprites.add(c_sprite)
-                #print(self.current_state,self.z)
+                if self.debug :
+                    c_sprite.parent.blit_front(c_sprite.image)
+                    self.last_collision_list.append(c_sprite)
                 if self.current_state == 'fall' and abs(self.z-c_sprite.parent.z-c_sprite.parent.rect.height)<4 :
                     if self.debug :print("Bottom Collision", self.z,c_sprite.parent.z,c_sprite.parent.rect.height)
                     c_bottom=-1
@@ -278,7 +282,7 @@ class IsoPlayer(pygame.sprite.Sprite):
         self.animate()  # animate player by updating frame
 
     def zsort(self):
-        isox,isoy = self.rect.x+self.rect.width/2-self.map_x-90,self.rect.y+self.rect.height-self.map_y+15
+        isox,isoy = self.rect.x+self.rect.width/2-self.map_x-80,self.rect.y+self.rect.height-self.map_y+15
         x,y = iso_to_cartesian(isox,isoy)
         i=round(x/self.tile_w*self.scale)
         j=round(y/self.tile_h*self.scale)

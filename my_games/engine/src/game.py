@@ -1,17 +1,13 @@
 import pygame
-from src.utility import FPS, WHITE, BLACK, resize_screen
-from src.ui import ColorGameBar, ImageGameBar, HeartGameBar
+from src.utility import *
+from src.gamebar import ColorGameBar, ImageGameBar, HeartGameBar
 from src.isotilemap import IsoTileMap
 from src.isoplayer import IsoPlayer
 from src.game_menu import GameMenu
-from src.game_objects import *
-from pygame.locals import Color
+from src.gametext import Text,DynamicText
+from src.gamesprite import GameSprite
 
 FPS = 60
-BLACK =Color('black')
-WHITE = Color('white')
-RED = Color('red')
-GREEN = Color('green')
 FONT_NAME = pygame.font.get_default_font()
 FONT_SIZE = 14
 
@@ -52,12 +48,14 @@ class Game(pygame.sprite.Sprite):
         text = Text(text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
         return text
 
-    def add_dynamic_text(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
-        text = DynamicText(text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
+    def add_dynamic_text(self, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+        text = DynamicText(font_name, size, color, bg_color, x, y, layer, sprite, behind)
         return text
 
     def add_image(self, img_path,alpha, colorkey, x, y, scale, layer, sprite=None, behind=False):
-        img = Image(img_path, alpha,colorkey, x, y, scale, layer, sprite, behind)
+        img = GameSprite()
+        img.load_image(img_path, alpha,colorkey,scale)
+        img.move(x,y)
         return img
 
 # PLAYER-----------------------------------------------------
@@ -73,8 +71,9 @@ class Game(pygame.sprite.Sprite):
         self.ui_sprites.add(self.game_menu)
 # ISOPLAYER-----------------------------------------------------
 
-    def create_isoplayer(self, json, map_x,map_y,tile_w,tile_h,scale=1):
+    def create_isoplayer(self, x,y,json, map_x,map_y,tile_w,tile_h,scale=1):
         isoplayer = IsoPlayer(json, map_x,map_y,tile_w,tile_h,scale)
+        isoplayer.move(x,y)
         self.game_sprites.add(isoplayer)
         return isoplayer
 # ISOTILEMAP-----------------------------------------------------
@@ -108,20 +107,17 @@ class Game(pygame.sprite.Sprite):
     def check_collision(self):
         moving_list = []
         non_moving_list = pygame.sprite.Group()
-
         for sprite in self.game_sprites.sprites() :
-            if 'rigid' in dir(sprite) and sprite.rigid :
-                if 'is_moving' in dir(sprite) and sprite.is_moving() :
+            if sprite.rigid :
+                if sprite.is_moving() :
                     moving_list.append(sprite.get_collision_sprite())
                 else :
                     non_moving_list.add(sprite.get_collision_sprite())
-
         for collision_sprite in moving_list :
             #Side collision between 2 losange at z=0
             collision_list = pygame.sprite.spritecollide(collision_sprite, non_moving_list, False, pygame.sprite.collide_mask)
             for sprite in collision_list:
                 #Z collision
-                #print (sprite.parent.z,sprite.parent.offsety,collision_sprite.parent.z,collision_sprite.parent.rect.height)
                 if sprite.parent.z<=collision_sprite.parent.z and sprite.parent.z>=collision_sprite.parent.z-collision_sprite.parent.rect.height:
                     collision_sprite.parent.collision_list.append(sprite)
                 if sprite.parent.z-sprite.parent.rect.height<=collision_sprite.parent.z and sprite.parent.z>=collision_sprite.parent.z-collision_sprite.parent.rect.height:
@@ -131,28 +127,23 @@ class Game(pygame.sprite.Sprite):
 # GAME-----------------------------------------------------
     def hide_sprites_for_player(self,player):
         for sprite in self.hided_sprites :
-            sprite.image.blit(sprite.copy,(0,0))
+            sprite.remove_blend()
+        self.hided_sprites = []
         sprites = self.game_sprites.sprites().copy()
         sprites.remove(player)
         collision_list = pygame.sprite.spritecollide(player, sprites, False, pygame.sprite.collide_mask)
         player.mask = pygame.mask.from_surface(player.image)
         for sprite in collision_list:
-            sprite.image.blit(sprite.copy,(0,0))
-
-            if 'zsort' in dir(sprite) and player.zsort()<sprite.zsort():
-                #print("zsort----------------")
-                #print(player.rect.y,player.rect.height, player.z, player.zsort())
-                #print(sprite.rect.y, sprite.rect.height,sprite.z, sprite.offsety, sprite.zsort())
-                sprite.image.fill((255, 0, 0, 220), None, pygame.BLEND_RGBA_MULT)
+            if player.zsort()<sprite.zsort():
+                sprite.blend((255, 0, 0, 200))
                 self.hided_sprites.append(sprite)
+
     def draw_bg(self):
         self.display.fill(WHITE)
         self.bg_sprites.draw(self.display)
 
     def zsort(self, sprite):
-        if 'zsort' in dir(sprite):
-            return sprite.zsort()
-        return 1
+        return sprite.zsort()
 
     def sort_game_sprite(self, game_sprites):
         tmp = game_sprites.sprites()
@@ -161,7 +152,6 @@ class Game(pygame.sprite.Sprite):
 
     def draw_game(self):
         self.game_sprites.update()
-
         self.game_sprites = self.sort_game_sprite(self.game_sprites)
         self.game_sprites.draw(self.display)
 

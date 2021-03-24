@@ -1,10 +1,11 @@
 import pygame
-from src.utility import FPS, WHITE, BLACK, resize_screen,draw_image
+from src.utility import *
 from types import MethodType
+from src.gamesprite import GameSprite
 
-class Text(pygame.sprite.Sprite):
+class Text(GameSprite):
     def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
-        pygame.sprite.Sprite.__init__(self)
+        GameSprite.__init__(self)
         self.x = x
         self.y = y
         self.layer = layer
@@ -50,47 +51,8 @@ class Text(pygame.sprite.Sprite):
 
 
 class DynamicText(Text):
-    def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
-        Text.__init__(self,text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
+    def __init__(self, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+        Text.__init__(self,'text', font_name, size, color, bg_color, x, y, layer, sprite, behind)
     #Dynamic text is a text than need to be refreshed, redrawn on the sreen
     def update(self):
         self.draw()
-
-
-class Image(pygame.sprite.Sprite):
-    def __init__(self, img_path,alpha,colorkey, x, y, scale, layer, sprite=None, behind=False):
-        pygame.sprite.Sprite.__init__(self)
-        self.img_path = img_path
-        self.x = x
-        self.y = y
-        self.scale = scale
-        self.layer = layer
-        self.alpha = alpha
-        self.colorkey = colorkey
-        self.sprite = sprite
-        self.behind = behind
-        self.init_img()
-        self.draw()
-
-    def init_img(self):
-        self.image=None
-        if self.sprite:
-            print("WARNING : relative position meaning your image could be hided behind the sprite !!!")
-            self.x += self.sprite.x
-            self.y += self.sprite.y
-        if self.behind:
-            # TODO: Find sprite position in layer then ad font before sprite [sort]
-            pass
-        else:
-            self.layer.add(self)
-        self.sprite = pygame.image.load(self.img_path).convert()
-        self.rect = self.sprite.get_rect()
-        self.image = pygame.Surface(self.rect.size)
-
-    def draw(self):
-        draw_image(self.image, self.sprite,self.scale)
-        self.rect = self.image.get_rect()
-        if self.colorkey :
-            self.image.set_colorkey(self.colorkey)
-        self.rect.x= self.x
-        self.rect.y= self.y

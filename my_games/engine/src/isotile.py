@@ -1,12 +1,13 @@
 #AngelStreet @2021
 ####################################################
 import pygame
+from src.gamesprite import GameSprite
 from src.utility import load_json, cartesian_to_iso
 RED = (255, 0, 0)
 
-class Tile(pygame.sprite.Sprite):
+class Tile(GameSprite):
     def __init__(self,tilemap, tile_sprite, tile_frame,i,j,z,w,h,x,y,offsetx,offsety,sort,rigid):
-        pygame.sprite.Sprite.__init__(self)
+        GameSprite.__init__(self)
         self.tilemap=tilemap
         self.tile_sprite=tile_sprite
         self.tile_frame = tile_frame
@@ -25,24 +26,16 @@ class Tile(pygame.sprite.Sprite):
         self.init_tile()
 
     def init_tile(self):
-        self.image = pygame.Surface((self.w, self.h),pygame.SRCALPHA, 32).convert_alpha()
-        self.copy = pygame.Surface((self.w, self.h),pygame.SRCALPHA, 32).convert_alpha()
-        self.image.blit(self.tile_sprite , (0, 0))
-        self.copy.blit(self.tile_sprite , (0, 0))
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x+self.offsetx
-        self.rect.y = self.y+self.z+self.offsety
+        self.create_surface(self.w,self.h)
+        self.blit(self.tile_sprite)
+        self.move(self.x+self.offsetx, self.y+self.z+self.offsety)
 
     def is_static(self):
         return not self.sort
 
     def zsort(self):
-        #return round(self.rect.y+self.rect.h-self.z+self.offsety)
         return int(200+self.i*100+1000*self.j-self.z)
 
-    def is_moving(self) :
-        return False
 
     def get_collision_sprite(self) :
         sprite = pygame.sprite.Sprite()

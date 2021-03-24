@@ -90,11 +90,12 @@ class ImageGameBar(GameBar):
 
     def draw(self) :
         bar_percentage = self.value/self.total
-        fill_bar_w= int(bar_percentage*self.fill_sprite_rect.width)
-        dimension = fill_bar_w,self.fill_sprite_rect.height
+        self.bar_w= round(bar_percentage*self.fill_sprite_rect.width)
         offset = int(self.fill_offset*self.scale)
-        self.image.blit(self.fill_sprite,(offset,0), (0,0,fill_bar_w,self.fill_sprite_rect.height))
+        self.image.fill((0,0,0,0))
+        self.image.blit(self.fill_sprite,(offset,0), (0,0,self.bar_w,self.fill_sprite_rect.height))
         self.image.blit(self.bg_sprite,(0,0))
+
 
 class HeartGameBar(ImageGameBar):
     def __init__(self, value, total, x, y, json,scale=1,offset=0):
@@ -138,9 +139,9 @@ class HeartGameBar(ImageGameBar):
     def draw(self) :
         nb_hearts = int(self.total/2)
         for i in range(0,nb_hearts) :
-            if i*2+2<=self.value :
+            if i*2+2<=round(self.value) :
                 self.draw_heart(i,self.full_id)
-            elif i*2+1<=self.value :
+            elif i*2+1<=round(self.value) :
                 self.draw_heart(i,self.half_id)
             else :
                 self.draw_heart(i,self.empty_id)

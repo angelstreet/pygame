@@ -1,5 +1,5 @@
 {"tilemap": {
-  "tilesheet_name" :"assets/image/tilesheet.png",
+  "tilesheet_name" :"../assets/image/tilesheet.png",
 	"colorkey" :null,
   "tile_w" : 160,
   "tile_h" : 120,

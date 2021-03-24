@@ -1,9 +1,9 @@
 import pygame, json
+from pygame.locals import Color
 
 FPS = 60
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-
+BLACK,WHITE,RED =Color('black'),Color('white'), Color('red')
+GREEN,YELLOW,BLUE = Color('green'), Color('yellow'), Color('blue')
 
 def draw_image(display, image,scale=1):
         rect = display.get_rect()
