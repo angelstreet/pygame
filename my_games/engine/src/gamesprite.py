@@ -24,15 +24,17 @@ class GameSprite(pygame.sprite.Sprite):
         self.source_image = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
         self.rear_image = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
         self.front_image = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
-        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
+
+    def create_mask(self):
+        self.mask = pygame.mask.from_surface(self.source_image)
 
     def blits(self):
         self.clear()
         self.image.blit(self.rear_image, (0, 0))
         self.image.blit(self.source_image, (0, 0))
         self.image.blit(self.front_image, (0, 0))
-        self.mask = pygame.mask.from_surface(self.image)
+        self.create_mask()
 
     def blit(self, source, dest=(0, 0), replace=True):
         if replace:

@@ -128,18 +128,19 @@ class Game(pygame.sprite.Sprite):
 
 
 # GAME-----------------------------------------------------
+    @profile
     def hide_sprites_for_player(self, player):
         for sprite in self.hided_sprites:
             sprite.remove_blend()
         self.hided_sprites = []
-        sprites = self.game_sprites.sprites().copy()
-        sprites.remove(player)
+        sprites = self.game_sprites.sprites()
         collision_list = pygame.sprite.spritecollide(
             player, sprites, False, pygame.sprite.collide_mask)
         for sprite in collision_list:
-            if player.zsort() < sprite.zsort():
+            if sprite != player and player.zsort() < sprite.zsort():
                 sprite.blend((255, 0, 0, 200))
                 self.hided_sprites.append(sprite)
+        sprites = None
 
     def draw_bg(self):
         self.display.fill(WHITE)
@@ -148,14 +149,14 @@ class Game(pygame.sprite.Sprite):
     def zsort(self, sprite):
         return sprite.zsort()
 
-    # @profile
+    @profile
     def sort_game_sprite(self):
         tmp = self.game_sprites.sprites()
         tmp.sort(key=self.zsort)
         self.game_sprites = pygame.sprite.OrderedUpdates(tmp)
+        tmp = None
 
-
-    # @profile
+    @profile
     def draw_game(self):
         self.game_sprites.update()
         self.game_sprites.draw(self.display)
