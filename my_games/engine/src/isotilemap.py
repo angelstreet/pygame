@@ -135,26 +135,26 @@ class IsoTileMap(GameSprite):
             tree.append(paths)
             return paths, tree
         # Check Right or Left or Both
-        if r_tile and src_i < dst_i and not (r_tile == [] or r_tile[0].rigid):
+        if r_tile and src_i < dst_i and not (r_tile == [] or r_tile[0].rigid)and not (src_i+1, src_j) in paths:
             print("right", src_i, src_j, dst_i, dst_j, paths)
             paths, tree = self.check_path(paths, tree, src_i+1, src_j, dst_i, dst_j)
             index = paths.index((src_i, src_j))
             paths = paths[:index+1]
             move_h = True
-        elif l_tile and src_i > dst_i and not (l_tile == [] or l_tile[0].rigid):
+        elif l_tile and src_i > dst_i and not (l_tile == [] or l_tile[0].rigid)and not (src_i-1, src_j) in paths:
             print("left", src_i, src_j, dst_i, dst_j, paths)
             paths, tree = self.check_path(paths, tree, src_i-1, src_j, dst_i, dst_j)
             index = paths.index((src_i, src_j))
             paths = paths[:index+1]
             move_h = True
         # Check Up or Down or Both
-        if u_tile and src_j < dst_j and not (u_tile == [] or u_tile[0].rigid):
+        if u_tile and src_j < dst_j and not (u_tile == [] or u_tile[0].rigid)and not (src_i, src_j+1) in paths:
             print("up", src_i, src_j, dst_i, dst_j, paths)
             paths, tree = self.check_path(paths, tree, src_i, src_j+1, dst_i, dst_j)
             index = paths.index((src_i, src_j))
             paths = paths[:index+1]
             move_v = True
-        elif d_tile and src_j > dst_j and not (d_tile == [] or d_tile[0].rigid):
+        elif d_tile and src_j > dst_j and not (d_tile == [] or d_tile[0].rigid)and not (src_i, src_j-1) in paths:
             print("down", src_i, src_j, dst_i, dst_j, paths)
             paths, tree = self.check_path(paths, tree, src_i, src_j-1, dst_i, dst_j)
             index = paths.index((src_i, src_j))
