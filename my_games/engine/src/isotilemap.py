@@ -113,32 +113,53 @@ class IsoTileMap(GameSprite):
     def getTiles(self):
         return self.dynamic_tiles
 
-    def check_path(self, paths, src_i, src_j, dst_i, dst_j) :
+    def check_path(self, paths,tree, src_i, src_j, dst_i, dst_j) :
+        paths.append((src_i, src_j))
         if src_i==dst_i and src_j==dst_j :
-            print ("Found a path :",paths)
-            paths.append([dst_i, dst_j])
-            return paths
+            #print ("Found a path :",paths)
+            #print ("------------------------------------")
+            tree.append(paths)
+            return paths, tree
         if src_i<dst_i :
-            print("right",src_i,src_j, dst_i, dst_j,paths)
-            rpath = []
-            rpath.append([src_i,src_j])
-            self.check_path(rpath,src_i+1,src_j, dst_i, dst_j)
-            paths.append(rpath)
+            #print("right",src_i,src_j, dst_i, dst_j,paths)
+            paths,tree = self.check_path(paths,tree, src_i+1,src_j, dst_i, dst_j)
+            index = paths.index((src_i, src_j))
+            paths = paths[:index+1]
         elif src_i>dst_i :
-            print("left",src_i,src_j, dst_i, dst_j,paths)
-            paths.append((src_i, src_j))
-            self.check_path(paths,src_i-1,src_j, dst_i, dst_j)
+            #print("left",src_i,src_j, dst_i, dst_j,paths)
+            paths,tree = self.check_path(paths,tree, src_i-1,src_j, dst_i, dst_j)
+            index = paths.index((src_i, src_j))
+            paths = paths[:index+1]
         if src_j<dst_j :
-            print("up",src_i,src_j, dst_i, dst_j,paths)
-            paths.append((src_i, src_j))
-            self.check_path(paths,src_i,src_j+1, dst_i, dst_j)
+            #print("up",src_i,src_j, dst_i, dst_j,paths)
+            paths,tree = self.check_path(paths,tree, src_i,src_j+1, dst_i, dst_j)
+            index = paths.index((src_i, src_j))
+            paths = paths[:index+1]
         elif src_j>dst_j:
-            print("down",src_i,src_j, dst_i, dst_j,paths)
-            paths.append((src_i, src_j))
-            self.check_path(paths,src_i,src_j-1, dst_i, dst_j)
-        return paths
+            #print("down",src_i,src_j, dst_i, dst_j,paths)
+            paths,tree = self.check_path(paths,tree, src_i,src_j-1, dst_i, dst_j)
+            index = paths.index((src_i, src_j))
+            paths = paths[:index+1]
+        return paths,tree
 
     def get_path(self,src, dst) :
+        tile_list = []
         print("Source",src.i,src.j,"Destination",dst.i,dst.j)
-        paths = self.check_path([],src.i, src.j, dst.i, dst.j)
-        print(paths)
+        _ ,tree = self.check_path([],[],src.i, src.j, dst.i, dst.j)
+        print("Paths found :",len(tree),"---------------------")
+        best_path_score,best_paths = None,None
+        for path  in tree :
+            if not best_paths or len(path)<best_path_score :
+                best_paths = [path]
+                best_path_score = len(path)
+            elif len(path)==best_path_score:
+                best_paths.append(path)
+        print("Best paths found :",len(best_paths)," with score :",str(best_path_score)," ---------------------")
+        for path  in best_paths :
+            print(path)
+            col = []
+            for t in path :
+                tile = self.tiles[t[1]][t[0]][0]
+                col.append(tile)
+            tile_list.append(col)
+        return tile_list

@@ -23,7 +23,6 @@ def main():
     #game.image.fill(GREEN)
     fpstext = game.add_dynamic_text(FONT_NAME,20,BLACK,None, GAME_WIDTH-70,20, game.ui_sprites)
     mouseclicktext = game.add_dynamic_text(FONT_NAME,20,BLACK,None, 50,20, game.ui_sprites)
-    #tilemap = game.create_isotilemap(0,100,1400,800,'assets/data/isotilemap.json',0.5)
     tilemap = game.create_isotilemap(600,100,1400,800,'../assets/data/isotilemap2.json',0.5)
     tilemap.game=game
     # LOOP ---------------------
@@ -31,6 +30,7 @@ def main():
     clock = pygame.time.Clock()
     src = None
     dst = None
+    paths = []
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -42,6 +42,9 @@ def main():
                     src.remove_blend()
                     dst.remove_blend()
                     src , dst = None , None
+                    if len(paths)>0 :
+                        for tile in paths[0] :
+                            tile.remove_blend()
                 else:
                     sprite_list=[]
                     pos = pygame.mouse.get_pos()
@@ -53,15 +56,14 @@ def main():
                         sprite_list.sort(key=sort)
                         if not src :
                             src = sprite_list[-1]
-                            #print("Src",src.i,src.j)
                             src.blend((255, 0, 0, 255))
                         elif not dst :
                             dst = sprite_list[-1]
-                            #print("Dst",dst.i,dst.j)
                             dst.blend((0, 0, 255, 255))
-                            path = tilemap.get_path(src,dst)
-
-
+                            paths = tilemap.get_path(src,dst)
+                            if len(paths)>0 :
+                                for tile in paths[0]:
+                                    tile.blend((255,0,0,255))
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw_screen()
         clock.tick(FPS)
