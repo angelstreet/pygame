@@ -39,8 +39,8 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if src and dst :
                     print("Clean path")
-                    src.image.blit(sprite.copy,(0 ,0))
-                    dst.image.blit(sprite.copy,(0 ,0))
+                    src.remove_blend()
+                    dst.remove_blend()
                     src , dst = None , None
                 else:
                     sprite_list=[]
@@ -54,11 +54,11 @@ def main():
                         if not src :
                             src = sprite_list[-1]
                             #print("Src",src.i,src.j)
-                            src.image.fill((255, 0, 0, 255), None, pygame.BLEND_RGBA_MULT)
+                            src.blend((255, 0, 0, 255))
                         elif not dst :
                             dst = sprite_list[-1]
                             #print("Dst",dst.i,dst.j)
-                            dst.image.fill((0, 0, 255, 255), None, pygame.BLEND_RGBA_MULT)
+                            dst.blend((0, 0, 255, 255))
                             path = tilemap.get_path(src,dst)
 
 

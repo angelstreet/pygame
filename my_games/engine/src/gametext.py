@@ -3,9 +3,9 @@ from src.utility import *
 from types import MethodType
 from src.gamesprite import GameSprite
 
-class Text(GameSprite):
+class Text(pygame.sprite.Sprite):
     def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
-        GameSprite.__init__(self)
+        pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
         self.layer = layer

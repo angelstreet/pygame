@@ -132,7 +132,6 @@ class Game(pygame.sprite.Sprite):
         sprites = self.game_sprites.sprites().copy()
         sprites.remove(player)
         collision_list = pygame.sprite.spritecollide(player, sprites, False, pygame.sprite.collide_mask)
-        player.mask = pygame.mask.from_surface(player.image)
         for sprite in collision_list:
             if player.zsort()<sprite.zsort():
                 sprite.blend((255, 0, 0, 200))

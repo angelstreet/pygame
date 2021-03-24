@@ -50,6 +50,3 @@ class Tile(GameSprite):
         #self.image.blit(sprite.image,(0,0))
         sprite.parent = self
         return sprite
-
-    def update(self):
-        pass

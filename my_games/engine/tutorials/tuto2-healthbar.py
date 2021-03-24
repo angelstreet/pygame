@@ -19,7 +19,7 @@ def main():
     colorgamebar = game.create_colorgamebar(100, 100, 10, 10, 200, 40)
     imagegamebar = game.create_imagegamebar(100, 100, 10, 120,'../assets/image/healthbar_bg.png','../assets/image/healthbar_fill.png',85,0.5)
     heartgamebar = game.create_heartgamebar(6, 6, 10, 250,'../assets/data/heart.json',0.2,10)
-    hptext = game.add_text('HP', FONT_NAME,20,BLACK, None,0,-20,game.game_sprites,imagegamebar)
+    hptext = game.add_text('HP', FONT_NAME,20,BLACK, None,0,-20,game.ui_sprites,imagegamebar)
     fpstext = game.add_dynamic_text(FONT_NAME,20,BLACK,None, GAME_WIDTH-70,20, game.ui_sprites)
     logo = game.add_image('../assets/image/fortnite.jpg', False, None,400,100,1,game.bg_sprites)
     # LOOP----------------------

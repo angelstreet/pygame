@@ -100,11 +100,10 @@ class IsoPlayer(GameSprite):
         else  : self.direction_h = "left"
 
     def init_player(self):
+        self.create_surface(50,50)
         self.load_player_data_from_json()
-        self.image = pygame.Surface(
-            (self.resolution['max_w']*self.scale*2, self.resolution['max_h']*self.scale))
-        self.rect = self.image.get_rect()
-        self.image.set_colorkey(self.colorkey)
+        self.create_surface(self.resolution['max_w']*self.scale*2, self.resolution['max_h']*self.scale)
+        if self.colorkey : self.image.set_colorkey(self.colorkey)
         self.prev_frame = None
         self.current_frame = self.first_frame
         self.last_collision_list =[]
@@ -113,6 +112,8 @@ class IsoPlayer(GameSprite):
         self.set_state()
         self.set_frame()
         self.load_player_frames()
+        self.get_collision_sprite()
+
 
     def init_collision_losange(self):
         self.collision_losange_w = self.collision_losange["w"]*self.scale
@@ -132,6 +133,9 @@ class IsoPlayer(GameSprite):
         return 0
 
     def check_collision(self):
+        if self.debug:
+            self.blit_rear(self.collision_sprite.image, (self.collision_sprite.x,self.collision_sprite.y))
+            #self.blit_rear(self.collision_sprite.image, (0,0))
         for c_sprite in self.last_collision_list :
             c_sprite.parent.clear_front()
         self.last_collision_list = []
@@ -143,22 +147,22 @@ class IsoPlayer(GameSprite):
                     c_sprite.parent.blit_front(c_sprite.image)
                     self.last_collision_list.append(c_sprite)
                 if self.current_state == 'fall' and abs(self.z-c_sprite.parent.z-c_sprite.parent.rect.height)<4 :
-                    if self.debug :print("Bottom Collision", self.z,c_sprite.parent.z,c_sprite.parent.rect.height)
+                    #if self.debug :print("Bottom Collision", self.z,c_sprite.parent.z,c_sprite.parent.rect.height)
                     c_bottom=-1
                     self.velocity_x,self.velocity_y,self.velocity_z = 0,0,0
                     self.set_state("idle")
                     break
                 if self.collision_sprite.rect.x< c_sprite.rect.x+c_sprite.rect.width/2 :
-                    if self.debug :print("Right Collision", self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
+                    #if self.debug :print("Right Collision", self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
                     c_right=-1
                 else :
-                    if self.debug :print("Left Collision",  self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
+                    #if self.debug :print("Left Collision",  self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
                     c_left=1
                 if self.collision_sprite.rect.y< c_sprite.rect.y+c_sprite.rect.height/2 :
-                    if self.debug :print("Down Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
+                    #if self.debug :print("Down Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
                     c_down=-1
                 else:
-                    if self.debug :print("Up Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
+                    #if self.debug :print("Up Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
                     c_up=1
             #if self.debug :print(self.collision_sprite.rect,c_sprite.rect)
         self.collision_list = []
@@ -257,10 +261,9 @@ class IsoPlayer(GameSprite):
 
     def display_current_sprite(self):
         if self.direction_h =='right' :
-            self.image = self.frames_data[self.current_frame][self.current_frame_id+1]['sprite']
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite'])
         else:
-            self.image = self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip']
-
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip'])
 
     def animate(self):
         frame_rate = self.get_frame_rate()
@@ -276,10 +279,12 @@ class IsoPlayer(GameSprite):
                     self.set_state('idle')
         self.display_current_sprite()
 
+
     def update(self):
         self.check_event()  # check key press event
         self.move_player()
         self.animate()  # animate player by updating frame
+        self.blits()
 
     def zsort(self):
         isox,isoy = self.rect.x+self.rect.width/2-self.map_x-80,self.rect.y+self.rect.height-self.map_y+15
@@ -307,9 +312,12 @@ class IsoPlayer(GameSprite):
         polygon_b=[(w/2, 0), (w, h/2), (w/2, h),(0, h/2)]
         pygame.draw.polygon(self.collision_sprite.image,(0,0,255),polygon_b)
         self.collision_sprite.mask = pygame.mask.from_surface(self.collision_sprite.image)
-        self.collision_sprite.rect = self.image.get_rect()
-        self.collision_sprite.rect.x=self.rect.x+offsetx
-        self.collision_sprite.rect.y=self.rect.y+self.rect.height+offsety
+        self.collision_sprite.rect = self.collision_sprite.image.get_rect()
+        self.collision_sprite.x = offsetx
+        self.collision_sprite.y = self.rect.height-self.collision_sprite.rect.height
+        self.collision_sprite.rect.x=self.rect.x+self.collision_sprite.x
+        self.collision_sprite.rect.y=self.rect.y+self.rect.height-self.collision_sprite.y
+
         #polygon_t=[(w/2+x, y-z), (w+x, h/2+y-z), (w/2+x, h+y-z),(x, h/2+y-z)]
         #pygame.draw.polygon(collision_sprite,(255,0,0),polygon_t)
         #pygame.draw.line(collision_sprite,(0,0,255),polygon_t[1],polygon_b[1] )
