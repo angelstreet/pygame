@@ -128,7 +128,6 @@ class Game(pygame.sprite.Sprite):
 
 
 # GAME-----------------------------------------------------
-
     def hide_sprites_for_player(self, player):
         for sprite in self.hided_sprites:
             sprite.remove_blend()
@@ -149,14 +148,16 @@ class Game(pygame.sprite.Sprite):
     def zsort(self, sprite):
         return sprite.zsort()
 
-    def sort_game_sprite(self, game_sprites):
-        tmp = game_sprites.sprites()
+    # @profile
+    def sort_game_sprite(self):
+        tmp = self.game_sprites.sprites()
         tmp.sort(key=self.zsort)
-        return pygame.sprite.OrderedUpdates(tmp)
+        self.game_sprites = pygame.sprite.OrderedUpdates(tmp)
 
+
+    # @profile
     def draw_game(self):
         self.game_sprites.update()
-        self.game_sprites = self.sort_game_sprite(self.game_sprites)
         self.game_sprites.draw(self.display)
 
     def draw_fx(self):

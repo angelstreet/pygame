@@ -70,6 +70,7 @@ def main():
                     player.K_RETURN = False
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw_screen()
+        game.hide_sprites_for_player(player)
         clock.tick(FPS)
 
 
