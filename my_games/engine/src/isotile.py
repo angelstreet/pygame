@@ -36,7 +36,11 @@ class Tile(GameSprite):
         return not self.sort
 
     def zsort(self):
-        return int(200+self.i*100+1000*self.j-self.z)
+        depth = int(200+self.i*100+1000*self.j-self.z)
+        if self.z >= 0:
+            depth -= 10000
+        # print(self.i,self.j,self.x,self.y,depth)
+        return depth
 
     def get_collision_sprite(self):
         sprite = pygame.sprite.Sprite()

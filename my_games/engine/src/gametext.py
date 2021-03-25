@@ -3,6 +3,7 @@ from src.utility import *
 from types import MethodType
 from src.gamesprite import GameSprite
 
+
 class Text(pygame.sprite.Sprite):
     def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
         pygame.sprite.Sprite.__init__(self)
@@ -31,28 +32,28 @@ class Text(pygame.sprite.Sprite):
         else:
             self.layer.add(self)
 
-    def draw_text(self,text, font_name, size, color):
+    def draw_text(self, text, font_name, size, color):
         font = pygame.font.Font(font_name, size)
         text_surface = font.render(str(text), True, color)
         return text_surface
 
     def draw(self):
-        font =self.draw_text(self.text, self.font_name, self.size, self.color)
+        font = self.draw_text(self.text, self.font_name, self.size, self.color)
         font_rect = font.get_rect()
         self.image = pygame.transform.scale(self.image, font_rect.size)
         if self.bg_color:
             self.image.fill(self.bg_color)
-        else :
-            self.image.fill((0,0,0,0))
+        else:
+            self.image.fill((0, 0, 0, 0))
         self.image.blit(font, (0, 0))
         self.rect = self.image.get_rect()
-        self.rect.x= self.x
-        self.rect.y= self.y
+        self.rect.x = self.x
+        self.rect.y = self.y
 
 
 class DynamicText(Text):
-    def __init__(self, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
-        Text.__init__(self,'text', font_name, size, color, bg_color, x, y, layer, sprite, behind)
-    #Dynamic text is a text than need to be refreshed, redrawn on the sreen
+    def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+        Text.__init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
+
     def update(self):
         self.draw()

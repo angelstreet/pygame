@@ -21,9 +21,9 @@ def main():
     display = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
-    fpstext = game.add_dynamic_text(FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20,
+    fpstext = game.add_dynamic_text('FPS',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20,
                                     game.ui_sprites)
-    pathtext = game.add_dynamic_text(FONT_NAME, 20, BLACK, None, 50, 20,
+    pathtext = game.add_dynamic_text('Path',FONT_NAME, 20, BLACK, None, 50, 20,
                                      game.ui_sprites)
     tilemap = game.create_isotilemap(600, 100, 1400, 800,
                                      '../assets/data/isotilemap2.json', 0.5)
@@ -44,9 +44,10 @@ def main():
                     src.remove_blend()
                     dst.remove_blend()
                     src, dst = None, None
-                    if len(paths) > 0:
-                        for tile in paths[0]:
-                            tile.remove_blend()
+                    for i in range(0, 3):
+                        if i < len(paths):
+                            for tile in paths[i]:
+                                tile.remove_blend()
                 else:
                     sprite_list = []
                     pos = pygame.mouse.get_pos()
@@ -64,12 +65,18 @@ def main():
                             dst.blend((0, 0, 255, 255))
                             paths, score = tilemap.get_path(src, dst)
 
-                            if len(paths) > 0:
-                                pathtext = "Best"
-                                for tile in paths[0]:
-                                    tile.blend((255, 0, 0, 255))
-                            else:
-                                pathtext.text = "No path found"
+                            for i in range(0, 3):
+                                if i < len(paths):
+                                    pathtext.text = 'Best path found with score : %s' % score
+                                    for tile in paths[i]:
+                                        tile.blend((255, 0, 0, 255))
+                                    game.draw_screen()
+                                    pygame.time.delay(500)
+                                    if i < min(2,len(paths)-1):
+                                        for tile in paths[i]:
+                                            tile.remove_blend()
+                                else:
+                                    pathtext.text = "No path found"
 
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw_screen()
