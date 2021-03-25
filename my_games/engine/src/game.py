@@ -48,8 +48,8 @@ class Game(pygame.sprite.Sprite):
         text = Text(text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
         return text
 
-    def add_dynamic_text(self, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
-        text = DynamicText(font_name, size, color, bg_color, x, y, layer, sprite, behind)
+    def add_dynamic_text(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+        text = DynamicText(text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
         return text
 
     def add_image(self, img_path, alpha, colorkey, x, y, scale, layer, sprite=None, behind=False):
@@ -128,7 +128,7 @@ class Game(pygame.sprite.Sprite):
 
 
 # GAME-----------------------------------------------------
-    @profile
+    #@profile
     def hide_sprites_for_player(self, player):
         for sprite in self.hided_sprites:
             sprite.remove_blend()
@@ -149,14 +149,13 @@ class Game(pygame.sprite.Sprite):
     def zsort(self, sprite):
         return sprite.zsort()
 
-    @profile
+    #@profile
     def sort_game_sprite(self):
         tmp = self.game_sprites.sprites()
         tmp.sort(key=self.zsort)
         self.game_sprites = pygame.sprite.OrderedUpdates(tmp)
-        tmp = None
 
-    @profile
+    #@profile
     def draw_game(self):
         self.game_sprites.update()
         self.game_sprites.draw(self.display)
