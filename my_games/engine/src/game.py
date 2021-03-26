@@ -1,5 +1,5 @@
 import pygame
-from src.utility import *
+from src.utility import WHITE, BLACK
 from src.gamebar import ColorGameBar, ImageGameBar, HeartGameBar
 from src.isotilemap import IsoTileMap
 from src.isoplayer import IsoPlayer
@@ -13,9 +13,8 @@ FONT_SIZE = 14
 
 
 class Game(pygame.sprite.Sprite):
-    def __init__(self, screen, display, w, h, isplaying=True):
+    def __init__(self, display, w, h, isplaying=True):
         pygame.sprite.Sprite.__init__(self)
-        self.screen = screen
         self.display = display
         self.w, self.h = w, h
         self.mid_w, self.mid_h = w / 2, h / 2
@@ -42,7 +41,10 @@ class Game(pygame.sprite.Sprite):
 
 # GAME-----------------------------------------------------
     def resize_screen(self, w, h, resizable=False):
-        self.screen, self.display = resize_screen(w, h, resizable)
+        if resizable:
+            pygame.display.set_mode((w, h), pygame.RESIZABLE)
+        else:
+            pygame.display.set_mode((w, h))
 
     def add_text(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
         text = Text(text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
@@ -128,7 +130,8 @@ class Game(pygame.sprite.Sprite):
 
 
 # GAME-----------------------------------------------------
-    #@profile
+    # @profile
+
     def hide_sprites_for_player(self, player):
         for sprite in self.hided_sprites:
             sprite.remove_blend()
@@ -143,19 +146,18 @@ class Game(pygame.sprite.Sprite):
         sprites = None
 
     def draw_bg(self):
-        self.display.fill(WHITE)
         self.bg_sprites.draw(self.display)
 
     def zsort(self, sprite):
         return sprite.zsort()
 
-    #@profile
+    # @profile
     def sort_game_sprite(self):
         tmp = self.game_sprites.sprites()
         tmp.sort(key=self.zsort)
         self.game_sprites = pygame.sprite.OrderedUpdates(tmp)
 
-    #@profile
+    # @profile
     def draw_game(self):
         self.game_sprites.update()
         self.game_sprites.draw(self.display)
@@ -169,12 +171,13 @@ class Game(pygame.sprite.Sprite):
         self.ui_sprites.draw(self.display)
 
     def draw_screen(self):
-        self.draw_bg()
-        if self.isplaying:
-            self.draw_game()
-            self.draw_fx()
-        self.draw_ui()
-        self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
+        self.display.fill(WHITE)
+        #self.draw_bg()
+        #if self.isplaying:
+            #self.draw_game()
+            #self.draw_fx()
+        #self.draw_ui()
+        #self.display.blit(pygame.transform.scale(self.display, self.display.get_size()), (0, 0))
         pygame.display.update()
 
     def resume(self):

@@ -15,16 +15,6 @@ def draw_image(display, image, scale=1):
         display.blit(image, (0, 0))
 
 
-def resize_screen(w, h, resizable=False):
-    # print(w,h,resizable)
-    if resizable:
-        screen = pygame.display.set_mode((w, h), pygame.RESIZABLE)
-    else:
-        screen = pygame.display.set_mode((w, h))
-    display = pygame.Surface((w, h))
-    return screen, display
-
-
 def load_json(json_file):
     with open(json_file) as f:
         data = json.load(f)

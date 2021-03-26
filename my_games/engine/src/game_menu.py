@@ -75,7 +75,7 @@ class FirstScreenMenu(Menu):
 
     def update(self):
         now = pygame.time.get_ticks()
-        if now - self.last_updated > 10000 :
+        if now - self.last_updated > 500:
             self.run_display = False
             self.game_menu.loading_menu.show()
 
@@ -109,7 +109,6 @@ class LoadingMenu(Menu):
         self.draw_text(self.display, self.percentage, self.font_name,30, WHITE, 1140,640)
         if self.percentage < 100 :
             self.percentage +=1
-            pygame.time.delay(100)
         else:
             pygame.time.delay(300)
             self.run_display = False

@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
 import pygame
-from src.game import Game, resize_screen
+from src.game import Game
 from src.game_menu import FirstScreenMenu, LoadingMenu, MainMenu, OptionsMenu, CreditsMenu, GameOptionsMenu
 
 FPS = 60
@@ -14,9 +14,8 @@ def main():
     pygame.init()  # initiates pygame
     pygame.display.set_caption(TITLE)
     screen = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
-    display = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
-    game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT, False)
+    game = Game(screen, GAME_WIDTH, GAME_HEIGHT, False)
     tilemap = game.create_isotilemap(600, 100, 1400, 800, '../assets/data/isotilemap.json', 0.5)
     game_menu = game.create_game_menu(GAME_WIDTH, GAME_HEIGHT, game)
     game_menu.first_screen_menu = FirstScreenMenu(game_menu, '../assets/image/fortnite.jpg')
@@ -41,7 +40,7 @@ def main():
             if event.type == pygame.VIDEORESIZE:
                 game.w, game.h = event.w, event.h
                 game.mid_w, game.mid_h = game.w / 2, game.h / 2
-                resize_screen(event.w, event.h, True)
+                game.resize_screen(event.w, event.h, True)
             # LISTEN GAME MENU KEY EVENT
             if event.type == pygame.KEYDOWN:
                 if game.isplaying:

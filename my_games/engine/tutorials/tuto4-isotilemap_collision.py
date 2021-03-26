@@ -25,7 +25,7 @@ def main():
     # GAME ---------------------
     game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
     #game.image.fill(GREEN)
-    fpstext = game.add_dynamic_text(FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20, game.ui_sprites)
+    fpstext = game.add_dynamic_text('',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20, game.ui_sprites)
     tilemap = game.create_isotilemap(600, 100, 1400, 800, '../assets/data/isotilemap.json', 0.5)
     player = game.create_isoplayer(530, 110, '../assets/data/isoplayer.json',
                                    tilemap.rect.x, tilemap.rect.y, tilemap.tile_w, tilemap.tile_h, 2)
