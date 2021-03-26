@@ -5,7 +5,7 @@ from src.gamesprite import GameSprite
 
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+    def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -52,7 +52,7 @@ class Text(pygame.sprite.Sprite):
 
 
 class DynamicText(Text):
-    def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, behind=False):
+    def __init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None):
         Text.__init__(self, text, font_name, size, color, bg_color, x, y, layer, sprite, behind)
 
     def update(self):

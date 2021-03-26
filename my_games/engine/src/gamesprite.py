@@ -1,6 +1,5 @@
-#AngelStreet @2021
+# AngelStreet @2021
 ####################################################
-from src.utility import load_json, move_sprite, iso_to_cartesian
 import pygame
 
 
