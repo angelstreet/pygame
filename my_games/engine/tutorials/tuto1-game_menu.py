@@ -1,7 +1,6 @@
 # AngelStreet @2021
 ####################################################
-import pygame,sys
-print(sys.path)
+import pygame
 from engine.src.game import Game, LAYER_GAME, LAYER_UI
 from engine.src.game_menu import FirstScreenMenu, LoadingMenu, MainMenu, OptionsMenu, CreditsMenu, GameOptionsMenu
 
@@ -14,20 +13,18 @@ def main():
     # INIT PYGAME----------------------
     pygame.init()  # initiates pygame
     pygame.display.set_caption(TITLE)
-    screen = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+    display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
-    game = Game(screen, GAME_WIDTH, GAME_HEIGHT, False)
-    tilemap = game.create_isotilemap(LAYER_GAME, 600, 100, 1400, 800, '../assets/data/isotilemap.json', 0.5)
+    game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     game_menu = game.create_game_menu(LAYER_UI, GAME_WIDTH, GAME_HEIGHT, game)
-    game_menu.first_screen_menu = FirstScreenMenu(LAYER_UI,game_menu, '../assets/image/fortnite.jpg')
-    game_menu.loading_menu = LoadingMenu(LAYER_UI,
-        game_menu, '../assets/image/fortnite_loading.jpg', '../assets/sound/fortnite_loading.mp3')
-    game_menu.main_menu = MainMenu(LAYER_UI,game_menu)
-    game_menu.options_menu = OptionsMenu(LAYER_UI,game_menu)
-    game_menu.credits_menu = CreditsMenu(LAYER_UI,game_menu)
-    game_menu.game_options_menu = GameOptionsMenu(LAYER_UI,game_menu)
-    game_menu.current_menu = game_menu.first_screen_menu
-    game_menu.current_menu.show()
+    game_menu.add('firstscreen', FirstScreenMenu(game_menu, '../assets/image/fortnite.jpg'))
+    game_menu.add('loading_menu', LoadingMenu(game_menu, '../assets/image/fortnite_loading.jpg',
+                              '../assets/sound/fortnite_loading.mp3'))
+    game_menu.add('main_menu', MainMenu(game_menu))
+    game_menu.add('options_menu', OptionsMenu(game_menu))
+    game_menu.add('credits_menu', CreditsMenu(game_menu))
+    game_menu.add('game_options_menu', GameOptionsMenu(game_menu))
+    game_menu.show('main_menu')
 
     # LOOP----------------------
     running = True
@@ -44,24 +41,20 @@ def main():
                 game.resize_screen(event.w, event.h, True)
             # LISTEN GAME MENU KEY EVENT
             if event.type == pygame.KEYDOWN:
-                if game.isplaying:
-                    if event.key == pygame.K_ESCAPE:
-                        game.K_ESCAPE = True
-                        game.isplaying = False
+                if event.key == pygame.K_ESCAPE:
+                    if not game_menu.current_menu:
                         game.resize_screen(game.w, game.h)
-                        game_menu.game_options_menu.show()
-                        game.show_game_menu()
-                else:
-                    if event.key == pygame.K_ESCAPE:
+                        game_menu.show('game_options_menu')
+                    else:
                         game_menu.current_menu.go_back()
-                    if event.key == pygame.K_RETURN:
-                        game_menu.current_menu.press_enter()
-                    if event.key == pygame.K_BACKSPACE:
-                        game_menu.current_menu.go_back()
-                    if event.key == pygame.K_DOWN:
-                        game_menu.current_menu.move_cursor_down()
-                    if event.key == pygame.K_UP:
-                        game_menu.current_menu.move_cursor_up()
+                elif event.key == pygame.K_RETURN:
+                    game_menu.current_menu.press_enter()
+                elif event.key == pygame.K_BACKSPACE:
+                    game_menu.current_menu.go_back()
+                elif event.key == pygame.K_DOWN:
+                    game_menu.current_menu.move_cursor_down()
+                elif event.key == pygame.K_UP:
+                    game_menu.current_menu.move_cursor_up()
         game.draw()
         clock.tick(FPS)
 

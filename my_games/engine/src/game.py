@@ -15,12 +15,12 @@ LAYER_BG = 0
 LAYER_GAME = 1
 LAYER_UI = 2
 
+
 class Game():
-    def __init__(self, display, w, h, isplaying=True):
+    def __init__(self, display, w, h):
         self.display = display
         self.w, self.h = w, h
         self.mid_w, self.mid_h = w / 2, h / 2
-        self.isplaying = isplaying
         self.font_name = FONT_NAME
         self.font_size = FONT_SIZE
         self.game_sprites = pg.sprite.LayeredUpdates()
@@ -34,21 +34,21 @@ class Game():
         else:
             pg.display.set_mode((w, h))
 
-    def add_text(self, layer,text, font_name, size, color, bg_color, x, y, sprite=None):
+    def add_text(self, layer, text, font_name, size, color, bg_color, x, y, sprite=None):
         text = Text(text, font_name, size, color, bg_color, x, y, sprite)
-        self.game_sprites.add(text,_layer=layer)
+        self.game_sprites.add(text, _layer=layer)
         return text
 
-    def add_dynamic_text(self,layer, text, font_name, size, color, bg_color, x, y, sprite=None):
+    def add_dynamic_text(self, layer, text, font_name, size, color, bg_color, x, y, sprite=None):
         text = DynamicText(text, font_name, size, color, bg_color, x, y, sprite)
-        self.game_sprites.add(text,_layer=layer)
+        self.game_sprites.add(text, _layer=layer)
         return text
 
-    def add_image(self,layer, img_path, alpha, colorkey, x, y, scale, sprite=None):
+    def add_image(self, layer, img_path, alpha, colorkey, x, y, scale, sprite=None):
         img = GameSprite()
         img.load_image(img_path, alpha, colorkey, scale)
         img.move(x, y)
-        self.game_sprites.add(img,_layer=layer)
+        self.game_sprites.add(img, _layer=layer)
         return img
 
 # PLAYER-----------------------------------------------------
@@ -67,7 +67,7 @@ class Game():
     def create_isoplayer(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
         isoplayer = IsoPlayer(layer, json, map_x, map_y, tile_w, tile_h, scale)
         isoplayer.move(x, y)
-        self.game_sprites.add(isoplayer,_layer=layer)
+        self.game_sprites.add(isoplayer, _layer=layer)
         return isoplayer
 # MAP-----------------------------------------------------
 
@@ -77,7 +77,7 @@ class Game():
         return self.tilemap
 
     def create_isotilemap(self, layer, map_json, map_scale=1, debug=False):
-        isotilemap = IsoTileMap(map_json, map_scale, debug)
+        self.isotilemap = IsoTileMap(map_json, map_scale, debug)
         self.game_sprites.add(self.isotilemap.get_sprites(), _layer=layer)
         return self.isotilemap
 # HEALTHBAR-----------------------------------------------------
@@ -149,10 +149,9 @@ class Game():
         self.game_sprites.update()
         self.game_sprites.draw(self.display)
 
-    def draw(self):
-        self.display.fill(WHITE)
-        if self.isplaying:
-            self._draw_game()
+    def draw(self, color=WHITE):
+        self.display.fill(color)
+        self._draw_game()
         pg.display.update()
 
     def resume(self):

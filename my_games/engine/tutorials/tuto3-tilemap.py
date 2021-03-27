@@ -15,7 +15,6 @@ def get_keyboard_keys():
         return pygame.K_q, pygame.K_d, pygame.K_z, pygame.K_s
     return pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s
 
-
 def main():
     # INIT PYGAME----------------------
     pygame.init()  # initiates pygame
