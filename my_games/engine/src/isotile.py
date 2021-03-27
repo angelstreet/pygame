@@ -1,8 +1,8 @@
-#AngelStreet @2021
+# AngelStreet @2021
 ####################################################
 import pygame
-from src.gamesprite import GameSprite
-from src.utility import load_json, cartesian_to_iso
+from engine.src.gamesprite import GameSprite
+from engine.src.utility import load_json, cartesian_to_iso
 RED = (255, 0, 0)
 
 

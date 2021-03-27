@@ -1,7 +1,7 @@
-#AngelStreet @2021
+# AngelStreet @2021
 ####################################################
 import pygame
-from src.utility import load_json,draw_image
+from engine.src.utility import load_json
 DEFAULT_COLOR = (255, 0, 0)
 DEFAULT_BORDER = {'color': (0, 0, 0), 'size': 1, 'radius': 0}
 
@@ -19,16 +19,16 @@ class GameBar(pygame.sprite.Sprite):
 
 class ColorGameBar(GameBar):
     def __init__(self, value, total, x, y, w, h, color=None, border=None):
-        GameBar.__init__(self,value, total, x, y)
+        GameBar.__init__(self, value, total, x, y)
         self.w = w
         self.h=h
         self.color = color or DEFAULT_COLOR
         self.border = border or DEFAULT_BORDER
-        self.init_bar()
+        self._init_bar()
         self.draw()
 
 
-    def init_bar(self):
+    def _init_bar(self):
         self.border_color =self.border['color']
         self.border_size =self.border['size']
         self.border_radius =self.border['radius']
@@ -49,17 +49,17 @@ class ColorGameBar(GameBar):
 
 class ImageGameBar(GameBar):
     def __init__(self, value, total, x, y, bg_image, fill_image,fill_offset,scale, alpha=True, colorkey=None):
-        GameBar.__init__(self,value, total, x, y)
+        GameBar.__init__(self, value, total, x, y)
         self.bg_image = bg_image
         self.fill_image = fill_image
         self.fill_offset = fill_offset
         self.scale = scale
         self.alpha = alpha
         self.colorkey = colorkey
-        self.init_bar()
+        self._init_bar()
         self.draw()
 
-    def init_bar(self):
+    def _init_bar(self):
         if self.alpha :
             self.bg_sprite = pygame.image.load(self.bg_image).convert_alpha()
             self.fill_sprite = pygame.image.load(self.fill_image).convert_alpha()
@@ -98,15 +98,15 @@ class ImageGameBar(GameBar):
 
 
 class HeartGameBar(ImageGameBar):
-    def __init__(self, value, total, x, y, json,scale=1,offset=0):
+    def __init__(self,value, total, x, y, json,scale=1,offset=0):
         GameBar.__init__(self,value, total, x, y)
         self.json = json
         self.scale = scale
         self.offset = offset
-        self.init_bar()
+        self._init_bar()
         self.draw()
 
-    def parse_data(self):
+    def _parse_data(self):
         self.sprite_name = self.data['heart']['sprite_name']
         self.colorkey = tuple(self.data['heart']['colorkey'])
         self.w = self.data['heart']['w']
@@ -116,9 +116,9 @@ class HeartGameBar(ImageGameBar):
         self.empty_id = self.data['heart']['empty_id']
         self.half_id = self.data['heart']['half_id']
 
-    def init_bar(self):
+    def _init_bar(self):
         self.data = load_json(self.json)
-        self.parse_data()
+        self._parse_data()
         self.spritesheet = pygame.image.load(self.sprite_name).convert_alpha()
         rect = self.spritesheet.get_rect()
         dimension = round(rect.width*self.scale), round(rect.height*self.scale)
@@ -131,7 +131,7 @@ class HeartGameBar(ImageGameBar):
         self.w *= self.scale
         self.h*=self.scale
 
-    def draw_heart(self,i,sprite_id) :
+    def _draw_heart(self,i,sprite_id) :
         dest = i*self.w+i*self.offset,0
         area = (sprite_id-1)*self.w,0,self.w,self.h
         self.image.blit(self.spritesheet,(dest),area)
@@ -140,8 +140,8 @@ class HeartGameBar(ImageGameBar):
         nb_hearts = int(self.total/2)
         for i in range(0,nb_hearts) :
             if i*2+2<=round(self.value) :
-                self.draw_heart(i,self.full_id)
+                self._draw_heart(i,self.full_id)
             elif i*2+1<=round(self.value) :
-                self.draw_heart(i,self.half_id)
+                self._draw_heart(i,self.half_id)
             else :
-                self.draw_heart(i,self.empty_id)
+                self._draw_heart(i,self.empty_id)

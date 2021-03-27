@@ -1,8 +1,8 @@
 #AngelStreet @2021
 ####################################################
 import pygame
-from src.gamesprite import GameSprite
-from src.utility import load_json, move_sprite, iso_to_cartesian
+from engine.src.gamesprite import GameSprite
+from engine.src.utility import load_json, move_sprite, iso_to_cartesian
 
 
 class IsoPlayer(GameSprite):

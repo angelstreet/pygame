@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
 import pygame
-from src.game import Game, FONT_NAME, BLACK, RED
+from engine.src.game import Game, FONT_NAME, BLACK,LAYER_GAME,LAYER_UI
 
 
 FPS = 60
@@ -23,11 +23,9 @@ def main():
     display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    #game.image.fill(RED)
-    fpstext = game.add_dynamic_text(3,'', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,
-                                    20)
-    tilemap = game.create_tilemap(2, '../assets/data/tilemap.json', 0.5, True)
-    #game.image.blit(tilemap.tile_list['1']['image'], (0, 0))
+    fpstext = game.add_dynamic_text(LAYER_UI,'', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,
+                                    20,None)
+    tilemap = game.create_tilemap(LAYER_GAME,'../assets/data/tilemap.json', 0.5, True)
     # LOOP ---------------------
     running = True
     clock = pygame.time.Clock()

@@ -1,118 +1,122 @@
 # AngelStreet @2021
 ####################################################
-import pygame as pg
-from engine.src.utility import load_json
-from engine.src.tile import Tile
+import pygame
+from engine.src.utility import load_json, cartesian_to_iso
+from engine.src.isotile import Tile
+from engine.src.gamesprite import GameSprite
 
 
-class TileMap():
-    def __init__(self, map_json, map_scale, debug=False):
-        self.map_json, self.map_scale = map_json, map_scale
+class IsoTileMap(GameSprite):
+    def __init__(self, x, y, map_w, map_h, json, scale=1, debug=False):
+        GameSprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.map_w = map_w
+        self.map_h = map_h
+        self.json = json
+        self.scale = scale
+        self.static_tiles = []
+        self.dynamic_tiles = []
+        self.tiles = []
         self.debug = debug
-        self.map_scale = map_scale
-        self.tileset_list_data = {}
-        self.tile_list_data = {}
-        self.tileset_list = {}
-        self.tile_list = {}
-        self.tilemap = []
-        self.sprites = []
-        self._load_map_json()
-        self._create_tileset_list()
-        self._create_tile_list()
-        self._create_tilemap()
+        self.init_map()
+        self.draw_map()
 
-    def _load_map_json(self):
-        data = load_json(self.map_json)
-        self.tileset_list_data = data['tilemap']['tileset_list']
-        self.tile_list_data = data['tilemap']['tile_list']
-        self.tilemap_data = data['tilemap']['tilemap']
-        self.tilemap_w = data['tilemap']['tilemap_w']
-        self.tilemap_h = data['tilemap']['tilemap_h']
-        self.tile_w = data['tilemap']['tile_w']*self.map_scale
-        self.tile_h = data['tilemap']['tile_h']*self.map_scale
+    def load_map_data_from_json(self):
+        data = load_json(self.json)
+        self.tilesheet_name = data['tilemap']['tilesheet_name']
+        self.colorkey = data['tilemap']['colorkey']
+        self.tiles_data = data['tilemap']['tiles_data']
+        self.map_data = data['tilemap']['map_data']
+        self.tile_w = data['tilemap']['tile_w']
+        self.tile_h = data['tilemap']['tile_h']
 
-    # 1 - Tileset list
-    def _scale_tileset(self, surface):
-        rect = surface.get_rect()
-        new_w = round(rect.width*self.map_scale)
-        new_h = round(rect.height*self.map_scale)
-        return pg.transform.scale(surface, (new_w, new_h))
+    def sort_tile(self, tile):
+        if tile.is_static():
+            self.static_tiles.append(tile)
+        else:
+            self.dynamic_tiles.append(tile)
 
-    def _create_tileset_list(self):
-        for id, tileset_data in self.tileset_list_data.items():
-            path = tileset_data['path']
-            colorkey = tileset_data['colorkey']
-            self.tileset_list[id] = {}
-            self.tileset_list[id]['path'] = path
-            self.tileset_list[id]['colorkey'] = colorkey
-            if colorkey:
-                self.tileset_list[id]['image'] = pg.image.load(path).convert()
-                self.tileset_list[id]['image'].set_colorkey(colorkey)
-            else:
-                self.tileset_list[id]['image'] = pg.image.load(path).convert_alpha()
-            self.tileset_list[id]['rect'] = self.tileset_list[id]['image'].get_rect()
-            if self.map_scale != 1:
-                self.tileset_list[id]['image'] = self._scale_tileset(self.tileset_list[id]['image'])
-            self.tileset_list[id]['rect'] = self.tileset_list[id]['image'].get_rect()
-
-    # 2 - Tile list
-    def _create_tile_list(self):
-        for id, tileset_data in self.tile_list_data.items():
-            tile_list_id = str(id)
-            self.tile_list[tile_list_id] = {}
-            tileset_id = str(tileset_data['tileset'])
-            x = round(tileset_data['x'])
-            y = round(tileset_data['y'])
-            w = round(tileset_data['w']*self.map_scale)
-            h = round(tileset_data['h']*self.map_scale)
-            self.tile_list[tile_list_id]['tileset'] = tileset_id
-            self.tile_list[tile_list_id]['x'], self.tile_list[tile_list_id]['y'] = x, y
-            self.tile_list[tile_list_id]['w'], self.tile_list[tile_list_id]['h'] = w, h
-            tile_sprite = pg.Surface((w, h), pg.SRCALPHA, 32).convert_alpha()
-            tile_sprite.blit(self.tileset_list[tileset_id]['image'], (0, 0), (x, y, w, h))
-            self.tile_list[tile_list_id]['image'] = tile_sprite
-            self.tile_list[tile_list_id]['rect'] = tile_sprite.get_rect()
-    # 3 - Tilemap
-
-    def _create_tilemap(self):
-        for j, row in enumerate(self.tilemap_data):
-            for i, tiles in enumerate(row):
-                j_list = []
-                if len(tiles) > 0:
-                    i_list = []
-                    for tile_data in tiles:
-                        tile = self._create_tile(tile_data, i, j)
-                        self.move_tile(tile)
-                        i_list.append(tile)
-                j_list.append(i_list)
-            self.tilemap.append(j_list)
-
-    # 4 - Tile
-    def _create_tile(self, tile_data,  i, j):
-        tile_id = str(tile_data['tile_id'])
-        tile_z, tile_flip, tile_rotate, tile_offsety = 0, False, 0, 0  # optional parameters
-        if 'z' in tile_data.keys():
-            tile_z = tile_data['z']*self.map_scale
-        if 'flip' in tile_data.keys():
-            tile_flip = tile_data['flip']
-        if 'rotate' in tile_data.keys():
-            tile_rotate = tile_data['rotate']
-        if 'offsety' in tile_data.keys():
-            tile_offsety = tile_data['offsety']*self.map_scale
-        tile_sprite = self.tile_list[tile_id]
-        tile = Tile(tile_id, tile_sprite['image'], i, j, tile_z, self.tile_w,
-                    self.tile_h, tile_flip, tile_rotate, tile_offsety)
-        self.sprites.append(tile)
+    def draw_tile(self, i, j, z, tile_frame, sort, rigid):
+        tile_data = self.tileset[tile_frame-1]
+        tile_sprite, w, h, offsetx, offsety = tile_data
+        isox, isoy = cartesian_to_iso(i, j, w, h+offsety)
+        tile = Tile(self, tile_sprite, tile_frame, i, j, z, w,
+                    h, isox, isoy, offsetx, offsety, sort, rigid)
+        self.sort_tile(tile)
         return tile
 
-    # ------------------------------------------------------------------
-    # Public
-    def move_tile(self,tile) :
-        tile.rect.x = tile.x
-        tile.rect.y = tile.y
+    def zsort(self, tile):
+        return tile['z']
 
-    def get_sprites(self):
-        return self.sprites
+    def update(self):
+        pass
+
+    def draw_tiles(self, i, j, tile_list):
+        # if self.debug and (x>3 or y >3) : return
+        tile_list.sort(key=self.zsort, reverse=True)
+        tiles = []
+        for tile in tile_list:
+            tile_frame = tile['tile_frame']
+            z = tile['z']*self.scale
+            sort, rigid = False, False
+            if 'sort' in tile:
+                sort = tile['sort']
+            if 'rigid' in tile:
+                rigid = True
+            tile = self.draw_tile(i, j, z, tile_frame, sort, rigid)
+            tiles.append(tile)
+        return tiles
+
+    def init_map(self):
+        self.create_surface(self.map_w, self.map_h)
+        self.load_map_data_from_json()
+        # Draw spritesheet with all tiles
+        if self.colorkey:
+            self.tilesheet_img = pygame.image.load(self.tilesheet_name).convert()
+            self.tilesheet_img.set_colorkey(self.colorkey)
+        else:
+            self.tilesheet_img = pygame.image.load(self.tilesheet_name).convert_alpha()
+        rect = self.tilesheet_img.get_rect()
+        self.tilesheet_img = pygame.transform.scale(
+            self.tilesheet_img, (round(rect.width*self.scale), round(rect.height*self.scale)))
+        # Draw each tiles on a sprite
+        self.tileset = []
+        self.tiles = []
+        self.tile_w = int(self.tile_w*self.scale)
+        self.tile_h = int(self.tile_h*self.scale)
+        for tile_data in self.tiles_data:
+            x, y = tile_data['x'], tile_data['y']
+            offsetx, offsety = tile_data['offsetx'], tile_data['offsety']
+            x, y, offsetx, offsety = [int(elt*self.scale) for elt in (x, y, offsetx, offsety)]
+            tile_sprite = pygame.Surface((self.tile_w, self.tile_h),
+                                         pygame.SRCALPHA, 32).convert_alpha()
+            tile_sprite.blit(self.tilesheet_img, (0, 0), (x, y, self.tile_w, self.tile_h))
+
+            if self.debug:
+                self.image.blit(tile_sprite, (x+180, y))
+            self.tileset.append((tile_sprite, self.tile_w, self.tile_h, offsetx, offsety))
+        # Draw the tilemap
+        for j, row in enumerate(self.map_data):
+            col = []
+            for i, tile_list in enumerate(row):
+                col.append(self.draw_tiles(i, j, tile_list))
+            self.tiles.append(col)
+
+    def draw_map(self):
+        for tile in self.static_tiles:
+            x = tile.x+tile.offsetx
+            y = tile.y+tile.z+tile.offsety  # 100 is security based on average offsety
+            self.blit(tile.image, (x+self.map_w/2,y+50), False)
+        self.blits()
+        self.rect.x = self.x-self.map_w/2
+        self.rect.y = self.y-50
+
+    def getBackground(self):
+        return self
+
+    def getTiles(self):
+        return self.dynamic_tiles
 
     def check_path(self, paths, tree, src_i, src_j, dst_i, dst_j):
         paths.append((src_i, src_j))
@@ -205,6 +209,3 @@ class TileMap():
                 col.append(tile)
             tile_list.append(col)
         return tile_list, best_path_score
-
-    def zsort(self, tile):
-        return 1

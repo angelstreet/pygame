@@ -1,5 +1,5 @@
 import pygame
-from src.utility import FPS, WHITE, BLACK
+from engine.src.utility import FPS, WHITE, BLACK
 
 
 class GameMenu(pygame.sprite.Sprite):

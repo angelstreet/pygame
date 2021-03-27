@@ -11,7 +11,7 @@ class Tile(pg.sprite.Sprite):
         self.tile_sprite = tile_sprite
         self.i, self.j, self.z = i, j, z
         self.tile_w, self.tile_h = tile_w, tile_h
-        self.rotate, self.offsety = rotate, offsety
+        self.flip,self.rotate, self.offsety = flip,rotate, offsety
         self._init_tile()
 
     def _init_tile(self):
@@ -21,8 +21,6 @@ class Tile(pg.sprite.Sprite):
         self.mask = pg.mask.from_surface(self.image)
         self.x = self.i*self.tile_w
         self.y = self.j*self.tile_h
-        self.rect.x = self.x
-        self.rect.y = self.y
         #print(self.i,self.j,self.tile_w,self.tile_h,self.x,self.y)
 
     # ------------------------------------------------------------------

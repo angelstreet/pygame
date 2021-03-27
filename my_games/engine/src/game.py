@@ -1,36 +1,31 @@
 import pygame as pg
-from src.utility import WHITE, BLACK, RED
-from src.gamebar import ColorGameBar, ImageGameBar, HeartGameBar
-from src.isotilemap import IsoTileMap
-from src.tilemap import TileMap
-from src.isoplayer import IsoPlayer
-from src.game_menu import GameMenu
-from src.gametext import Text, DynamicText
-from src.gamesprite import GameSprite
+from engine.src.utility import WHITE, BLACK, RED
+from engine.src.gamebar import ColorGameBar, ImageGameBar, HeartGameBar
+from engine.src.isotilemap import IsoTileMap
+from engine.src.tilemap import TileMap
+from engine.src.isoplayer import IsoPlayer
+from engine.src.game_menu import GameMenu
+from engine.src.gametext import Text, DynamicText
+from engine.src.gamesprite import GameSprite
 
 FPS = 60
 FONT_NAME = pg.font.get_default_font()
 FONT_SIZE = 14
+LAYER_BG = 0
+LAYER_GAME = 1
+LAYER_UI = 2
 
-
-class Game(pg.sprite.Sprite):
+class Game():
     def __init__(self, display, w, h, isplaying=True):
-        pg.sprite.Sprite.__init__(self)
         self.display = display
         self.w, self.h = w, h
         self.mid_w, self.mid_h = w / 2, h / 2
         self.isplaying = isplaying
-        self.init_game()
-
-    def init_game(self):
-        self.image = pg.Surface((self.w, self.h))
-        self.rect = self.image.get_rect()
-        self.font_name = pg.font.get_default_font()
-        self.font_size = 20
+        self.font_name = FONT_NAME
+        self.font_size = FONT_SIZE
         self.game_sprites = pg.sprite.LayeredUpdates()
-        # ------------------------------------------------------
-        self.image.fill((255, 255, 255))
         self.hided_sprites = []
+
 
 # GAME-----------------------------------------------------
     def resize_screen(self, w, h, resizable=False):
@@ -39,70 +34,68 @@ class Game(pg.sprite.Sprite):
         else:
             pg.display.set_mode((w, h))
 
-    def add_text(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None, layer = 1):
-        text = Text(text, font_name, size, color, bg_color, x, y, layer, sprite)
+    def add_text(self, layer,text, font_name, size, color, bg_color, x, y, sprite=None):
+        text = Text(text, font_name, size, color, bg_color, x, y, sprite)
+        self.game_sprites.add(text,_layer=layer)
         return text
 
-    def add_dynamic_text(self, text, font_name, size, color, bg_color, x, y, layer, sprite=None,  layer = 1):
-        text = DynamicText(text, font_name, size, color, bg_color, x, y, layer, sprite)
+    def add_dynamic_text(self,layer, text, font_name, size, color, bg_color, x, y, sprite=None):
+        text = DynamicText(text, font_name, size, color, bg_color, x, y, sprite)
+        self.game_sprites.add(text,_layer=layer)
         return text
 
-    def add_image(self, img_path, alpha, colorkey, x, y, scale, layer, sprite=None, behind=False, layer = 1):
+    def add_image(self,layer, img_path, alpha, colorkey, x, y, scale, sprite=None):
         img = GameSprite()
         img.load_image(img_path, alpha, colorkey, scale)
         img.move(x, y)
+        self.game_sprites.add(img,_layer=layer)
         return img
 
 # PLAYER-----------------------------------------------------
-    def create_game_menu(self, w, h, game,  layer=0):
+    def create_game_menu(self, layer, w, h, game):
         self.game_menu = GameMenu(w, h, game)
-        self.game_sprites.add(self.game_menu, 1)
+        self.game_sprites.add(self.game_menu, _layer=layer)
         return self.game_menu
 
     def hide_game_menu(self):
         self.game_sprites.remove(self.game_menu)
 
-    def show_game_menu(self, layer=0):
-        self.game_sprites.add(self.game_menu, 1)
+    def show_game_menu(self, layer):
+        self.game_sprites.add(self.game_menu, _layer=layer)
 # ISOPLAYER-----------------------------------------------------
 
-    def create_isoplayer(self, x, y, json, map_x, map_y, tile_w, tile_h, scale=1, layer = 1):
-        isoplayer = IsoPlayer(json, map_x, map_y, tile_w, tile_h, scale)
+    def create_isoplayer(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
+        isoplayer = IsoPlayer(layer, json, map_x, map_y, tile_w, tile_h, scale)
         isoplayer.move(x, y)
-        self.game_sprites.add(isoplayer)
+        self.game_sprites.add(isoplayer,_layer=layer)
         return isoplayer
 # MAP-----------------------------------------------------
 
-    def create_tilemap(self, map_json, map_scale=1, debug=False, layer = 1):
+    def create_tilemap(self, layer, map_json, map_scale=1, debug=False):
         self.tilemap = TileMap(map_json, map_scale, debug)
-        self.game_sprites.add(self.tilemap.get_sprites(), layer=0)
+        self.game_sprites.add(self.tilemap.get_sprites(), _layer=layer)
         return self.tilemap
 
-    def create_isotilemap(self, x, y, map_w, map_h, json, scale, debug=False, layer = 1):
-        isotilemap = IsoTileMap(x, y, map_w, map_h, json, scale, debug)
-        self.bg_sprites.add(isotilemap.getBackground())
-        tiles = isotilemap.getTiles()
-        for tile in tiles:
-            tile.rect.x += x
-            tile.rect.y += y
-        self.game_sprites.add(tiles)
-        return isotilemap
+    def create_isotilemap(self, layer, map_json, map_scale=1, debug=False):
+        isotilemap = IsoTileMap(map_json, map_scale, debug)
+        self.game_sprites.add(self.isotilemap.get_sprites(), _layer=layer)
+        return self.isotilemap
 # HEALTHBAR-----------------------------------------------------
 
-    def create_colorgamebar(self, value, total, x, y, w, h, layer = 1):
+    def create_colorgamebar(self, layer, value, total, x, y, w, h):
         colorgamebar = ColorGameBar(value, total, x, y, w, h)
-        self.ui_sprites.add(colorgamebar)
+        self.game_sprites.add(colorgamebar,_layer=layer)
         return colorgamebar
 
-    def create_imagegamebar(self, value, total, x, y, bg_img, fill_img, fill_offset, scale, alpha=True, keycolor=False, layer = 1):
+    def create_imagegamebar(self, layer, value, total, x, y, bg_img, fill_img, fill_offset, scale, alpha=True, keycolor=False):
         imagegamebar = ImageGameBar(value, total, x, y, bg_img, fill_img,
                                     fill_offset, scale, alpha, keycolor)
-        self.ui_sprites.add(imagegamebar)
+        self.game_sprites.add(imagegamebar,_layer=layer)
         return imagegamebar
 
-    def create_heartgamebar(self, value, total, x, y, json, scale, offset, layer = 1):
+    def create_heartgamebar(self,layer, value, total, x, y, json, scale, offset):
         healthbar = HeartGameBar(value, total, x, y, json, scale, offset)
-        self.ui_sprites.add(healthbar)
+        self.game_sprites.add(healthbar,_layer=layer)
         return healthbar
 # COLLISION-----------------------------------------------------
 
@@ -129,7 +122,6 @@ class Game(pg.sprite.Sprite):
 
 # GAME-----------------------------------------------------
     # @profile
-
     def hide_sprites_for_player(self, player):
         for sprite in self.hided_sprites:
             sprite.remove_blend()
@@ -153,14 +145,14 @@ class Game(pg.sprite.Sprite):
         self.game_sprites = pg.sprite.OrderedUpdates(tmp)
 
     # @profile
-    def draw_game(self):
+    def _draw_game(self):
         self.game_sprites.update()
         self.game_sprites.draw(self.display)
 
     def draw(self):
         self.display.fill(WHITE)
         if self.isplaying:
-            self.draw_game()
+            self._draw_game()
         pg.display.update()
 
     def resume(self):

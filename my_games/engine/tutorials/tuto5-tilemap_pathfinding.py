@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
 import pygame
-from src.game import Game, FONT_NAME, BLACK
+from engine.src.game import Game, FONT_NAME, BLACK,LAYER_GAME,LAYER_UI
 
 
 FPS = 60
@@ -17,15 +17,12 @@ def main():
     # INIT PYGAME----------------------
     pygame.init()  # initiates pygame
     pygame.display.set_caption(TITLE)
-    screen = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
-    display = pygame.Surface((GAME_WIDTH, GAME_HEIGHT))
+    display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
-    game = Game(screen, display, GAME_WIDTH, GAME_HEIGHT)
-    fpstext = game.add_dynamic_text('FPS',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20,
-                                    game.ui_sprites)
-    pathtext = game.add_dynamic_text('Path',FONT_NAME, 20, BLACK, None, 50, 20,
-                                     game.ui_sprites)
-    tilemap = game.create_isotilemap(600, 100, 1400, 800,
+    game = Game(display, GAME_WIDTH, GAME_HEIGHT)
+    fpstext = game.add_dynamic_text(LAYER_UI, 'FPS',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
+    pathtext = game.add_dynamic_text(LAYER_UI,'Path',FONT_NAME, 20, BLACK, None, 50, 20)
+    tilemap = game.create_isotilemap(LAYER_GAME,600, 100, 1400, 800,
                                      '../assets/data/isotilemap2.json', 0.5)
     tilemap.game = game
     # LOOP ---------------------
@@ -79,7 +76,7 @@ def main():
                                     pathtext.text = "No path found"
 
         fpstext.text = str(int(clock.get_fps()))+" FPS"
-        game.draw_screen()
+        game.draw()
         clock.tick(FPS)
 
 

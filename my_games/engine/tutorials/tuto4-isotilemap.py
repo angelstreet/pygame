@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
 import pygame
-from src.game import Game, FONT_NAME, BLACK
+from engine.src.game import Game, FONT_NAME, BLACK,LAYER_GAME,LAYER_UI
 
 
 FPS = 60
@@ -24,12 +24,12 @@ def main():
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     # game.image.fill(GREEN)
-    fpstext = game.add_dynamic_text('', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,
-                                    20, game.ui_sprites)
+    fpstext = game.add_dynamic_text(game.LAYER_UI,'', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,
+                                    20)
     tilemap = game.create_isotilemap(
         600, 100, 1400, 800, '../assets/data/isotilemap2.json', 0.5, True)
     tilemap.game = game
-    player = game.create_isoplayer(530, 110, '../assets/data/isoplayer.json',
+    player = game.create_isoplayer(game.LAYER_GAME, 530, 110, '../assets/data/isoplayer.json',
                                    tilemap.rect.x, tilemap.rect.y,
                                    tilemap.tile_w, tilemap.tile_h, 2)
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()
@@ -68,7 +68,7 @@ def main():
                 if event.key == pygame.K_RETURN:
                     player.K_RETURN = False
         fpstext.text = str(int(clock.get_fps()))+" FPS"
-        game.draw_screen()
+        game.draw()
         clock.tick(FPS)
 
 
