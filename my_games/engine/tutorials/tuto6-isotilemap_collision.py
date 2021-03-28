@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
 import pygame
-from src.game import Game, GREEN, FONT_NAME, BLACK, LAYER_UI,LAYER_GAME
+from engine.src.game import Game, FONT_NAME, BLACK, LAYER_UI, LAYER_GAME
 
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 1200, 600
@@ -22,11 +22,12 @@ def main():
     display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    #game.image.fill(GREEN)
-    fpstext = game.add_dynamic_text(LAYER_UI,'',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
-    tilemap = game.create_isotilemap(LAYER_GAME,600, 100, 1400, 800, '../assets/data/isotilemap.json', 0.5)
-    player = game.create_isoplayer(LAYER_GAME,530, 110, '../assets/data/isoplayer.json',
-                                   tilemap.rect.x, tilemap.rect.y, tilemap.tile_w, tilemap.tile_h, 2)
+    fpstext = game.add_dynamic_text(LAYER_UI,'', FONT_NAME, 20, BLACK, None,
+                                    GAME_WIDTH-70,20)
+    tilemap = game.create_isotilemap(LAYER_GAME, '../assets/data/isotilemap.json', 0.5)
+    player = game.create_isoplayer(LAYER_GAME, 380, 60, '../assets/data/isoplayer.json',
+                                   tilemap.x, tilemap.y,
+                                   tilemap.tile_w, tilemap.tile_h, 2)
     player.debug = True
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()
     # LOOP ---------------------
@@ -64,10 +65,10 @@ def main():
                 if event.key == pygame.K_RETURN:
                     player.K_RETURN = False
         fpstext.text = str(int(clock.get_fps()))+" FPS"
+        game.sortPlayer(player)
         game.draw()
-        game.sort_game_sprite()
-        game.check_collision()
-        game.hide_sprites_for_player(player)
+        #game.check_collision()
+        #game.hide_sprites_for_player(player)
         clock.tick(FPS)
 
 

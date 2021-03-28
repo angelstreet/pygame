@@ -1,4 +1,4 @@
-#AngelStreet @2021
+# AngelStreet @2021
 ####################################################
 import pygame
 from engine.src.gamesprite import GameSprite
@@ -148,24 +148,18 @@ class Player(GameSprite):
                     c_sprite.parent.blit_front(c_sprite.image)
                     self.last_collision_list.append(c_sprite)
                 if self.current_state == 'fall' and abs(self.z-c_sprite.parent.z-c_sprite.parent.rect.height) < 4:
-                    #if self.debug :print("Bottom Collision", self.z,c_sprite.parent.z,c_sprite.parent.rect.height)
                     c_bottom = -1
                     self.velocity_x, self.velocity_y, self.velocity_z = 0, 0, 0
                     self.set_state("idle")
                     break
                 if self.collision_sprite.rect.x < c_sprite.rect.x+c_sprite.rect.width/2:
-                    #if self.debug :print("Right Collision", self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
                     c_right = -1
                 else:
-                    #if self.debug :print("Left Collision",  self.collision_sprite.rect.x,self.collision_losange_offsetx,c_sprite.rect.x,c_sprite.rect.width/2)
                     c_left = 1
                 if self.collision_sprite.rect.y < c_sprite.rect.y+c_sprite.rect.height/2:
-                    #if self.debug :print("Down Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
                     c_down = -1
                 else:
-                    #if self.debug :print("Up Collision", self.collision_sprite.rect.y,self.collision_losange_offsety,c_sprite.rect.y,c_sprite.rect.height/2 )
                     c_up = 1
-            #if self.debug :print(self.collision_sprite.rect,c_sprite.rect)
         self.collision_list = []
         return c_left, c_right, c_up, c_down, 0, 0
 
@@ -174,8 +168,6 @@ class Player(GameSprite):
         vx = self.velocity_x+(c_left+c_right)*self.velocity
         vy = self.velocity_y+(c_up+c_down)*self.velocity
         vz = self.velocity_z
-        if vz > 0:
-            print(vz, self.z)
         if vx != 0 and vy != 0:
             vx *= 0.8
 
@@ -218,7 +210,7 @@ class Player(GameSprite):
                 self.set_state('attack')
                 self.attack()
         elif self.K_SPACE:
-            if not self.current_state in ('jump', 'fall'):  # need to be abuse for double jumps
+            if not self.current_state in ('jump', 'fall'):
                 self.set_state('jump')
                 self.jump()
         elif not (self.current_state == 'attack' or self.current_state == 'jump' or self.current_state == 'fall' or self.current_state == 'hurt'):
@@ -288,12 +280,12 @@ class Player(GameSprite):
         self.blits()
 
     def zsort(self):
-        isox, isoy = self.rect.x+self.rect.width/2-self.map_x-600-190, self.rect.y+self.rect.height-self.map_y-80
+        isox, isoy = self.rect.x+self.rect.width/2-self.map_x - \
+            600-190, self.rect.y+self.rect.height-self.map_y-80
         x, y = iso_to_cartesian(isox, isoy)
         i = round(x/self.tile_w*self.scale)
         j = round(y/self.tile_h*self.scale)
         depth = int(200+i*100+1000*j-self.z)
-        #print("player", i, j, isox,isoy,x,y)
         return depth
 
     def is_moving(self):
@@ -317,16 +309,12 @@ class Player(GameSprite):
         self.collision_sprite.mask = pygame.mask.from_surface(self.collision_sprite.image)
         self.collision_sprite.rect = self.collision_sprite.image.get_rect()
         self.collision_sprite.x = offsetx
-        self.collision_sprite.y = self.rect.height-self.collision_sprite.rect.height
+        self.collision_sprite.y = self.rect.height-self.collision_sprite.rect.height+offsety
         self.collision_sprite.rect.x = self.rect.x+self.collision_sprite.x
         self.collision_sprite.rect.y = self.rect.y+self.rect.height-self.collision_sprite.y
-
-        #polygon_t=[(w/2+x, y-z), (w+x, h/2+y-z), (w/2+x, h+y-z),(x, h/2+y-z)]
-        # pygame.draw.polygon(collision_sprite,(255,0,0),polygon_t)
-        #pygame.draw.line(collision_sprite,(0,0,255),polygon_t[1],polygon_b[1] )
-        # pygame.draw.line(collision_sprite,(0,0,255),polygon_t[3],polygon_b[3])
         self.collision_sprite.parent = self
         return self.collision_sprite
+
 
 class IsoPlayer(Player):
     def __init__(self, json, map_x, map_y, tile_w, tile_h, scale=1):

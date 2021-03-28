@@ -1,10 +1,11 @@
 # AngelStreet @2021
 ####################################################
-import pygame
+import pygame as pg
 
-class GameSprite(pygame.sprite.Sprite):
+
+class GameSprite(pg.sprite.Sprite):
     def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
+        pg.sprite.Sprite.__init__(self)
         self.z = 0
         self.rigid = False
 
@@ -18,14 +19,14 @@ class GameSprite(pygame.sprite.Sprite):
         return False
 
     def create_surface(self, w, h):
-        self.image = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
-        self.source_image = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
-        self.rear_image = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
-        self.front_image = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
+        self.image = pg.Surface((w, h), pg.SRCALPHA, 32).convert_alpha()
+        self.source_image = pg.Surface((w, h), pg.SRCALPHA, 32).convert_alpha()
+        self.rear_image = pg.Surface((w, h), pg.SRCALPHA, 32).convert_alpha()
+        self.front_image = pg.Surface((w, h), pg.SRCALPHA, 32).convert_alpha()
         self.rect = self.image.get_rect()
 
     def create_mask(self):
-        self.mask = pygame.mask.from_surface(self.source_image)
+        self.mask = pg.mask.from_surface(self.source_image)
 
     def blits(self):
         self.clear()
@@ -57,29 +58,29 @@ class GameSprite(pygame.sprite.Sprite):
         surface.fill(color, rect=None, special_flags=0)
 
     def clear(self):
-        self.image.fill((0, 0, 0, 0), None, pygame.BLEND_RGBA_MULT)
+        self.image.fill((0, 0, 0, 0), None, pg.BLEND_RGBA_MULT)
 
     def clear_source(self):
-        self.source_image.fill((0, 0, 0, 0), None, pygame.BLEND_RGBA_MULT)
+        self.source_image.fill((0, 0, 0, 0), None, pg.BLEND_RGBA_MULT)
 
     def clear_rear(self):
-        self.rear_image.fill((0, 0, 0, 0), None, pygame.BLEND_RGBA_MULT)
+        self.rear_image.fill((0, 0, 0, 0), None, pg.BLEND_RGBA_MULT)
 
     def clear_front(self):
-        self.front_image.fill((0, 0, 0, 0), None, pygame.BLEND_RGBA_MULT)
+        self.front_image.fill((0, 0, 0, 0), None, pg.BLEND_RGBA_MULT)
 
     def blend(self, alpha_color):
         self.blit_front(self.source_image)
-        self.front_image.fill(alpha_color, None, pygame.BLEND_RGBA_MULT)
+        self.front_image.fill(alpha_color, None, pg.BLEND_RGBA_MULT)
 
     def remove_blend(self):
         self.clear_front()
 
     def load_image(self, path, alpha=False, colorkey=None, scale=1):
         if alpha:
-            load_img = pygame.image.load(path).convert_alpha()
+            load_img = pg.image.load(path).convert_alpha()
         else:
-            load_img = pygame.image.load(path).convert()
+            load_img = pg.image.load(path).convert()
         if colorkey:
             load_img.set_colorkey(colorkey)
             self.colorkey = colorkey

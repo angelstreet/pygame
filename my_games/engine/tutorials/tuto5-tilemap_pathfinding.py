@@ -22,8 +22,7 @@ def main():
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     fpstext = game.add_dynamic_text(LAYER_UI, 'FPS',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
     pathtext = game.add_dynamic_text(LAYER_UI,'Path',FONT_NAME, 20, BLACK, None, 50, 20)
-    tilemap = game.create_isotilemap(LAYER_GAME,600, 100, 1400, 800,
-                                     '../assets/data/isotilemap2.json', 0.5)
+    tilemap = game.create_isotilemap(LAYER_GAME, '../assets/data/isotilemap.json', 0.5)
     tilemap.game = game
     # LOOP ---------------------
     running = True
@@ -64,15 +63,15 @@ def main():
 
                             for i in range(0, 3):
                                 if i < len(paths):
-                                    pathtext.text = 'Best path found with score : %s' % score
+                                    pathtext.text = 'Best path found with score: %s' % score
                                     for tile in paths[i]:
                                         tile.blend((255, 0, 0, 255))
-                                    game.draw_screen()
+                                    game.draw()
                                     pygame.time.delay(500)
                                     if i < min(2,len(paths)-1):
                                         for tile in paths[i]:
                                             tile.remove_blend()
-                                else:
+                                elif not paths:
                                     pathtext.text = "No path found"
 
         fpstext.text = str(int(clock.get_fps()))+" FPS"

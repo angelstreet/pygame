@@ -1,56 +1,43 @@
 {"tilemap": {
-  "tilesheet_name" :"../assets/image/tilesheet.png",
-	"colorkey" :null,
+  "tilemap_w" : 20,
+  "tilemap_h" : 20,
   "tile_w" : 160,
   "tile_h" : 120,
-  "_comment": "Multidimensionnal isometric tilemap",
-  "map_data" :[
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":4,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":2,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":4,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":-20,"sort":true, "rigid":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]],
-                [[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":3,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":5,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}],[{"tile_frame":1,"z":0,"sort":true}]]
-              ],
-	"tiles_data" :[
-	{
-			"name": "tile1",
-			"x":0,
-			"y":0,
-			"offsetx" : 0,
-			"offsety" : -40
-	},
-	{
-			"name": "tile2",
-			"x":160,
-			"y":0,
-			"offsetx" : 0,
-			"offsety" : -40
-	},
-	{
-			"name": "tile3",
-			"x":320,
-			"y":0,
-			"offsetx" : 0,
-			"offsety" : -40
-	},
-	{
-			"name": "tile4",
-			"x":480,
-			"y":0,
-			"offsetx" : 0,
-			"offsety" : -40
-	},
-	{
-			"name": "tile5",
-			"x":640,
-			"y":0,
-			"offsetx" : 0,
-			"offsety" : -40
-	}]
+  "tileset_list" :{
+      "1":{"path":"../assets/image/tilesheet.png","colorkey":null}
+  },
+  "tile_list" :  {
+      "1": {"tileset":1, "x":0,"y":0, "w":160,"h":120, "flip":0,"rotate":0},
+      "2": {"tileset":1, "x":160,"y":0, "w":160,"h":120, "flip":0,"rotate":0},
+      "3": {"tileset":1, "x":320,"y":0, "w":160,"h":120, "flip":0,"rotate":0},
+      "4": {"tileset":1, "x":480,"y":0, "w":160,"h":120, "flip":0,"rotate":0},
+      "5": {"tileset":1, "x":640,"y":0, "w":160,"h":120, "flip":0,"rotate":0}
+    },
+  "data" : {
+      "0" :[
+              {"layer":[
+                [5,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1],
+                [5,1,1,1,1,1,1,1,1,1,5,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                [1,1,1,1,1,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1]
+                ]}
+            ]
+      }
 	}
 }

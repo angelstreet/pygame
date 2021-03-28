@@ -5,7 +5,7 @@
   "first_frame":"idle_right_down",
   "resolution":{"max_w":60,"max_h":40},
   "sound":{"jump":"../assets/sound/jump.mp3","attack":"../assets/sound/sword.mp3"},
-  "collision_losange" :{"w":35,"h":20,"offsetx":13,"offsety":-15},
+  "collision_losange" :{"w":35,"h":20,"offsetx":13,"offsety":0},
   "frames" : {
     "idle_right_down" :	[
       {"midbottom":[30,20]},

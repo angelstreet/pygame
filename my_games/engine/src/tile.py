@@ -1,21 +1,24 @@
 # AngelStreet @2021
 ####################################################
 import pygame as pg
+from engine.src.gamesprite import GameSprite
 RED = (255, 0, 0)
 
 
-class Tile(pg.sprite.Sprite):
-    def __init__(self, i, j, z, w, h, tile_list):
-        pg.sprite.Sprite.__init__(self)
+class Tile(GameSprite):
+    def __init__(self, i, j, z, w, h, tile_list, rigid=False):
+        GameSprite.__init__(self)
         self.i, self.j, self.z = i, j, z
         self.w, self.h = w, h
         self.tile_list = tile_list
+        self.rigid = rigid
         self._init_tile()
 
     def _init_tile(self):
         self.image = pg.Surface((self.w, self.h), pg.SRCALPHA, 32).convert_alpha()
+        self.create_surface(self.w, self.h)
         for _, sprite in self.tile_list:
-            self.image.blit(sprite, (0, 0))
+            self.blit(sprite, (0, 0), False)
         self.rect = self.image.get_rect()
         self.mask = pg.mask.from_surface(self.image)
         self.x = self.i*self.w
@@ -37,6 +40,5 @@ class Tile(pg.sprite.Sprite):
         return sprite
 
     def zsort(self):
-        print("test4")
-        depth = int(200+self.i*100+1000*self.j-self.z)
-        return depth
+        self.depth = int(200+self.i*100+1000*self.j-self.z)
+        return self.depth
