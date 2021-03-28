@@ -54,11 +54,8 @@ class Player(GameSprite):
         self.playersheet_img = pygame.transform.scale(self.playersheet_img, dimension)
         # Create sprite for all animation frames
         for key, value in self.frames_data.items():
-            midbottom = value[0]['midbottom']
-            flip = value[-1]
             for i, frame in enumerate(value):
                 if i > 0 and isinstance(frame, dict):
-                    frame_name = frame['name']
                     x, y, w, h, offsetx, offsety = [int(elt*self.scale)
                                                     for elt in self.get_frame_sprite_data(frame)]
                     sprite = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
@@ -333,4 +330,4 @@ class Player(GameSprite):
 
 class IsoPlayer(Player):
     def __init__(self, json, map_x, map_y, tile_w, tile_h, scale=1):
-        Player.__init__(self, json, map_x, map_y, tile_w, tile_h, scale=1)
+        Player.__init__(self, json, map_x, map_y, tile_w, tile_h, scale)

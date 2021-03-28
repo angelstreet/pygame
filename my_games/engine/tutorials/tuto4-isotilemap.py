@@ -29,7 +29,7 @@ def main():
     tilemap = game.create_isotilemap(LAYER_GAME, '../assets/data/isotilemap.json', 0.5, True)
     player = game.create_isoplayer(LAYER_GAME, 530, 110, '../assets/data/isoplayer.json',
                                    tilemap.x, tilemap.y,
-                                   tilemap.tile_w, tilemap.tile_h, 3)
+                                   tilemap.tile_w, tilemap.tile_h, 2)
 
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()
     # LOOP ---------------------
