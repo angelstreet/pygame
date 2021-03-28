@@ -84,9 +84,9 @@ class TileMap():
                     tile = self._create_tile(data, i, j, z)
                     self.move_tile(tile)
                     i_list.append(tile)
+                    self.sprites.append(tile)
                 j_list.append(i_list)
             self.tilemap[str(z)] = j_list
-            self.sprites.append(tile)
 
     # 4 - Tile
     def _create_tile(self, data, i, j, z):
