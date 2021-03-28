@@ -1,9 +1,8 @@
 import pygame as pg
 from engine.src.utility import WHITE, BLACK, RED
 from engine.src.gamebar import ColorGameBar, ImageGameBar, HeartGameBar
-from engine.src.isotilemap import IsoTileMap
-from engine.src.tilemap import TileMap
-from engine.src.isoplayer import IsoPlayer
+from engine.src.tilemap import TileMap, IsoTileMap
+from engine.src.player import Player, IsoPlayer
 from engine.src.game_menu import GameMenu
 from engine.src.gametext import Text, DynamicText
 from engine.src.gamesprite import GameSprite
@@ -62,10 +61,17 @@ class Game():
 
     def show_game_menu(self, layer):
         self.game_sprites.add(self.game_menu, _layer=layer)
+
 # ISOPLAYER-----------------------------------------------------
 
+    def create_player(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
+        player = Player(json, map_x, map_y, tile_w, tile_h, scale)
+        player.move(x, y)
+        self.game_sprites.add(player, _layer=layer)
+        return player
+
     def create_isoplayer(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
-        isoplayer = IsoPlayer(layer, json, map_x, map_y, tile_w, tile_h, scale)
+        isoplayer = IsoPlayer(json, map_x, map_y, tile_w, tile_h, scale)
         isoplayer.move(x, y)
         self.game_sprites.add(isoplayer, _layer=layer)
         return isoplayer

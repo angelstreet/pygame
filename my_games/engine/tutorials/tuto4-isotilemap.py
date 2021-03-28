@@ -24,14 +24,13 @@ def main():
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     # game.image.fill(GREEN)
-    fpstext = game.add_dynamic_text(game.LAYER_UI,'', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,
+    fpstext = game.add_dynamic_text(LAYER_UI,'', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,
                                     20)
-    tilemap = game.create_isotilemap(
-        600, 100, 1400, 800, '../assets/data/isotilemap2.json', 0.5, True)
-    tilemap.game = game
-    player = game.create_isoplayer(game.LAYER_GAME, 530, 110, '../assets/data/isoplayer.json',
-                                   tilemap.rect.x, tilemap.rect.y,
-                                   tilemap.tile_w, tilemap.tile_h, 2)
+    tilemap = game.create_isotilemap(LAYER_GAME, '../assets/data/isotilemap.json', 0.5, True)
+    player = game.create_isoplayer(LAYER_GAME, 530, 110, '../assets/data/isoplayer.json',
+                                   tilemap.x, tilemap.y,
+                                   tilemap.tile_w, tilemap.tile_h, 3)
+
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()
     # LOOP ---------------------
     running = True

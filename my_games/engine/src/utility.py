@@ -22,9 +22,9 @@ def load_json(json_file):
     return data
 
 
-def cartesian_to_iso(x, y, w, h):
-    iso_x = int((x - y) * w/2)
-    iso_y = int((x + y) * h/2)
+def cartesian_to_iso(i, j, w, h):
+    iso_x = int((i - j) * w/2)
+    iso_y = int((i + j) * h/2)
     return iso_x, iso_y
 
 

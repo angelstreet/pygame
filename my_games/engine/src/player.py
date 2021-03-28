@@ -5,7 +5,7 @@ from engine.src.gamesprite import GameSprite
 from engine.src.utility import load_json, move_sprite, iso_to_cartesian
 
 
-class IsoPlayer(GameSprite):
+class Player(GameSprite):
     def __init__(self, json, map_x, map_y, tile_w, tile_h, scale=1):
         GameSprite.__init__(self)
         self.json = json
@@ -330,3 +330,7 @@ class IsoPlayer(GameSprite):
         # pygame.draw.line(collision_sprite,(0,0,255),polygon_t[3],polygon_b[3])
         self.collision_sprite.parent = self
         return self.collision_sprite
+
+class IsoPlayer(Player):
+    def __init__(self, json, map_x, map_y, tile_w, tile_h, scale=1):
+        Player.__init__(self, json, map_x, map_y, tile_w, tile_h, scale=1)

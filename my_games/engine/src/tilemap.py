@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
 import pygame as pg
-from engine.src.utility import load_json
+from engine.src.utility import load_json, cartesian_to_iso
 from engine.src.tile import Tile
 
 
@@ -61,50 +61,58 @@ class TileMap():
             tile_list_id = str(id)
             self.tile_list[tile_list_id] = {}
             tileset_id = str(tileset_data['tileset'])
-            x = round(tileset_data['x'])
-            y = round(tileset_data['y'])
+            x = round(tileset_data['x']*self.map_scale)
+            y = round(tileset_data['y']*self.map_scale)
             w = round(tileset_data['w']*self.map_scale)
             h = round(tileset_data['h']*self.map_scale)
             self.tile_list[tile_list_id]['tileset'] = tileset_id
             self.tile_list[tile_list_id]['x'], self.tile_list[tile_list_id]['y'] = x, y
             self.tile_list[tile_list_id]['w'], self.tile_list[tile_list_id]['h'] = w, h
+            self.tile_list[tile_list_id]['flip'] =  tileset_data['flip']
+            self.tile_list[tile_list_id]['rotate'] = tileset_data['rotate']
             tile_sprite = pg.Surface((w, h), pg.SRCALPHA, 32).convert_alpha()
             tile_sprite.blit(self.tileset_list[tileset_id]['image'], (0, 0), (x, y, w, h))
             self.tile_list[tile_list_id]['image'] = tile_sprite
             self.tile_list[tile_list_id]['rect'] = tile_sprite.get_rect()
-    # 3 - Tilemap
 
+    # 3 - Tilemap
     def _create_tilemap(self):
+        self.x = self.tilemap_w*self.tile_w/2
+        self.y = 100
         for z, data in self.tilemap_data.items():
-            z *= self.map_scale
+            z = int(z)*self.map_scale
             j_list = []
             for j in range(0, self.tilemap_h):
                 i_list = []
                 for i in range(0, self.tilemap_w):
                     tile = self._create_tile(data, i, j, z)
-                    self.move_tile(tile)
-                    i_list.append(tile)
-                    self.sprites.append(tile)
+                    if tile:
+                        self.move_tile(tile)
+                        i_list.append(tile)
+                        self.sprites.append(tile)
                 j_list.append(i_list)
             self.tilemap[str(z)] = j_list
 
     # 4 - Tile
     def _create_tile(self, data, i, j, z):
+        tile = None
         sprite_list = []
         for layer in data:
             id = str(layer['layer'][j][i])
             if not id == '0':
                 sprite = self.tile_list[id]['image']
+                w = self.tile_list[id]['w']
+                h = self.tile_list[id]['h']
                 sprite_list.append((id, sprite))
-        tile = Tile(i, j, z, self.tile_w, self.tile_h, sprite_list)
+        if sprite_list:
+            tile = Tile(i, j, z, w,  h, sprite_list)
         return tile
 
     # ------------------------------------------------------------------
     # Public
     def move_tile(self, tile):
         tile.rect.x = tile.x
-        tile.rect.y = tile.y
-        print(tile.x,tile.y)
+        tile.rect.y = tile.y + tile.z
 
     def get_sprites(self):
         return self.sprites
@@ -203,3 +211,14 @@ class TileMap():
 
     def zsort(self, tile):
         return 1
+
+
+class IsoTileMap(TileMap):
+    def __init__(self,map_json, map_scale=1, debug=False):
+        TileMap.__init__(self, map_json, map_scale, debug=False)
+
+    def move_tile(self, tile):
+        offsety = tile.h-tile.w
+        tile.rect.x, tile.rect.y = cartesian_to_iso(tile.i, tile.j, self.tile_w, self.tile_h + offsety)
+        tile.rect.x += self.x
+        tile.rect.y += tile.z + self.y
