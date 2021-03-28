@@ -14,7 +14,7 @@ class TileMap():
         self.tile_list_data = {}
         self.tileset_list = {}
         self.tile_list = {}
-        self.tilemap = []
+        self.tilemap = {}
         self.sprites = []
         self._load_map_json()
         self._create_tileset_list()
@@ -25,7 +25,7 @@ class TileMap():
         data = load_json(self.map_json)
         self.tileset_list_data = data['tilemap']['tileset_list']
         self.tile_list_data = data['tilemap']['tile_list']
-        self.tilemap_data = data['tilemap']['tilemap']
+        self.tilemap_data = data['tilemap']['data']
         self.tilemap_w = data['tilemap']['tilemap_w']
         self.tilemap_h = data['tilemap']['tilemap_h']
         self.tile_w = data['tilemap']['tile_w']*self.map_scale
@@ -75,41 +75,36 @@ class TileMap():
     # 3 - Tilemap
 
     def _create_tilemap(self):
-        for j, row in enumerate(self.tilemap_data):
-            for i, tiles in enumerate(row):
-                j_list = []
-                if len(tiles) > 0:
-                    i_list = []
-                    for tile_data in tiles:
-                        tile = self._create_tile(tile_data, i, j)
-                        self.move_tile(tile)
-                        i_list.append(tile)
+        for z, data in self.tilemap_data.items():
+            z *= self.map_scale
+            j_list = []
+            for j in range(0, self.tilemap_h):
+                i_list = []
+                for i in range(0, self.tilemap_w):
+                    tile = self._create_tile(data, i, j, z)
+                    self.move_tile(tile)
+                    i_list.append(tile)
                 j_list.append(i_list)
-            self.tilemap.append(j_list)
+            self.tilemap[str(z)] = j_list
+            self.sprites.append(tile)
 
     # 4 - Tile
-    def _create_tile(self, tile_data,  i, j):
-        tile_id = str(tile_data['tile_id'])
-        tile_z, tile_flip, tile_rotate, tile_offsety = 0, False, 0, 0  # optional parameters
-        if 'z' in tile_data.keys():
-            tile_z = tile_data['z']*self.map_scale
-        if 'flip' in tile_data.keys():
-            tile_flip = tile_data['flip']
-        if 'rotate' in tile_data.keys():
-            tile_rotate = tile_data['rotate']
-        if 'offsety' in tile_data.keys():
-            tile_offsety = tile_data['offsety']*self.map_scale
-        tile_sprite = self.tile_list[tile_id]
-        tile = Tile(tile_id, tile_sprite['image'], i, j, tile_z, self.tile_w,
-                    self.tile_h, tile_flip, tile_rotate, tile_offsety)
-        self.sprites.append(tile)
+    def _create_tile(self, data, i, j, z):
+        sprite_list = []
+        for layer in data:
+            id = str(layer['layer'][j][i])
+            if not id == '0':
+                sprite = self.tile_list[id]['image']
+                sprite_list.append((id, sprite))
+        tile = Tile(i, j, z, self.tile_w, self.tile_h, sprite_list)
         return tile
 
     # ------------------------------------------------------------------
     # Public
-    def move_tile(self,tile) :
+    def move_tile(self, tile):
         tile.rect.x = tile.x
         tile.rect.y = tile.y
+        print(tile.x,tile.y)
 
     def get_sprites(self):
         return self.sprites

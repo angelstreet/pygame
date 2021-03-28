@@ -24,7 +24,7 @@ def main():
     game_menu.add('options_menu', OptionsMenu(game_menu))
     game_menu.add('credits_menu', CreditsMenu(game_menu))
     game_menu.add('game_options_menu', GameOptionsMenu(game_menu))
-    game_menu.show('main_menu')
+    game_menu.show('firstscreen')
 
     # LOOP----------------------
     running = True

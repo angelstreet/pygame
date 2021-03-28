@@ -5,23 +5,21 @@ RED = (255, 0, 0)
 
 
 class Tile(pg.sprite.Sprite):
-    def __init__(self, tile_id, tile_sprite, i, j, z, tile_w, tile_h, flip=False, rotate=0, offsety=0):
+    def __init__(self, i, j, z, tile_w, tile_h, tile_list):
         pg.sprite.Sprite.__init__(self)
-        self.tile_id = tile_id
-        self.tile_sprite = tile_sprite
         self.i, self.j, self.z = i, j, z
         self.tile_w, self.tile_h = tile_w, tile_h
-        self.flip,self.rotate, self.offsety = flip,rotate, offsety
+        self.tile_list = tile_list
         self._init_tile()
 
     def _init_tile(self):
-        self.image = pg.Surface((self.tile_w,self.tile_h), pg.SRCALPHA, 32).convert_alpha()
-        self.image.blit(self.tile_sprite,(0,0))
+        self.image = pg.Surface((self.tile_w, self.tile_h), pg.SRCALPHA, 32).convert_alpha()
+        for _, sprite in self.tile_list:
+            self.image.blit(sprite, (0, 0))
         self.rect = self.image.get_rect()
         self.mask = pg.mask.from_surface(self.image)
         self.x = self.i*self.tile_w
         self.y = self.j*self.tile_h
-        #print(self.i,self.j,self.tile_w,self.tile_h,self.x,self.y)
 
     # ------------------------------------------------------------------
     # Public

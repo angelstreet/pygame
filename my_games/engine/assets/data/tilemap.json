@@ -1,56 +1,23 @@
 {"tilemap": {
   "tilemap_w" : 5,
   "tilemap_h" : 5,
-  "tile_w" : 160,
-  "tile_h" : 120,
+  "tile_w" : 32,
+  "tile_h" : 32,
   "tileset_list" :{
-      "1":{"path":"../assets/image/tilesheet.png","colorkey":null},
-      "2":{"path":"../assets/image/tilesheet.png","colorkey":null},
-      "3":{"path":"../assets/image/tilesheet.png","colorkey":null}
+      "1":{"path":"../assets/image/tiles_32x32.png","colorkey":null}
   },
   "tile_list" :  {
-      "1": {"tileset":1, "x":0,"y":0, "w":160,"h":120},
-      "2": {"tileset":1, "x":160,"y":0, "w":160,"h":120},
-      "3": {"tileset":2, "x":320,"y":0, "w":160,"h":120},
-      "4": {"tileset":2, "x":480,"y":0, "w":160,"h":120},
-      "5": {"tileset":2, "x":640,"y":0, "w":160,"h":120}
-  },
-  "tilemap" :[
-      [
-        [{"tile_id":1, "z":0, ",flip":false, "rotate":0, "offsety":0}, {"tile_id":3,"z":-4},{"tile_id":3,"z":-8},{"tile_id":2,"z":-12}],
-        [{"tile_id":1}],
-        [{"tile_id":3}],
-        [{"tile_id":1}],
-        [{"tile_id":3}]
-      ],
-      [
-        [{"tile_id":3}],
-        [{"tile_id":2}],
-        [{"tile_id":1},{"tile_id":3,"z":-4},{"tile_id":3,"z":-8}],
-        [{"tile_id":2}],
-        []
-      ],
-      [
-        [{"tile_id":3}],
-        [{"tile_id":1}],
-        [{"tile_id":1},{"tile_id":3,"z":-4}],
-        [{"tile_id":4}],
-        [{"tile_id":1}]
-      ],
-      [
-        [{"tile_id":1}],
-        [{"tile_id":5}],
-        [{"tile_id":1}],
-        [{"tile_id":1}],
-        [{"tile_id":1},{"tile_id":1,"z":40},{"tile_id":1,"z":40}]
-      ],
-      [
-        [{"tile_id":1}],
-        [{"tile_id":5}],
-        [],
-        [{"tile_id":1}],
-        [{"tile_id":5},{"tile_id":5,"z":40}]
-      ]
-    ]
+      "1": {"tileset":1, "x":96,"y":2240, "w":32,"h":32},
+      "2": {"tileset":1, "x":32,"y":2464, "w":32,"h":32},
+      "3": {"tileset":1, "x":160,"y":2752, "w":32,"h":32},
+      "4": {"tileset":1, "x":32,"y":2880, "w":32,"h":32},
+      "5": {"tileset":1, "x":192,"y":1760, "w":32,"h":32}
+    },
+  "data" : {
+    "0" : [
+          {"layer":[[1,1,1,1,1],  [1,1,1,1,1],  [1,1,1,1,1],  [1,1,1,1,1],  [1,1,1,1,1]]},
+          {"layer":[[4,5,3,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]}
+        ]
+    }
 	}
 }
