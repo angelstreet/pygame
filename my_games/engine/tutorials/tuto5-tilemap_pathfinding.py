@@ -1,7 +1,8 @@
 # AngelStreet @2021
 ####################################################
 import pygame
-from engine.src.game import Game, FONT_NAME, BLACK,LAYER_GAME,LAYER_UI
+from engine.src.game import Game, FONT_NAME, BLACK, LAYER_GAME, LAYER_UI
+from engine.src.tile import Tile
 
 
 FPS = 60
@@ -20,8 +21,8 @@ def main():
     display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    fpstext = game.add_dynamic_text(LAYER_UI, 'FPS',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
-    pathtext = game.add_dynamic_text(LAYER_UI,'Path',FONT_NAME, 20, BLACK, None, 50, 20)
+    fpstext = game.add_dynamic_text(LAYER_UI, 'FPS', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
+    pathtext = game.add_dynamic_text(LAYER_UI, 'Path', FONT_NAME, 20, BLACK, None, 50, 20)
     tilemap = game.create_isotilemap(LAYER_GAME, '../assets/data/isotilemap.json', 0.5)
     tilemap.game = game
     # LOOP ---------------------
@@ -49,7 +50,7 @@ def main():
                     pos = pygame.mouse.get_pos()
                     for sprite in game.game_sprites.sprites():
                         pos_in_mask = pos[0] - sprite.rect.x, pos[1] - sprite.rect.y
-                        if sprite.rect.collidepoint(pos) and sprite.mask.get_at(pos_in_mask):
+                        if isinstance(sprite, Tile) and sprite.rect.collidepoint(pos) and sprite.mask.get_at(pos_in_mask):
                             sprite_list.append(sprite)
                     if len(sprite_list) > 0:
                         sprite_list.sort(key=sort)
@@ -68,7 +69,7 @@ def main():
                                         tile.blend((255, 0, 0, 255))
                                     game.draw()
                                     pygame.time.delay(500)
-                                    if i < min(2,len(paths)-1):
+                                    if i < min(2, len(paths)-1):
                                         for tile in paths[i]:
                                             tile.remove_blend()
                                 elif not paths:

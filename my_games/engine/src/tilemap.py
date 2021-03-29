@@ -6,9 +6,9 @@ from engine.src.tile import Tile
 
 
 class TileMap():
-    def __init__(self, map_json, map_scale, debug=False):
+    def __init__(self, layer, map_json, map_scale, debug=False):
         self.map_json, self.map_scale = map_json, map_scale
-        self.debug = debug
+        self.layer, self.debug = layer, debug
         self.map_scale = map_scale
         self.tileset_list_data = {}
         self.tile_list_data = {}
@@ -85,6 +85,7 @@ class TileMap():
     def _create_tilemap(self):
         self.x = self.tilemap_w*self.tile_w/2
         self.y = 100
+        layer = self.layer
         for z, data in self.tilemap_data.items():
             z = int(z)*self.map_scale
             j_list = []
@@ -96,6 +97,13 @@ class TileMap():
                         self.move_tile(tile)
                         i_list.append(tile)
                         self.sprites.append(tile)
+                        if z > 0:
+                            tile.layer = layer
+                        elif z == 0:
+                            tile.layer = layer+1
+                        else:
+                            tile.layer = layer+2
+
                 j_list.append(i_list)
             self.tilemap[str(z).replace('.0', '')] = j_list
 
@@ -109,7 +117,7 @@ class TileMap():
                 if layer['rigid'][j][i] > 0:
                     rigid = True
             else:
-                id = str(layer['layer'][j][i])
+                id = str(list(layer.values())[0][j][i])
                 if not id == '0':
                     sprite = self.tile_list[id]['image']
                     w = self.tile_list[id]['w']
@@ -211,13 +219,10 @@ class TileMap():
             tile_list.append(col)
         return tile_list, best_path_score
 
-    def zsort(self, tile):
-        return 1
-
 
 class IsoTileMap(TileMap):
-    def __init__(self, map_json, map_scale=1, debug=False):
-        TileMap.__init__(self, map_json, map_scale, debug=False)
+    def __init__(self, map_json, map_scale, layer, debug=False):
+        TileMap.__init__(self, map_json, map_scale, layer, debug)
 
     def move_tile(self, tile):
         offsety = tile.h-tile.w

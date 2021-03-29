@@ -9,12 +9,6 @@ class GameSprite(pg.sprite.Sprite):
         self.z = 0
         self.rigid = False
 
-    def update(self):
-        self.blits()
-
-    def zsort(self):
-        return 1
-
     def is_moving(self):
         return False
 

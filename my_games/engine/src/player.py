@@ -2,13 +2,14 @@
 ####################################################
 import pygame
 from engine.src.gamesprite import GameSprite
-from engine.src.utility import load_json, move_sprite, iso_to_cartesian
+from engine.src.utility import load_json, move_sprite, cartesian_to_iso, cartesian_to_iso2, iso_to_cartesian
 
 
 class Player(GameSprite):
-    def __init__(self, json, map_x, map_y, tile_w, tile_h, scale=1):
+    def __init__(self, layer, json, map_x, map_y, tile_w, tile_h, scale=1):
         GameSprite.__init__(self)
         self.json = json
+        self.layer = layer
         self.map_x = map_x
         self.map_y = map_y
         self.tile_w = tile_w
@@ -30,7 +31,7 @@ class Player(GameSprite):
         self.debug = False
         pygame.mixer.init()
         pygame.mixer.music.set_volume(0.1)
-        self.init_player()
+        self._init_player()
 
     def load_player_data_from_json(self):
         data = load_json(self.json)
@@ -38,13 +39,13 @@ class Player(GameSprite):
         self.colorkey = data['player']['colorkey']
         self.attributes = data['player']['attributes']
         self.first_frame = data['player']['first_frame']
-        self.resolution = data['player']['resolution']
+        self.size = data['player']['size']
         self.frames_data = data['player']['frames']
         self.sound_data = data['player']['sound']
         self.collision_losange = data['player']['collision_losange']
 
     def get_frame_sprite_data(self, frame):
-        return frame['x'], frame['y'], frame['w'], frame['h'], frame['offsetx'], frame['offsety']
+        return frame['x'], frame['y'], frame['offsetx'], frame['offsety']
 
     def load_player_frames(self):
         # Create spritesheets
@@ -56,10 +57,10 @@ class Player(GameSprite):
         for key, value in self.frames_data.items():
             for i, frame in enumerate(value):
                 if i > 0 and isinstance(frame, dict):
-                    x, y, w, h, offsetx, offsety = [int(elt*self.scale)
-                                                    for elt in self.get_frame_sprite_data(frame)]
-                    sprite = pygame.Surface((w, h), pygame.SRCALPHA, 32).convert_alpha()
-                    sprite.blit(self.playersheet_img, (0, 0), (x, y, w, h))
+                    x, y, offsetx, offsety = [int(elt*self.scale)
+                                              for elt in self.get_frame_sprite_data(frame)]
+                    sprite = pygame.Surface((self.w, self.h), pygame.SRCALPHA, 32).convert_alpha()
+                    sprite.blit(self.playersheet_img, (0, 0), (x, y, self.w, self.h))
                     sprite_flip = pygame.transform.flip(sprite, True, False)
                     frame['sprite'] = sprite
                     frame['sprite_flip'] = sprite_flip
@@ -98,11 +99,12 @@ class Player(GameSprite):
         else:
             self.direction_h = "left"
 
-    def init_player(self):
-        self.create_surface(50, 50)
+    def _init_player(self):
         self.load_player_data_from_json()
-        self.create_surface(self.resolution['max_w']*self.scale *
-                            2, self.resolution['max_h']*self.scale)
+        self.w = self.size['w']*self.scale
+        self.h = self.size['h']*self.scale
+        self.create_surface(self.w,
+                            self.h)
         if self.colorkey:
             self.image.set_colorkey(self.colorkey)
         self.prev_frame = None
@@ -136,16 +138,15 @@ class Player(GameSprite):
         if self.debug:
             self.blit_rear(self.collision_sprite.image,
                            (self.collision_sprite.x, self.collision_sprite.y))
-            #self.blit_rear(self.collision_sprite.image, (0,0))
         for c_sprite in self.last_collision_list:
-            c_sprite.parent.clear_front()
+            c_sprite.parent.remove_blend()
         self.last_collision_list = []
         c_left, c_right, c_up, c_down, c_top, c_bottom = 0, 0, 0, 0, 0, 0
         if len(self.collision_list) > 0:
             self.collision_list.sort(key=self.vsort_collision_list)
             for c_sprite in self.collision_list:
                 if self.debug:
-                    c_sprite.parent.blit_front(c_sprite.image)
+                    c_sprite.parent.blend((255,0,0))
                     self.last_collision_list.append(c_sprite)
                 if self.current_state == 'fall' and abs(self.z-c_sprite.parent.z-c_sprite.parent.rect.height) < 4:
                     c_bottom = -1
@@ -280,12 +281,16 @@ class Player(GameSprite):
         self.blits()
 
     def zsort(self):
-        isox, isoy = self.rect.x+self.rect.width/2-self.map_x - \
-            600-190, self.rect.y+self.rect.height-self.map_y-80
+        offsetx = (self.w-self.tile_w)/2
+        offsety = (self.h-self.tile_h)/2
+        isox = self.rect.x+offsetx+self.rect.width/2-self.map_x
+        isoy = self.rect.y+offsety+self.rect.height-self.map_y
         x, y = iso_to_cartesian(isox, isoy)
-        i = round(x/self.tile_w*self.scale)
-        j = round(y/self.tile_h*self.scale)
-        depth = int(200+i*100+1000*j-self.z)
+        x = x - 60
+        y = y - 10
+        i = round(2*x/self.tile_w)
+        j = round(y/(2*self.tile_h-self.tile_w))
+        depth = int(200+i*100+1000*j-self.z-self.tile_h)
         return depth
 
     def is_moving(self):
@@ -293,11 +298,11 @@ class Player(GameSprite):
             return True
         return False
 
-    def get_collision_sprite_center(self):
+    def center(self):
         self.get_collision_sprite()
-        x = self.collision_sprite.rect.x + self.collision_sprite.rect.width/2
-        y = self.collision_sprite.rect.y + self.collision_sprite.rect.height/2
-        return x, y
+        centerx = self.collision_sprite.rect.x + self.collision_sprite.rect.width/2
+        centery = self.collision_sprite.rect.y + self.collision_sprite.rect.height/2
+        return centerx, centery
 
     def get_collision_sprite(self):
         w, h = self.collision_losange_w, self.collision_losange_h
@@ -317,5 +322,5 @@ class Player(GameSprite):
 
 
 class IsoPlayer(Player):
-    def __init__(self, json, map_x, map_y, tile_w, tile_h, scale=1):
-        Player.__init__(self, json, map_x, map_y, tile_w, tile_h, scale)
+    def __init__(self, layer, json, map_x, map_y, tile_w, tile_h, scale=1):
+        Player.__init__(self, layer, json, map_x, map_y, tile_w, tile_h, scale)

@@ -12,8 +12,9 @@ FPS = 60
 FONT_NAME = pg.font.get_default_font()
 FONT_SIZE = 14
 LAYER_BG = 0
-LAYER_GAME = 1
-LAYER_UI = 2
+LAYER_TILEMAP = 1
+LAYER_GAME = 99
+LAYER_UI = 100
 
 
 class Game(pg.sprite.Sprite):
@@ -30,8 +31,8 @@ class Game(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.game_sprites.add(self, layer=5)
 
-
 # GAME-----------------------------------------------------
+
     def resize_screen(self, w, h, resizable=False):
         if resizable:
             pg.display.set_mode((w, h), pg.RESIZABLE)
@@ -70,41 +71,89 @@ class Game(pg.sprite.Sprite):
 # ISOPLAYER-----------------------------------------------------
 
     def create_player(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
-        player = Player(json, map_x, map_y, tile_w, tile_h, scale)
+        player = Player(layer+2, json, map_x, map_y, tile_w, tile_h, scale)
         player.move(x, y)
-        self.game_sprites.add(player, layer=layer)
+        self.game_sprites.add(player)
         return player
 
     def create_isoplayer(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
-        isoplayer = IsoPlayer(json, map_x, map_y, tile_w, tile_h, scale)
+        isoplayer = IsoPlayer(layer+2, json, map_x, map_y, tile_w, tile_h, scale)
         isoplayer.move(x, y)
-        self.game_sprites.add(isoplayer, layer=layer)
+        self.game_sprites.add(isoplayer)
         return isoplayer
 
-    def sortPlayer(self, player):
-        x, y = player.get_collision_sprite_center()
-        sprites = self.game_sprites.get_sprites_at((x, y))
-        for sprite in sprites:
-            if isinstance(sprite, Tile):
-                if sprite.z<0 :
-                    sprites = self.game_sprites.remove_sprites_of_layer(LAYER_GAME)
-                    sprites.remove(player)
-                    index = sprites.index(sprite)+1
-                    sorted_sprites = sprites[:index] + [player] + sprites[index:]
-                    print(sprite.i, sprite.j, sprite.z, index)
-                    self.game_sprites.add(sorted_sprites, layer=LAYER_GAME)
-                    break
+    # @profile
+    def sort_player(self, player):
+        collision_list = []
+        if player.is_moving():
+            for sprite in self.hided_sprites:
+                sprite.image.set_alpha(255)
+            self.hided_sprites = []
+            sprites = self.game_sprites.get_sprites_from_layer(player.layer)
+            group = sprites.copy()
+            group.remove(player)
+            collision_list = pg.sprite.spritecollide(player, group, False, pg.sprite.collide_mask)
+            centerx, centery = player.center()
+            sprites.sort(key=lambda s: s.zsort())
+            self.game_sprites.remove_sprites_of_layer(player.layer)
+            self.game_sprites.add(sprites)
+            index = sprites.index(player)
+            for sprite in collision_list:
+                if sprites.index(sprite) > index:
+                    sprite.image.set_alpha(180)
+                    self.hided_sprites.append(sprite)
+
+    # @profile
+    def check_player_collision(self, player):
+        if player.is_moving():
+            sprites, collision_list = [], []
+            sprites = self.game_sprites.get_sprites_from_layer(player.layer)
+            sprites.remove(player)
+            if sprites:
+                p = player.get_collision_sprite()
+                for sprite in sprites:
+                    collision_list.append(sprite.get_collision_sprite())
+                collision_list = pg.sprite.spritecollide(
+                    p, collision_list, False, pg.sprite.collide_mask)
+
+                for sprite in collision_list:
+                    # Side collision between 2 losange at z=0
+                    # Z collision
+                    if sprite.parent.z <= p.parent.z and sprite.parent.z >= p.parent.z-p.parent.rect.height:
+                        p.parent.collision_list.append(sprite)
+                    if sprite.parent.z-sprite.parent.rect.height <= p.parent.z and sprite.parent.z >= p.parent.z-p.parent.rect.height:
+                        p.parent.collision_list.append(sprite)
+
+    # def check_collision(self):
+    #     moving_list = []
+    #     non_moving_list = pg.sprite.Group()
+    #     for sprite in self.game_sprites.sprites():
+    #         if sprite.rigid:
+    #             if sprite.is_moving():
+    #                 moving_list.append(sprite.get_collision_sprite())
+    #             else:
+    #                 non_moving_list.add(sprite.get_collision_sprite())
+    #     for collision_sprite in moving_list:
+    #         # Side collision between 2 losange at z=0
+    #         collision_list = pg.sprite.spritecollide(
+    #             collision_sprite, non_moving_list, False, pg.sprite.collide_mask)
+    #         for sprite in collision_list:
+    #             # Z collision
+    #             if sprite.parent.z <= collision_sprite.parent.z and sprite.parent.z >= collision_sprite.parent.z-collision_sprite.parent.rect.height:
+    #                 collision_sprite.parent.collision_list.append(sprite)
+    #             if sprite.parent.z-sprite.parent.rect.height <= collision_sprite.parent.z and sprite.parent.z >= collision_sprite.parent.z-collision_sprite.parent.rect.height:
+    #                 collision_sprite.parent.collision_list.append(sprite)
 
 # MAP-----------------------------------------------------
 
     def create_tilemap(self, layer, map_json, map_scale=1, debug=False):
-        self.tilemap = TileMap(map_json, map_scale, debug)
-        self.game_sprites.add(self.tilemap.get_sprites(), layer=layer)
+        self.tilemap = TileMap(layer, map_json, map_scale, debug)
+        self.game_sprites.add(self.tilemap.get_sprites())
         return self.tilemap
 
     def create_isotilemap(self, layer, map_json, map_scale=1, debug=False):
-        self.isotilemap = IsoTileMap(map_json, map_scale, debug)
-        self.game_sprites.add(self.isotilemap.get_sprites(), layer=layer)
+        self.isotilemap = IsoTileMap(layer, map_json, map_scale, debug)
+        self.game_sprites.add(self.isotilemap.get_sprites())
         return self.isotilemap
 # HEALTHBAR-----------------------------------------------------
 
@@ -119,48 +168,12 @@ class Game(pg.sprite.Sprite):
         self.game_sprites.add(imagegamebar, layer=layer)
         return imagegamebar
 
-    def create_heartgamebar(self,layer, value, total, x, y, json, scale, offset):
+    def create_heartgamebar(self, layer, value, total, x, y, json, scale, offset):
         healthbar = HeartGameBar(value, total, x, y, json, scale, offset)
         self.game_sprites.add(healthbar, layer=layer)
         return healthbar
-# COLLISION-----------------------------------------------------
-
-    def check_collision(self):
-        moving_list = []
-        non_moving_list = pg.sprite.Group()
-        for sprite in self.game_sprites.sprites():
-            if sprite.rigid:
-                if sprite.is_moving():
-                    moving_list.append(sprite.get_collision_sprite())
-                else:
-                    non_moving_list.add(sprite.get_collision_sprite())
-        for collision_sprite in moving_list:
-            # Side collision between 2 losange at z=0
-            collision_list = pg.sprite.spritecollide(
-                collision_sprite, non_moving_list, False, pg.sprite.collide_mask)
-            for sprite in collision_list:
-                # Z collision
-                if sprite.parent.z <= collision_sprite.parent.z and sprite.parent.z >= collision_sprite.parent.z-collision_sprite.parent.rect.height:
-                    collision_sprite.parent.collision_list.append(sprite)
-                if sprite.parent.z-sprite.parent.rect.height <= collision_sprite.parent.z and sprite.parent.z >= collision_sprite.parent.z-collision_sprite.parent.rect.height:
-                    collision_sprite.parent.collision_list.append(sprite)
-
 
 # GAME-----------------------------------------------------
-    # @profile
-    def hide_sprites_for_player(self, player):
-        for sprite in self.hided_sprites:
-            sprite.remove_blend()
-        self.hided_sprites = []
-        sprites = self.game_sprites.sprites()
-        collision_list = pg.sprite.spritecollide(
-            player, sprites, False, pg.sprite.collide_mask)
-        for sprite in collision_list:
-            if sprite != player and player.zsort() < sprite.zsort():
-                sprite.blend((255, 0, 0, 200))
-                self.hided_sprites.append(sprite)
-        sprites = None
-
 
     # @profile
     def _draw_game(self):

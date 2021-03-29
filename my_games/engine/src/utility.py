@@ -27,6 +27,11 @@ def cartesian_to_iso(i, j, w, h):
     iso_y = int((i + j) * h/2)
     return iso_x, iso_y
 
+def cartesian_to_iso2(x,y):
+    iso_x = int((x - y))
+    iso_y = int((x + y)/2)
+    return iso_x, iso_y
+
 
 def iso_to_cartesian(isox, isoy):
     x = int((2*isoy + isox)/2)
