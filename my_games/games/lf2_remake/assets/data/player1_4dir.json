@@ -1,0 +1,66 @@
+{"player": {
+  "sprite_w" : 100,
+  "sprite_h" : 150,
+  "spritesheet_list" :  {
+        "1":{"path":"../assets/image/4_dir/idle.png","colorkey":null},
+        "2":{"path":"../assets/image/4_dir/run_1.png","colorkey":null},
+        "3":{"path":"../assets/image/4_dir/run_2.png","colorkey":null},
+        "4":{"path":"../assets/image/4_dir/run_3.png","colorkey":null},
+        "5":{"path":"../assets/image/4_dir/run_4.png","colorkey":null},
+        "6":{"path":"../assets/image/4_dir/run_5.png","colorkey":null},
+        "7":{"path":"../assets/image/4_dir/run_6.png","colorkey":null},
+        "8":{"path":"../assets/image/4_dir/run_7.png","colorkey":null},
+        "9":{"path":"../assets/image/4_dir/run_8.png","colorkey":null}
+    },
+	"colorkey" :null,
+  "attributes" : {	"hp" :1000,  "mp" :200,"ad" :30,"ap" :4,"as" :3,"p_armor" :5,"m_armor" :5, "regen" :1},
+  "first_frame":"idle_right",
+  "collision_losange" :{"w":50,"h":50,"offsetx":0,"offsety":0},
+  "frames" : {
+    "idle_right" :	[
+      {"midbottom":[30,20]},
+      {"name": "idle_right", "spritesheet":1, "x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 8}
+    ],
+    "idle_up" :	[
+      {"midbottom":[30,20]},
+      {"name": "idle_up","spritesheet":1,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 8}
+    ],
+    "idle_down" :	[
+      {"midbottom":[30,20]},
+      {"name": "idle_down","spritesheet":1,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 8}
+    ],
+    "walk_right" :	[
+      {"midbottom":[30,20]},
+        {"name": "walk_right_1","spritesheet":2,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+        {"name": "walk_right_2","spritesheet":3,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+        {"name": "walk_right_3","spritesheet":4,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+        {"name": "walk_right_4","spritesheet":5,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+        {"name": "walk_right_5","spritesheet":6,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+        {"name": "walk_right_6","spritesheet":7,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+        {"name": "walk_right_7","spritesheet":8,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+        {"name": "walk_right_8","spritesheet":9,"x":150,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1}
+    ],
+    "walk_up" :	[
+      {"midbottom":[30,20]},
+      {"name": "walk_right_1","spritesheet":2,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_2","spritesheet":3,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_3","spritesheet":4,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_4","spritesheet":5,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_5","spritesheet":6,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_6","spritesheet":7,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_7","spritesheet":8,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_8","spritesheet":9,"x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1}
+    ],
+    "walk_down" :	[
+      {"midbottom":[30,20]},
+      {"name": "walk_right_1","spritesheet":2,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_2","spritesheet":3,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_3","spritesheet":4,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_4","spritesheet":5,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_5","spritesheet":6,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_6","spritesheet":7,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_7","spritesheet":8,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"name": "walk_right_8","spritesheet":9,"x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1}
+    ]}
+  }
+}
