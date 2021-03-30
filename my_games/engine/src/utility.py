@@ -39,6 +39,6 @@ def iso_to_cartesian(isox, isoy):
     return x, y
 
 
-def move_sprite(rect, x, y):
-    rect.x += x
-    rect.y += y
+def move_sprite(sprite, x, y):
+    sprite.rect.x = x
+    sprite.rect.y = y

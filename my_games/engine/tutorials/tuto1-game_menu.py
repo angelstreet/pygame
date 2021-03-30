@@ -1,6 +1,6 @@
 # AngelStreet @2021
 ####################################################
-import pygame
+import pygame as pg
 from engine.src.game import Game, LAYER_GAME, LAYER_UI
 from engine.src.game_menu import FirstScreenMenu, LoadingMenu, MainMenu, OptionsMenu, CreditsMenu, GameOptionsMenu
 
@@ -10,10 +10,10 @@ TITLE = "Menu Interface!"
 
 
 def main():
-    # INIT PYGAME----------------------
-    pygame.init()  # initiates pygame
-    pygame.display.set_caption(TITLE)
-    display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+    # INIT pg----------------------
+    pg.init()  # initiates pg
+    pg.display.set_caption(TITLE)
+    display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     game_menu = game.create_game_menu(LAYER_UI, GAME_WIDTH, GAME_HEIGHT, game)
@@ -28,35 +28,36 @@ def main():
 
     # LOOP----------------------
     running = True
-    clock = pygame.time.Clock()
+    clock = pg.time.Clock()
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 running = False
-                pygame.mixer.music.stop()
-                return pygame.quit()
-            if event.type == pygame.VIDEORESIZE:
+                pg.mixer.music.stop()
+                return pg.quit()
+            if event.type == pg.VIDEORESIZE:
                 game.w, game.h = event.w, event.h
                 game.mid_w, game.mid_h = game.w / 2, game.h / 2
                 game.resize_screen(event.w, event.h, True)
             # LISTEN GAME MENU KEY EVENT
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
                     if not game_menu.current_menu:
                         game.resize_screen(game.w, game.h)
                         game_menu.show('game_options_menu')
                     else:
                         game_menu.current_menu.go_back()
-                elif event.key == pygame.K_RETURN:
+                elif event.key == pg.K_RETURN:
                     game_menu.current_menu.press_enter()
-                elif event.key == pygame.K_BACKSPACE:
+                elif event.key == pg.K_BACKSPACE:
                     game_menu.current_menu.go_back()
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pg.K_DOWN:
                     game_menu.current_menu.move_cursor_down()
-                elif event.key == pygame.K_UP:
+                elif event.key == pg.K_UP:
                     game_menu.current_menu.move_cursor_up()
         game.draw()
         clock.tick(FPS)
+        pg.display.update()
 
 
 if __name__ == "__main__":

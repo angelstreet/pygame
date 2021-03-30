@@ -5,15 +5,10 @@ from engine.src.gamesprite import GameSprite
 from engine.src.utility import load_json, move_sprite, cartesian_to_iso, cartesian_to_iso2, iso_to_cartesian
 
 
-class Player(GameSprite):
-    def __init__(self, layer, json, map_x, map_y, tile_w, tile_h, scale=1):
+class _Player(GameSprite):
+    def __init__(self, layer, json,  scale=1):
         GameSprite.__init__(self)
-        self.json = json
-        self.layer = layer
-        self.map_x = map_x
-        self.map_y = map_y
-        self.tile_w = tile_w
-        self.tile_h = tile_h
+        self.json, self.layer = json, layer
         self.scale = scale
         self.K_LEFT, self.K_RIGHT, self.K_DOWN, self.K_UP, self.K_SPACE, self.K_RETURN = False, False, False, False, False, False
         self.current_frame_id = 0
@@ -33,63 +28,72 @@ class Player(GameSprite):
         pygame.mixer.music.set_volume(0.1)
         self._init_player()
 
-    def load_player_data_from_json(self):
+    def _load_player_data_from_json(self):
         data = load_json(self.json)
-        self.playersheet_name = data['player']['playersheet_name']
+        self.w = data['player']['sprite_w']
+        self.h = data['player']['sprite_h']
+        self.spritesheet_data = data['player']['spritesheet_list']
         self.colorkey = data['player']['colorkey']
         self.attributes = data['player']['attributes']
         self.first_frame = data['player']['first_frame']
-        self.size = data['player']['size']
         self.frames_data = data['player']['frames']
-        self.sound_data = data['player']['sound']
+        if 'sound' in data['player']:
+            self.sound_data = data['player']['sound']
         self.collision_losange = data['player']['collision_losange']
 
-    def get_frame_sprite_data(self, frame):
+    def _get_frame_sprite_data(self, frame):
         return frame['x'], frame['y'], frame['offsetx'], frame['offsety']
 
-    def load_player_frames(self):
+    def _load_player_frames(self):
         # Create spritesheets
-        self.playersheet_img = pygame.image.load(self.playersheet_name).convert_alpha()
-        rect = self.playersheet_img.get_rect()
-        dimension = int(rect.width*self.scale), int(rect.height*self.scale)
-        self.playersheet_img = pygame.transform.scale(self.playersheet_img, dimension)
+        self.spritesheet_list = {}
+        for key, spritesheet in self.spritesheet_data.items():
+            if spritesheet['colorkey']:
+                self.spritesheet_list[key] = pygame.image.load(spritesheet['path']).convert()
+                self.spritesheet_list[key].set_colorkey(spritesheet['colorkey'])
+            else:
+                self.spritesheet_list[key] = pygame.image.load(spritesheet['path']).convert_alpha()
+            rect = self.spritesheet_list[key].get_rect()
+            dimension = int(rect.width*self.scale), int(rect.height*self.scale)
+            self.spritesheet_list[key] = pygame.transform.scale(
+                self.spritesheet_list[key], dimension)
         # Create sprite for all animation frames
+        dimension = int(self.w*self.scale), int(self.h*self.scale)
         for key, value in self.frames_data.items():
             for i, frame in enumerate(value):
                 if i > 0 and isinstance(frame, dict):
+                    spritesheet_id = str(frame['spritesheet'])
                     x, y, offsetx, offsety = [int(elt*self.scale)
-                                              for elt in self.get_frame_sprite_data(frame)]
+                                              for elt in self._get_frame_sprite_data(frame)]
                     sprite = pygame.Surface((self.w, self.h), pygame.SRCALPHA, 32).convert_alpha()
-                    sprite.blit(self.playersheet_img, (0, 0), (x, y, self.w, self.h))
+                    sprite.blit(self.spritesheet_list[spritesheet_id],
+                                (0, 0), (x, y, self.w, self.h))
                     sprite_flip = pygame.transform.flip(sprite, True, False)
                     frame['sprite'] = sprite
                     frame['sprite_flip'] = sprite_flip
 
-    def set_current_frame(self, frame):
+    def _set_current_frame(self, frame):
         if self.current_frame != frame:
             self.prev_frame = self.current_frame
             self.current_frame = frame
             self.current_frame_id = 0
 
-    def set_frame(self):
-        self.set_current_frame("%s_right_%s" % (self.current_state, self.direction_v))
-
-    def set_state(self, state=False):
+    def _set_state(self, state=False):
         if not self.current_state == state:
             if state:
                 if self.current_state:
                     self.prev_state = self.current_state
                 self.current_state = state
             else:
-                states = ['idle', 'walk', 'attack', 'jump', 'fall', 'hurt']
+                states = ['idle', 'walk', 'run' 'attack', 'jump', 'fall', 'hurt']
                 for state in states:
                     if state in self.current_frame:
                         if self.current_state:
                             self.prev_state = self.current_state
                         self.current_state = state
-        self.set_frame()
+        self._set_frame()
 
-    def init_direction_from_frame(self):
+    def _init_direction_from_frame(self):
         if "down" in self.current_frame:
             self.direction_v = "down"
         else:
@@ -100,34 +104,33 @@ class Player(GameSprite):
             self.direction_h = "left"
 
     def _init_player(self):
-        self.load_player_data_from_json()
-        self.w = self.size['w']*self.scale
-        self.h = self.size['h']*self.scale
-        self.create_surface(self.w,
-                            self.h)
+        self._load_player_data_from_json()
+        self.w = int(self.w*self.scale)
+        self.h = int(self.h*self.scale)
+        self.create_surface(self.w, self.h)
         if self.colorkey:
             self.image.set_colorkey(self.colorkey)
         self.prev_frame = None
         self.current_frame = self.first_frame
         self.last_collision_list = []
-        self.init_direction_from_frame()
-        self.init_collision_losange()
-        self.set_state()
-        self.set_frame()
-        self.load_player_frames()
+        self._init_direction_from_frame()
+        self._init_collision_losange()
+        self._set_state()
+        self._set_frame()
+        self._load_player_frames()
         self.get_collision_sprite()
 
-    def init_collision_losange(self):
+    def _init_collision_losange(self):
         self.collision_losange_w = self.collision_losange["w"]*self.scale
         self.collision_losange_h = self.collision_losange["h"]*self.scale
         self.collision_losange_offsetx = self.collision_losange["offsetx"]*self.scale
         self.collision_losange_offsety = self.collision_losange["offsety"]*self.scale
 
-    def reset_velocity(self):
+    def _reset_velocity(self):
         self.velocity_x, self.velocity_y = 0, 0
 
     def move(self, x, y):
-        move_sprite(self.rect, x, y)
+        move_sprite(self, self.rect.x + x, self.rect.y + y)
 
     def vsort_collision_list(self, sprite):
         if 'z' in dir(sprite):
@@ -146,12 +149,12 @@ class Player(GameSprite):
             self.collision_list.sort(key=self.vsort_collision_list)
             for c_sprite in self.collision_list:
                 if self.debug:
-                    c_sprite.parent.blend((255,0,0))
+                    c_sprite.parent.blend((255, 0, 0))
                     self.last_collision_list.append(c_sprite)
                 if self.current_state == 'fall' and abs(self.z-c_sprite.parent.z-c_sprite.parent.rect.height) < 4:
                     c_bottom = -1
                     self.velocity_x, self.velocity_y, self.velocity_z = 0, 0, 0
-                    self.set_state("idle")
+                    self._set_state("idle")
                     break
                 if self.collision_sprite.rect.x < c_sprite.rect.x+c_sprite.rect.width/2:
                     c_right = -1
@@ -164,36 +167,35 @@ class Player(GameSprite):
         self.collision_list = []
         return c_left, c_right, c_up, c_down, 0, 0
 
-    def move_player(self):
+    def _move_player(self):
         c_left, c_right, c_up, c_down, c_top, c_bottom = self.check_collision()
         vx = self.velocity_x+(c_left+c_right)*self.velocity
         vy = self.velocity_y+(c_up+c_down)*self.velocity
         vz = self.velocity_z
         if vx != 0 and vy != 0:
             vx *= 0.8
-
         self.move(vx, vy+vz)
         if (self.current_state == 'jump' and self.velocity_z < 0):
             self.velocity_z = min(0, self.velocity_z+self.gravity)
             self.z += self.velocity_z
         elif(self.current_state == 'jump' and self.velocity_z == 0):
-            self.set_state("fall")
+            self._set_state("fall")
         elif(self.current_state == 'fall'):
             self.velocity_z = max(self.jump_force, self.velocity_z+self.gravity)
             self.z += self.velocity_z
             if(self.velocity_z == -1*self.jump_force+self.gravity):
-                self.set_state("idle")
+                self._set_state("idle")
                 self.velocity_z = 0
                 self.z = 0
-                self.reset_velocity()
+                self._reset_velocity()
 
-    def attack(self):
+    def _attack(self):
         if 'attack' in self.sound_data:
             attack_sound = self.sound_data['attack']
             pygame.mixer.music.load(attack_sound)
             pygame.mixer.music.play()
 
-    def jump(self):
+    def _jump(self):
         self.z = 0
         self.velocity_z = self.jump_force
         if 'jump' in self.sound_data:
@@ -201,68 +203,62 @@ class Player(GameSprite):
             pygame.mixer.music.load(jump_sound)
             pygame.mixer.music.play()
 
-    def fall(self):
+    def _fall(self):
         pass
 
-    def check_event(self):
+    def _check_event(self):
         if self.K_RETURN:
             if not self.current_state in ('attack'):
-                self.reset_velocity()
-                self.set_state('attack')
-                self.attack()
+                self._reset_velocity()
+                self._set_state('attack')
+                self._attack()
         elif self.K_SPACE:
             if not self.current_state in ('jump', 'fall'):
-                self.set_state('jump')
-                self.jump()
+                self._set_state('jump')
+                self._jump()
         elif not (self.current_state == 'attack' or self.current_state == 'jump' or self.current_state == 'fall' or self.current_state == 'hurt'):
             if self.K_LEFT:
                 self.velocity_x = -self.velocity
                 if self.direction_h != 'left':
                     self.direction_h = 'left'
                     self.current_frame_id = 0
-                self.set_state('walk')
+                self._set_state('walk')
             elif self.K_RIGHT:
                 self.velocity_x = self.velocity
                 if self.direction_h != 'right':
                     self.direction_h = 'right'
                     self.current_frame_id = 0
-                self.set_state('walk')
+                self._set_state('walk')
             if self.K_UP:
                 self.velocity_y = -self.velocity
                 if self.direction_v != 'up':
                     self.direction_v = 'up'
                     self.current_frame_id = 0
-                self.set_state('walk')
+                self._set_state('walk')
             elif self.K_DOWN:
                 self.velocity_y = self.velocity
                 if self.direction_v != 'down':
                     self.direction_v = 'down'
                     self.current_frame_id = 0
-                self.set_state('walk')
+                self._set_state('walk')
             if not (self.K_LEFT or self.K_RIGHT):
                 self.velocity_x = 0
             if not (self.K_UP or self.K_DOWN):
                 self.velocity_y = 0
             if not (self.K_LEFT or self.K_RIGHT or self.K_UP or self.K_DOWN):
-                self.set_state('idle')
+                self._set_state('idle')
 
-    def get_frame_rate(self):
+    def _get_frame_rate(self):
         frame_rate = self.frames_data[self.current_frame][self.current_frame_id+1]['frame_rate']
         return frame_rate
 
-    def get_nb_frame(self):
+    def _get_nb_frame(self):
         nb_frames = len(self.frames_data[self.current_frame])-1  # less midbottom and sprite
         return nb_frames
 
-    def display_current_sprite(self):
-        if self.direction_h == 'right':
-            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite'])
-        else:
-            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip'])
-
-    def animate(self):
-        frame_rate = self.get_frame_rate()
-        nb_frames = self.get_nb_frame()
+    def _animate(self):
+        frame_rate = self._get_frame_rate()
+        nb_frames = self._get_nb_frame()
         now = pygame.time.get_ticks()
         if now - self.last_updated > 100*frame_rate:
             self.last_updated = now
@@ -271,13 +267,14 @@ class Player(GameSprite):
                 self.current_frame_id = 0
                 if self.current_state in ('attack', 'hurt'):
                     self.last_updated = now
-                    self.set_state('idle')
-        self.display_current_sprite()
+                    self._set_state('idle')
+        self._display_current_sprite()
 
+    # Public --------------------------------------------
     def update(self):
-        self.check_event()  # check key press event
-        self.move_player()
-        self.animate()  # animate player by updating frame
+        self._check_event()  # check key press event
+        self._move_player()
+        self._animate()  # animate player by updating frame
         self.blits()
 
     def zsort(self):
@@ -321,6 +318,149 @@ class Player(GameSprite):
         return self.collision_sprite
 
 
-class IsoPlayer(Player):
-    def __init__(self, layer, json, map_x, map_y, tile_w, tile_h, scale=1):
-        Player.__init__(self, layer, json, map_x, map_y, tile_w, tile_h, scale)
+class HorizontalPlayer(_Player):
+    def __init__(self, layer, json, scale=1, force_right=False):
+        self.force_right = force_right
+        _Player.__init__(self, layer, json, scale)
+
+    def _set_frame(self):
+        self._set_current_frame("%s_right" % self.current_state)
+
+    def _display_current_sprite(self):
+        if self.direction_h == 'right':
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id + 1]['sprite'])
+        elif not self.force_right:
+            self.blit(self.frames_data[self.current_frame]
+                      [self.current_frame_id + 1]['sprite_flip'])
+
+    def _display_current_sprite(self):
+        if self.direction_h == 'right' or self.force_right:
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite'])
+        else:
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip'])
+
+
+class VerticalPlayer(_Player):
+    def __init__(self, layer, json,  scale=1, force_up=False):
+        self.force_up = force_up
+        _Player.__init__(self, layer, json, scale)
+
+    def _set_frame(self):
+        if self.force_up:
+            self._set_current_frame("%s_up" % self.current_state)
+        else:
+            self._set_current_frame("%s_%s" % (self.current_state, self.direction_v))
+
+    def _display_current_sprite(self):
+        if self.direction_h == 'right':
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite'])
+        else:
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip'])
+
+
+class FourDirPlayer(_Player):
+    def __init__(self, layer, json, scale=1):
+        _Player.__init__(self, layer, json, scale)
+        self.map_x, self.map_y = 0, 0
+        self.tile_w, self.tile_h = 60, 60
+
+    def set_tilemap(self, map_x, map_y, tile_w, tile_h):
+        self.map_x, self.map_y = map_x, map_y
+        self.tile_w, self.tile_h = tile_w, tile_h
+
+    def _set_frame(self):
+        if self.direction_h == 'right':
+            self._set_current_frame("%s_right" % self.current_state)
+        elif self.direction_v == 'up':
+            self._set_current_frame("%s_up" % self.current_state)
+        elif self.direction_v == 'down':
+            self._set_current_frame("%s_down" % self.current_state)
+
+    def _display_current_sprite(self):
+        if self.direction_h == 'left':
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip'])
+        else:
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite'])
+
+    def _check_event(self):
+        if self.K_RETURN:
+            if not self.current_state in ('attack'):
+                self._reset_velocity()
+                self._set_state('attack')
+                self._attack()
+        elif self.K_SPACE:
+            if not self.current_state in ('jump', 'fall'):
+                self._set_state('jump')
+                self._jump()
+        elif not (self.current_state == 'attack' or self.current_state == 'jump' or self.current_state == 'fall' or self.current_state == 'hurt'):
+            if self.K_LEFT:
+                self.velocity_x = -self.velocity
+                if self.direction_h != 'left':
+                    self.direction_h = 'left'
+                    self.current_frame_id = 0
+                    self.direction_v = None
+                self._set_state('walk')
+            elif self.K_RIGHT:
+                self.velocity_x = self.velocity
+                if self.direction_h != 'right':
+                    self.direction_h = 'right'
+                    self.current_frame_id = 0
+                    self.direction_v = None
+                self._set_state('walk')
+            if self.K_UP:
+                self.velocity_y = -self.velocity
+                if self.direction_v != 'up':
+                    self.direction_v = 'up'
+                    self.current_frame_id = 0
+                    self.direction_h = None
+                self._set_state('walk')
+            elif self.K_DOWN:
+                self.velocity_y = self.velocity
+                if self.direction_v != 'down':
+                    self.direction_v = 'down'
+                    self.current_frame_id = 0
+                    self.direction_h = None
+                self._set_state('walk')
+            if not (self.K_LEFT or self.K_RIGHT):
+                self.velocity_x = 0
+            if not (self.K_UP or self.K_DOWN):
+                self.velocity_y = 0
+            if not (self.K_LEFT or self.K_RIGHT or self.K_UP or self.K_DOWN):
+                self._set_state('idle')
+
+class FourDirIsoPlayer(_Player):
+    def __init__(self, layer, json, scale=1):
+        _Player.__init__(self, layer, json, scale)
+        self.map_x, self.map_y = 0, 0
+        self.tile_w, self.tile_h = 60, 60
+
+    def set_tilemap(self, map_x, map_y, tile_w, tile_h):
+        self.map_x, self.map_y = map_x, map_y
+        self.tile_w, self.tile_h = tile_w, tile_h
+
+    def _set_frame(self):
+        self._set_current_frame("%s_right_%s" % (self.current_state, self.direction_v))
+
+    def _display_current_sprite(self):
+        if self.direction_h == 'right':
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite'])
+        else:
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip'])
+
+
+class HeightDirPlayer(_Player):
+    def __init__(self, layer, json,  scale=1):
+        _Player.__init__(self, layer, json, scale)
+
+    def set_tilemap(self, map_x, map_y, tile_w, tile_h):
+        self.map_x, self.map_y = map_x, map_y
+        self.tile_w, self.tile_h = tile_w, tile_h
+
+    def _set_frame(self):
+        self._set_current_frame("%s_%s" % (self.current_state, self.direction_v))
+
+    def _display_current_sprite(self):
+        if self.direction_h == 'right':
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite'])
+        else:
+            self.blit(self.frames_data[self.current_frame][self.current_frame_id+1]['sprite_flip'])

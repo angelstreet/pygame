@@ -1,6 +1,6 @@
 # AngelStreet @2021
 ####################################################
-import pygame
+import pygame as pg
 from engine.src.game import Game, FONT_NAME, BLACK,LAYER_BG,LAYER_GAME,LAYER_UI
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 1200, 600
@@ -8,10 +8,10 @@ TITLE = 'HealthBar!'
 
 
 def main():
-    # INIT PYGAME----------------------
-    pygame.init()
-    pygame.display.set_caption(TITLE)
-    display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+    # INIT pg----------------------
+    pg.init()
+    pg.display.set_caption(TITLE)
+    display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME----------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     colorgamebar = game.create_colorgamebar(LAYER_GAME,100, 100, 10, 10, 200, 40)
@@ -23,18 +23,19 @@ def main():
     logo = game.add_image(LAYER_BG,'../assets/image/fortnite.jpg', False, None, 400, 100, 1)
     # LOOP----------------------
     running = True
-    clock = pygame.time.Clock()
+    clock = pg.time.Clock()
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 running = False
-                return pygame.quit()
+                return pg.quit()
         game.draw()
         colorgamebar.value = max(1, colorgamebar.value-0.3)
         imagegamebar.value = max(0, imagegamebar.value-0.1)
         heartgamebar.value = max(0, heartgamebar.value-0.01)
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         clock.tick(FPS)
+        pg.display.update()
 
 
 if __name__ == "__main__":

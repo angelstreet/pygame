@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
-import pygame
-from engine.src.game import Game, FONT_NAME, BLACK, LAYER_GAME, LAYER_UI
+import pygame as pg
+from engine.src.game import Game, FONT_NAME, BLACK, LAYER_GAME, LAYER_UI, LAYER_TILEMAP
 from engine.src.tile import Tile
 
 
@@ -16,27 +16,27 @@ def sort(sprite):
 
 def main():
     # INIT PYGAME----------------------
-    pygame.init()  # initiates pygame
-    pygame.display.set_caption(TITLE)
-    display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+    pg.init()  # initiates pygame
+    pg.display.set_caption(TITLE)
+    display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     fpstext = game.add_dynamic_text(LAYER_UI, 'FPS', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
     pathtext = game.add_dynamic_text(LAYER_UI, 'Path', FONT_NAME, 20, BLACK, None, 50, 20)
-    tilemap = game.create_isotilemap(LAYER_GAME, '../assets/data/isotilemap.json', 0.5)
+    tilemap = game.create_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5)
     tilemap.game = game
     # LOOP ---------------------
     running = True
-    clock = pygame.time.Clock()
+    clock = pg.time.Clock()
     src = None
     dst = None
     paths = []
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 running = False
-                return pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+                return pg.quit()
+            if event.type == pg.MOUSEBUTTONDOWN:
                 if src and dst:
                     src.remove_blend()
                     dst.remove_blend()
@@ -47,7 +47,7 @@ def main():
                                 tile.remove_blend()
                 else:
                     sprite_list = []
-                    pos = pygame.mouse.get_pos()
+                    pos = pg.mouse.get_pos()
                     for sprite in game.game_sprites.sprites():
                         pos_in_mask = pos[0] - sprite.rect.x, pos[1] - sprite.rect.y
                         if isinstance(sprite, Tile) and sprite.rect.collidepoint(pos) and sprite.mask.get_at(pos_in_mask):
@@ -68,7 +68,8 @@ def main():
                                     for tile in paths[i]:
                                         tile.blend((255, 0, 0, 255))
                                     game.draw()
-                                    pygame.time.delay(500)
+                                    pg.display.update()
+                                    pg.time.delay(500)
                                     if i < min(2, len(paths)-1):
                                         for tile in paths[i]:
                                             tile.remove_blend()
@@ -78,6 +79,7 @@ def main():
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw()
         clock.tick(FPS)
+        pg.display.update()
 
 
 if __name__ == "__main__":

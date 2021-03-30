@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
-import pygame
-from engine.src.game import Game, FONT_NAME, BLACK, LAYER_GAME, LAYER_UI
+import pygame as pg
+from engine.src.game import Game, FONT_NAME, BLACK, LAYER_GAME, LAYER_UI,LAYER_TILEMAP
 
 
 FPS = 60
@@ -12,36 +12,37 @@ KEYBOARD = "AZERTY"
 
 def get_keyboard_keys():
     if KEYBOARD == "AZERTY":
-        return pygame.K_q, pygame.K_d, pygame.K_z, pygame.K_s
-    return pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s
+        return pg.K_q, pg.K_d, pg.K_z, pg.K_s
+    return pg.K_a, pg.K_d, pg.K_w, pg.K_s
 
 
 def main():
-    # INIT PYGAME----------------------
-    pygame.init()  # initiates pygame
-    pygame.display.set_caption(TITLE)
-    display = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+    # INIT pg----------------------
+    pg.init()  # initiates pg
+    pg.display.set_caption(TITLE)
+    display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None,
                                     GAME_WIDTH-70, 20)
-    tilemap = game.create_tilemap(LAYER_GAME, '../assets/data/tilemap.json', 1, True)
+    tilemap = game.create_tilemap(LAYER_TILEMAP, '../assets/data/tilemap.json', 1, True)
     # LOOP ---------------------
     running = True
-    clock = pygame.time.Clock()
+    clock = pg.time.Clock()
     while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
                 running = False
-                return pygame.quit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                return pg.quit()
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
                     running = False
-                    return pygame.quit()
+                    return pg.quit()
 
         fpstext.text = str(int(clock.get_fps()))+" FPS"
         game.draw()
         clock.tick(FPS)
+        pg.display.update()
 
 
 if __name__ == "__main__":

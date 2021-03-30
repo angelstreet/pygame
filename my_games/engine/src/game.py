@@ -1,11 +1,11 @@
 import pygame as pg
-from engine.src.utility import WHITE, BLACK, RED
+from engine.src.utility import WHITE,BLACK,RED,GREEN, move_sprite
 from engine.src.gamebar import ColorGameBar, ImageGameBar, HeartGameBar
 from engine.src.tilemap import TileMap, IsoTileMap
-from engine.src.tilemap import Tile
-from engine.src.player import Player, IsoPlayer
+from engine.src.player import HorizontalPlayer, VerticalPlayer, FourDirPlayer, FourDirIsoPlayer, HeightDirPlayer
 from engine.src.game_menu import GameMenu
 from engine.src.gametext import Text, DynamicText
+from engine.src.button import Button
 from engine.src.gamesprite import GameSprite
 
 FPS = 60
@@ -29,7 +29,9 @@ class Game(pg.sprite.Sprite):
         self.hided_sprites = []
         self.image = pg.Surface(self.display.get_size(), pg.SRCALPHA, 32).convert_alpha()
         self.rect = self.image.get_rect()
-        self.game_sprites.add(self, layer=5)
+        self.layer = LAYER_GAME
+        self.game_sprites.add(self)
+        self.display.fill(WHITE)
 
 # GAME-----------------------------------------------------
 
@@ -48,6 +50,12 @@ class Game(pg.sprite.Sprite):
         text = DynamicText(text, font_name, size, color, bg_color, x, y, sprite)
         self.game_sprites.add(text, layer=layer)
         return text
+
+    def create_button(self, layer, x, y, w, h,  text, font_name, font_size, font_color, bg_color):
+        btn = Button(w, h, text, font_name, font_size, font_color, bg_color)
+        move_sprite(btn, x, y)
+        self.game_sprites.add(btn, layer=layer)
+        return btn
 
     def add_image(self, layer, img_path, alpha, colorkey, x, y, scale, sprite=None):
         img = GameSprite()
@@ -69,18 +77,35 @@ class Game(pg.sprite.Sprite):
         self.game_sprites.add(self.game_menu, layer=layer)
 
 # ISOPLAYER-----------------------------------------------------
-
-    def create_player(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
-        player = Player(layer+2, json, map_x, map_y, tile_w, tile_h, scale)
+    def create_h_player(self, layer, x, y, json, scale=1, force_right=False):
+        player = HorizontalPlayer(layer+2, json, scale, force_right)
         player.move(x, y)
         self.game_sprites.add(player)
         return player
 
-    def create_isoplayer(self, layer, x, y, json, map_x, map_y, tile_w, tile_h, scale=1):
-        isoplayer = IsoPlayer(layer+2, json, map_x, map_y, tile_w, tile_h, scale)
-        isoplayer.move(x, y)
-        self.game_sprites.add(isoplayer)
-        return isoplayer
+    def create_v_player(self, layer, x, y, json, scale=1, force_up=False):
+        player = VerticalPlayer(layer+2, json, scale, force_up)
+        player.move(x, y)
+        self.game_sprites.add(player)
+        return player
+
+    def create_4D_player(self, layer, x, y, json, scale=1):
+        player = FourDirPlayer(layer+2, json, scale)
+        player.move(x, y)
+        self.game_sprites.add(player)
+        return player
+
+    def create_4D_iso_player(self, layer, x, y, json, scale=1):
+        player = FourDirIsoPlayer(layer+2, json, scale)
+        player.move(x, y)
+        self.game_sprites.add(player)
+        return player
+
+    def create_8D_player(self, layer, x, y, json, scale=1, force_up=False):
+        player = HeightDirPlayer(layer+2, json, scale)
+        player.move(x, y)
+        self.game_sprites.add(player)
+        return player
 
     # @profile
     def sort_player(self, player):
@@ -180,10 +205,9 @@ class Game(pg.sprite.Sprite):
         self.game_sprites.update()
         self.game_sprites.draw(self.display)
 
-    def draw(self, color=WHITE):
-        self.display.fill(color)
+    def draw(self, bg_color=WHITE):
+        self.display.fill(bg_color)
         self._draw_game()
-        pg.display.update()
 
     def resume(self):
         self.isplaying = True
