@@ -22,8 +22,7 @@ def main():
     display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None,
-                                    GAME_WIDTH-70, 20)
+    fpstext = game.add_dynamic_text(LAYER_UI, GAME_WIDTH-70, 20, '', FONT_NAME, 20, BLACK, None)
     tilemap = game.add_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5)
     player = game.add_4D_iso_player(LAYER_TILEMAP, 380, 120, '../assets/data/isoplayer.json', 2)
     player.set_tilemap(tilemap.x, tilemap.y, tilemap.tile_w, tilemap.tile_h)

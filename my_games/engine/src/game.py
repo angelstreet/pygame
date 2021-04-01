@@ -44,12 +44,12 @@ class Game(pg.sprite.Sprite):
             pg.display.set_mode((w, h))
 
     def add_text(self, layer, x, y, text, font_name, size, color, bg_color, sprite=None):
-        text = Text(text, font_name, size, color, bg_color, x, y, sprite)
+        text = Text(x, y, text, font_name, size, color, bg_color,  sprite)
         self.game_sprites.add(text, layer=layer)
         return text
 
     def add_dynamic_text(self, layer, x, y, text, font_name, size, color, bg_color, sprite=None):
-        text = DynamicText(text, font_name, size, color, bg_color, x, y, sprite)
+        text = DynamicText(x, y, text, font_name, size, color, bg_color,  sprite)
         self.game_sprites.add(text, layer=layer)
         return text
 
@@ -213,19 +213,19 @@ class Game(pg.sprite.Sprite):
         return self.isotilemap
 # HEALTHBAR-----------------------------------------------------
 
-    def add_colorgamebar(self, layer, value, total, x, y, w, h):
-        colorgamebar = ColorGameBar(value, total, x, y, w, h)
+    def add_colorgamebar(self, layer, x, y, value, total,  w, h):
+        colorgamebar = ColorGameBar(x, y, value, total,  w, h)
         self.game_sprites.add(colorgamebar, layer=layer)
         return colorgamebar
 
-    def add_imagegamebar(self, layer, value, total, x, y, bg_img, fill_img, fill_offset, scale, alpha=True, keycolor=False):
-        imagegamebar = ImageGameBar(value, total, x, y, bg_img, fill_img,
+    def add_imagegamebar(self, layer, x, y, value, total, bg_img, fill_img, fill_offset, scale, alpha=True, keycolor=False):
+        imagegamebar = ImageGameBar(x, y, value, total, bg_img, fill_img,
                                     fill_offset, scale, alpha, keycolor)
         self.game_sprites.add(imagegamebar, layer=layer)
         return imagegamebar
 
-    def add_heartgamebar(self, layer, value, total, x, y, json, scale, offset):
-        healthbar = HeartGameBar(value, total, x, y, json, scale, offset)
+    def add_heartgamebar(self, layer, x, y, value, total,  json, scale, offset):
+        healthbar = HeartGameBar(x, y, value, total,  json, scale, offset)
         self.game_sprites.add(healthbar, layer=layer)
         return healthbar
 

@@ -21,8 +21,8 @@ def main():
     display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    fpstext = game.add_dynamic_text(LAYER_UI, 'FPS', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
-    pathtext = game.add_dynamic_text(LAYER_UI, 'Path', FONT_NAME, 20, BLACK, None, 50, 20)
+    fpstext = game.add_dynamic_text(LAYER_UI, GAME_WIDTH-70, 20, 'FPS', FONT_NAME, 20, BLACK, None)
+    pathtext = game.add_dynamic_text(LAYER_UI, 50, 20, 'Path', FONT_NAME, 20, BLACK, None)
     tilemap = game.add_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5)
     tilemap.game = game
     # LOOP ---------------------

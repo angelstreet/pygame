@@ -1,7 +1,7 @@
 # AngelStreet @2021
 ####################################################
 import pygame as pg
-from engine.src.game import Game, LAYER_GAME, LAYER_UI
+from engine.src.game import Game,GameMenu, LAYER_GAME, LAYER_UI
 from engine.src.game_menu import FirstScreenMenu, LoadingMenu, MainMenu, OptionsMenu, CreditsMenu, GameOptionsMenu
 
 FPS = 60
@@ -16,7 +16,8 @@ def main():
     display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    game_menu = game.add_game_menu(LAYER_UI, GAME_WIDTH, GAME_HEIGHT, game)
+    game_menu = GameMenu(GAME_WIDTH, GAME_HEIGHT, game)
+    game.add_sprite(LAYER_UI,0,0,game_menu)
     game_menu.add('firstscreen', FirstScreenMenu(game_menu, '../assets/image/fortnite.jpg'))
     game_menu.add('loading_menu', LoadingMenu(game_menu, '../assets/image/fortnite_loading.jpg',
                               '../assets/sound/fortnite_loading.mp3'))

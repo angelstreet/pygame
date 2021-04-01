@@ -50,8 +50,8 @@ def main():
     display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
-    direction = game.add_dynamic_text(LAYER_UI, 'horizontal', FONT_NAME, 20, BLACK, None, 150, 25)
+    fpstext = game.add_dynamic_text(LAYER_UI, GAME_WIDTH-70, 20, '', FONT_NAME, 20, BLACK, None)
+    direction = game.add_dynamic_text(LAYER_UI, 150, 25, 'horizontal', FONT_NAME, 20, BLACK, None)
     player = game.add_h_player(LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
     button = game.add_button(LAYER_GAME, 20, 20, 60, 30, 'next', FONT_NAME, 20, WHITE, BLACK)
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()

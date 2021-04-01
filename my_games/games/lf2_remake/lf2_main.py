@@ -3,6 +3,7 @@
 import pygame as pg
 from engine.src.game import Game, LAYER_GAME, LAYER_UI, LAYER_BG, BLACK
 from lf2_game_menu import *
+from lf2_game import LF2_Game
 
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 1200, 600
@@ -31,10 +32,18 @@ def scroll_bg(game, dir, max_scroll_x):
                 bg.image.blit(bg.copy, (rx, 0))
             bg.x += bg.speed*dir
 
+def create_ennemies(game) :
+    pass
 
-def launch_game(game, game_menu):
-    game_menu.kill()
-    game_menu = None
+def create_player(game):
+    pass
+
+def create_gamebar(game):
+    p = 'assets/image/gbar/'
+    img_list = [p+'avatar.png',p+'bg_img.png',p+'hp_bar.png',p+'mp_bar.png']
+    game.add_imagegamebar(LAYER_UI,20,20,100, 100, *img_list, 0, 0.5)
+
+def create_map(game):
     p = 'assets/image/lf/'
     l1, l2, l3, l4 = p+'land1.bmp', p+'land2.bmp', p+'land3.bmp', p+'land4.bmp'
     game.bg_5 = game.add_tiles_bg(LAYER_BG, 0, 230, TILE_MAP_W, TILE_MAP_H,
@@ -50,8 +59,24 @@ def launch_game(game, game_menu):
     game.bg_2.x, game.bg_2.speed = 0, 0.5
     game.bg_4.x, game.bg_4.speed = 0, 2
     game.bg_5.x, game.bg_5.speed = 0, 2
-    pg.mixer.music.fadeout(300)
 
+def create_menu(game):
+    game_menu = GameMenu(GAME_WIDTH, GAME_HEIGHT, game)
+    game.add_sprite(LAYER_UI, 0, 0, game_menu)
+    game_menu.add('firstscreen', FirstScreenMenu(game_menu, 'assets/image/start_screen.png'))
+    game_menu.add('loading_menu', LoadingMenu(game_menu, 'assets/image/loading_screen.png'))
+    game_menu.add('main_menu', MainMenu(game_menu, 'assets/image/menu_screen.png'))
+    game_menu.add('options_menu', OptionsMenu(game_menu))
+    game_menu.add('credits_menu', CreditsMenu(game_menu))
+    game_menu.add('game_options_menu', GameOptionsMenu(game_menu))
+    game_menu.show('firstscreen')
+    return game_menu
+
+def launch_game(game, game_menu):
+    game_menu.kill()
+    game_menu = None
+    pg.mixer.music.fadeout(300)
+    create_map(game)
 
 def main():
     # INIT pg----------------------
@@ -64,18 +89,12 @@ def main():
     pg.mixer.music.set_volume(0.5)
     pg.mixer.music.play(-1)
 
-
     # GAME ---------------------
-    game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    game_menu = GameMenu(GAME_WIDTH, GAME_HEIGHT, game)
-    game.add_sprite(LAYER_UI, 0, 0, game_menu)
-    game_menu.add('firstscreen', FirstScreenMenu(game_menu, 'assets/image/start_screen.png'))
-    game_menu.add('loading_menu', LoadingMenu(game_menu, 'assets/image/loading_screen.png'))
-    game_menu.add('main_menu', MainMenu(game_menu, 'assets/image/menu_screen.png'))
-    game_menu.add('options_menu', OptionsMenu(game_menu))
-    game_menu.add('credits_menu', CreditsMenu(game_menu))
-    game_menu.add('game_options_menu', GameOptionsMenu(game_menu))
-    game_menu.show('firstscreen')
+    game = LF2_Game(display, GAME_WIDTH, GAME_HEIGHT)
+    #game_menu = create_menu(game)
+    create_map(game)
+    game_bar = create_gamebar(game)
+
     # LOOP----------------------
     running = True
     speed = 0

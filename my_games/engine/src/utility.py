@@ -65,3 +65,9 @@ def move_sprite(sprite, x, y, displace=False):
 def setIcon(iconfile):
     gameicon = pg.image.load(iconfile)
     pg.display.set_icon(gameicon)
+
+
+def scale_img(img, scale):
+    rect = img.get_rect()
+    dimension = round(rect.width*scale), round(rect.height*scale)
+    return pg.transform.scale(img, dimension)
