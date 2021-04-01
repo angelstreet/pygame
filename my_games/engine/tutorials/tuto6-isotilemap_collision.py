@@ -24,8 +24,8 @@ def main():
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None,
                                     GAME_WIDTH-70, 20)
-    tilemap = game.create_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5)
-    player = game.create_4D_iso_player(LAYER_TILEMAP, 380, 120, '../assets/data/isoplayer.json', 2)
+    tilemap = game.add_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5)
+    player = game.add_4D_iso_player(LAYER_TILEMAP, 380, 120, '../assets/data/isoplayer.json', 2)
     player.set_tilemap(tilemap.x, tilemap.y, tilemap.tile_w, tilemap.tile_h)
     player.debug = True
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()

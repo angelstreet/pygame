@@ -1,16 +1,35 @@
-import pygame
-import json
+import pygame as pg
 from pygame.locals import Color
+import json
 FPS = 60
 BLACK, WHITE, RED = Color('black'), Color('white'), Color('red')
 GREEN, YELLOW, BLUE = Color('green'), Color('yellow'), Color('blue')
+
+
+def load_image(path, alpha=False, colorkey=None, scale=1):
+    sprite = pg.sprite.Sprite()
+    if alpha:
+        load_img = pg.image.load(path).convert_alpha()
+    else:
+        load_img = pg.image.load(path).convert()
+        if colorkey:
+            load_img.set_colorkey(colorkey)
+    rect = load_img.get_rect()
+    dimension = rect.width*scale, rect.height*scale
+    if rect.size != dimension:
+        load_img = pg.transform.scale(load_img, dimension)
+    sprite.image = load_img
+    sprite.rect = load_img.get_rect()
+    sprite.w = sprite.rect.width
+    sprite.h = sprite.rect.height
+    return sprite
 
 
 def draw_image(display, image, scale=1):
     rect = display.get_rect()
     dimension = rect.width*scale, rect.height*scale
     if rect.size != dimension:
-        display = pygame.transform.scale(image, dimension)
+        display = pg.transform.scale(image, dimension)
     else:
         display.blit(image, (0, 0))
 
@@ -27,11 +46,6 @@ def cartesian_to_iso(i, j, w, h):
     iso_y = int((i + j) * h/2)
     return iso_x, iso_y
 
-def cartesian_to_iso2(x,y):
-    iso_x = int((x - y))
-    iso_y = int((x + y)/2)
-    return iso_x, iso_y
-
 
 def iso_to_cartesian(isox, isoy):
     x = int((2*isoy + isox)/2)
@@ -39,6 +53,15 @@ def iso_to_cartesian(isox, isoy):
     return x, y
 
 
-def move_sprite(sprite, x, y):
-    sprite.rect.x = x
-    sprite.rect.y = y
+def move_sprite(sprite, x, y, displace=False):
+    if displace:
+        sprite.rect.x += x
+        sprite.rect.y += y
+    else:
+        sprite.rect.x = x
+        sprite.rect.y = y
+
+
+def setIcon(iconfile):
+    gameicon = pg.image.load(iconfile)
+    pg.display.set_icon(gameicon)

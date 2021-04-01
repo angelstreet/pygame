@@ -20,7 +20,7 @@ class GameMenu(pygame.sprite.Sprite):
         if self.current_menu:
             self.current_menu.update()
         else:
-            print("Warning : menu_list is empty ! Use .add() to add menu to GameMenu")
+            print("Warning : menu_list is empty ! Use .add() to add")
 
     def show(self, name):
         self.current_menu = self.menu_list[name]

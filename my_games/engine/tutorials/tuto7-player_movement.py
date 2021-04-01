@@ -6,14 +6,42 @@ from engine.src.player import HorizontalPlayer, VerticalPlayer, FourDirPlayer, F
 
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 600, 400
-TITLE = "TileMap"
+TITLE = "Sprite animation"
 KEYBOARD = "AZERTY"
+
 
 def get_keyboard_keys():
     if KEYBOARD == "AZERTY":
         return pg.K_q, pg.K_d, pg.K_z, pg.K_s
     return pg.K_a, pg.K_d, pg.K_w, pg.K_s
 
+
+def next(game, player, direction):
+    if isinstance(player, HorizontalPlayer):
+        if not player.force_right:
+            player.force_right = True
+            direction.text = "horizontal force right"
+        else:
+            player.kill()
+            player = game.add_v_player(
+                LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
+            direction.text = "vertical"
+
+    elif isinstance(player, VerticalPlayer):
+        if not player.force_up:
+            player.force_up = True
+            direction.text = "vertical force up"
+        else:
+            player.kill()
+            player = game.add_4D_player(
+                LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
+            direction.text = "4 dir"
+    elif isinstance(player, FourDirPlayer):
+        player.kill()
+        player = game.add_h_player(LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
+        direction.text = "add_h_player"
+        player.force_right = False
+    return player
 
 def main():
     # INIT pg----------------------
@@ -22,15 +50,16 @@ def main():
     display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME ---------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,20)
-    direction = game.add_dynamic_text(LAYER_UI, 'horizontal', FONT_NAME, 20, BLACK, None, 150,25)
-    player = game.create_h_player(LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
-    button = game.create_button(LAYER_GAME,20,20,60,30,'next',FONT_NAME,20, WHITE,BLACK)
+    fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
+    direction = game.add_dynamic_text(LAYER_UI, 'horizontal', FONT_NAME, 20, BLACK, None, 150, 25)
+    player = game.add_h_player(LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
+    button = game.add_button(LAYER_GAME, 20, 20, 60, 30, 'next', FONT_NAME, 20, WHITE, BLACK)
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()
     # LOOP ---------------------
     running = True
     clock = pg.time.Clock()
     button_over = False
+    k_space_released = True
     while running:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -45,30 +74,12 @@ def main():
                     button_over = False
             if event.type == pg.MOUSEBUTTONDOWN:
                 if button.rect.collidepoint(pg.mouse.get_pos()):
-                    if isinstance(player, HorizontalPlayer):
-                        if not player.force_right:
-                            player.force_right = True
-                            direction.text = "horizontal force right"
-                        else:
-                            player.kill()
-                            player = game.create_v_player(LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
-                            direction.text = "vertical"
-                    elif isinstance(player, VerticalPlayer):
-                        if not player.force_up:
-                            player.force_up = True
-                            direction.text = "vertical force up"
-                        else:
-                            player.kill()
-                            player = game.create_4D_player(LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
-                            direction.text = "4 dir"
-                    elif isinstance(player, FourDirPlayer):
-                            player.kill()
-                            player = game.create_h_player(LAYER_GAME, 250, 150, '../assets/data/player1_4dir.json', 0.5)
-                            direction.text = "create_h_player"
-                            player.force_right = False
-
+                    player = next(game, player, direction)
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_LEFT or event.key == K_LEFT:
+                if event.key == pg.K_SPACE and k_space_released:
+                    player = next(game, player, direction)
+                    k_space_released = False
+                elif event.key == pg.K_LEFT or event.key == K_LEFT:
                     player.K_LEFT = True
                 elif event.key == pg.K_RIGHT or event.key == K_RIGHT:
                     player.K_RIGHT = True
@@ -77,7 +88,9 @@ def main():
                 elif event.key == pg.K_DOWN or event.key == K_DOWN:
                     player.K_DOWN = True
             elif event.type == pg.KEYUP:
-                if event.key == pg.K_LEFT or event.key == K_LEFT:
+                if event.key == pg.K_SPACE:
+                    k_space_released = True
+                elif event.key == pg.K_LEFT or event.key == K_LEFT:
                     player.K_LEFT = False
                 elif event.key == pg.K_RIGHT or event.key == K_RIGHT:
                     player.K_RIGHT = False

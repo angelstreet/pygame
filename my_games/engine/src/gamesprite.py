@@ -69,15 +69,3 @@ class GameSprite(pg.sprite.Sprite):
 
     def remove_blend(self):
         self.clear_front()
-
-    def load_image(self, path, alpha=False, colorkey=None, scale=1):
-        if alpha:
-            load_img = pg.image.load(path).convert_alpha()
-        else:
-            load_img = pg.image.load(path).convert()
-        if colorkey:
-            load_img.set_colorkey(colorkey)
-            self.colorkey = colorkey
-        self.rect = load_img.get_rect()
-        self.create_surface(self.rect.width, self.rect.height)
-        self.blit(load_img)

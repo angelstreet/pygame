@@ -7,7 +7,7 @@ from engine.src.tile import Tile
 
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 1200, 600
-TITLE = "TileMap A*"
+TITLE = "TileMap Pathfinding"
 
 
 def sort(sprite):
@@ -23,7 +23,7 @@ def main():
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     fpstext = game.add_dynamic_text(LAYER_UI, 'FPS', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
     pathtext = game.add_dynamic_text(LAYER_UI, 'Path', FONT_NAME, 20, BLACK, None, 50, 20)
-    tilemap = game.create_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5)
+    tilemap = game.add_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5)
     tilemap.game = game
     # LOOP ---------------------
     running = True

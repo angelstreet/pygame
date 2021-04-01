@@ -25,7 +25,7 @@ def main():
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
     fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None,
                                     GAME_WIDTH-70, 20)
-    tilemap = game.create_tilemap(LAYER_TILEMAP, '../assets/data/tilemap.json', 1, True)
+    tilemap = game.add_tilemap(LAYER_TILEMAP, '../assets/data/tilemap.json', 1, True)
     # LOOP ---------------------
     running = True
     clock = pg.time.Clock()

@@ -4,7 +4,7 @@ from engine.src.gamesprite import GameSprite
 
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, text, font_name, size, color, bg_color, x, y, sprite=None):
+    def __init__(self, x, y, text, font_name, size, color, bg_color, sprite=None):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
@@ -44,8 +44,8 @@ class Text(pygame.sprite.Sprite):
 
 
 class DynamicText(Text):
-    def __init__(self, text, font_name, size, color, bg_color, x, y, sprite=None):
-        Text.__init__(self, text, font_name, size, color, bg_color, x, y,  sprite)
+    def __init__(self, x, y, text, font_name, size, color, bg_color,  sprite=None):
+        Text.__init__(self, x, y, text, font_name, size, color, bg_color, sprite)
 
     def update(self):
         self._draw()

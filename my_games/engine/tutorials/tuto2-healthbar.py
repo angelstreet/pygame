@@ -14,13 +14,13 @@ def main():
     display = pg.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
     # GAME----------------------
     game = Game(display, GAME_WIDTH, GAME_HEIGHT)
-    colorgamebar = game.create_colorgamebar(LAYER_GAME,100, 100, 10, 10, 200, 40)
-    imagegamebar = game.create_imagegamebar(LAYER_GAME,100, 100, 10, 120, '../assets/image/healthbar_bg.png',
+    colorgamebar = game.add_colorgamebar(LAYER_GAME,100, 100, 10, 10, 200, 40)
+    imagegamebar = game.add_imagegamebar(LAYER_GAME,100, 100, 10, 120, '../assets/image/healthbar_bg.png',
                                                          '../assets/image/healthbar_fill.png', 85, 0.5)
-    heartgamebar = game.create_heartgamebar(LAYER_GAME,6, 6, 10, 250, '../assets/data/heart.json', 0.2, 10)
+    heartgamebar = game.add_heartgamebar(LAYER_GAME,6, 6, 10, 250, '../assets/data/heart.json', 0.2, 10)
     hptext = game.add_text(LAYER_UI,'HP', FONT_NAME, 20, BLACK, None, 0, -20, imagegamebar)
     fpstext = game.add_dynamic_text(LAYER_UI,'',FONT_NAME, 20, BLACK, None, GAME_WIDTH-70, 20)
-    logo = game.add_image(LAYER_BG,'../assets/image/fortnite.jpg', False, None, 400, 100, 1)
+    logo = game.add_image(LAYER_BG,400,100,'../assets/image/fortnite.jpg', False, None, 1)
     # LOOP----------------------
     running = True
     clock = pg.time.Clock()

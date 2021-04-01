@@ -6,7 +6,7 @@ from engine.src.game import Game, FONT_NAME, BLACK, LAYER_GAME, LAYER_UI, LAYER_
 
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 1200, 600
-TITLE = "TileMap"
+TITLE = "Isometric TileMap"
 KEYBOARD = "AZERTY"
 
 
@@ -26,8 +26,8 @@ def main():
     # game.image.fill(GREEN)
     fpstext = game.add_dynamic_text(LAYER_UI, '', FONT_NAME, 20, BLACK, None, GAME_WIDTH-70,
                                     20)
-    tilemap = game.create_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5, True)
-    player = game.create_4D_iso_player(LAYER_GAME, 100, 60, '../assets/data/isoplayer.json', 2)
+    tilemap = game.add_isotilemap(LAYER_TILEMAP, '../assets/data/isotilemap.json', 0.5, True)
+    player = game.add_4D_iso_player(LAYER_GAME, 100, 60, '../assets/data/isoplayer.json', 2)
 
     K_LEFT, K_RIGHT, K_UP, K_DOWN = get_keyboard_keys()
     # LOOP ---------------------

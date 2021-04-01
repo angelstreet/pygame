@@ -2,7 +2,7 @@
 ####################################################
 import pygame
 from engine.src.gamesprite import GameSprite
-from engine.src.utility import load_json, move_sprite, cartesian_to_iso, cartesian_to_iso2, iso_to_cartesian
+from engine.src.utility import load_json, move_sprite, cartesian_to_iso, iso_to_cartesian
 
 
 class _Player(GameSprite):
