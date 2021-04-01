@@ -1,0 +1,55 @@
+{"player": {
+  "sprite_w" : 80,
+  "sprite_h" : 80,
+  "spritesheet_list" :  {
+        "1":{"path":"assets/image/char/davis_0.bmp","colorkey":[0,0,0]},
+        "2":{"path":"assets/image/char/davis_1.bmp","colorkey":[0,0,0]},
+        "3":{"path":"assets/image/char/davis_2.bmp","colorkey":[0,0,0]},
+        "4":{"path":"assets/image/char/davis_ball.bmp","colorkey":[0,0,0]}
+    },
+	"colorkey" :[0,0,0],
+  "attributes" : {	"hp" :1000,  "mp" :200,"ad" :30,"ap" :4,"as" :3,"p_armor" :5,"m_armor" :5, "regen" :0.2},
+  "first_frame":"idle_right",
+  "collision_losange" :{"w":40,"h":40,"offsetx":0,"offsety":0},
+  "frames" : {
+    "idle_right" :	[
+      {"midbottom":[0,0]},
+      {"spritesheet":1, "x":0,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":80,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":160,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":240,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2}
+    ],
+    "walk_right" :	[
+      {"midbottom":[0,0]},
+      {"spritesheet":1, "x":300,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":380,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":460,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":540,"y":0,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2}
+    ],
+    "run_right" :	[
+      {"midbottom":[40,20]},
+      {"spritesheet":1, "x":0,"y":240,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":80,"y":240,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":160,"y":240,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2}
+    ],
+    "attack_right" :	[
+      {"midbottom":[40,20] },
+      {"spritesheet":1, "x":0,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"spritesheet":1, "x":80,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"spritesheet":1, "x":160,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1},
+      {"spritesheet":1, "x":240,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 1}
+    ],
+    "attack2_right" :	[
+      {"midbottom":[40,20]},
+      {"spritesheet":1, "x":300,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":380,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":460,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2},
+      {"spritesheet":1, "x":540,"y":80,"offsetx" : 0,"offsety" : 0,"frame_rate" : 2}
+    ],
+    "jump_right" :	[
+      {"midbottom":[40,20]},
+      {"spritesheet":1, "x":160,"y":480,"offsetx" : 0,"offsety" : 0,"frame_rate" : 5}
+    ]
+  }
+  }
+}

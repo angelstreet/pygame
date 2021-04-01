@@ -13,35 +13,40 @@ TILE_MAP = [[[1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1], [1, 1, 1, 1
             [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]]
 
 
-def scroll_bg(game, dir, max_scroll_x):
-    if dir != 0:
-        if dir < 0:
-            if max_scroll_x['max_left']+dir > max_scroll_x['current']:
-                return
-        elif dir > 0:
-            if max_scroll_x['max_right']+dir < max_scroll_x['current']:
-                return
-        max_scroll_x['current'] += dir
-        for bg in game.bg_list:
-            if not bg.x == 0:
-                bg.image.fill(BLACK)
-            rx = bg.x % bg.w
-            #print(bg.x, max_scroll_x)
-            bg.image.blit(bg.copy, (rx-bg.w, 0))
-            if rx < bg.w:
-                bg.image.blit(bg.copy, (rx, 0))
-            bg.x += bg.speed*dir
+def scroll_bg(game, speed, max_scroll_x):
+    if speed < 0:
+        if max_scroll_x['max_left']+speed > max_scroll_x['current']:
+            return False
+    elif speed > 0:
+        if max_scroll_x['max_right']+speed < max_scroll_x['current']:
+            return False
 
-def create_ennemies(game) :
+    max_scroll_x['current'] += speed
+    for bg in game.bg_list:
+        if not bg.x == 0:
+            bg.image.fill(BLACK)
+        rx = bg.x % bg.w
+        # print(bg.x, max_scroll_x)
+        bg.image.blit(bg.copy, (rx-bg.w, 0))
+        if rx < bg.w:
+            bg.image.blit(bg.copy, (rx, 0))
+        bg.x += bg.speed*speed
+    return True
+
+
+def create_ennemies(game):
     pass
+
 
 def create_player(game):
-    pass
+    return game.add_player(LAYER_GAME, 50, 200, 'assets/data/davis.json', 1)
+
 
 def create_gamebar(game):
     p = 'assets/image/gbar/'
-    img_list = [p+'avatar.png',p+'bg_img.png',p+'hp_bar.png',p+'mp_bar.png']
-    game.add_imagegamebar(LAYER_UI,20,20,100, 100, *img_list, 0, 0.5)
+    img_list = [p+'avatar.png', p+'bg_img.png', p+'hp_bar.png', p+'mp_bar.png']
+    game.add_imagegamebar(LAYER_UI, 20, 20, 100, 100, *img_list, 0, 0.5)
+
 
 def create_map(game):
     p = 'assets/image/lf/'
@@ -50,7 +55,7 @@ def create_map(game):
                                   [l1, l2, l3, l4], TILE_MAP, (0, 0, 0))
     game.bg_1 = game.add_parallax_bg(LAYER_BG, 0, 0, p+'forests.bmp', None, True)
     game.bg_2 = game.add_parallax_bg(LAYER_BG, 0, 15, p+'forestm1.bmp',  (0, 0, 0), True)
-    #game.bg_3 = game.add_image(LAYER_BG, 0, 50, p+'forestm3.bmp',  None, (0, 0, 0))
+    # game.bg_3 = game.add_image(LAYER_BG, 0, 50, p+'forestm3.bmp',  None, (0, 0, 0))
     game.bg_4 = game.add_parallax_bg(LAYER_BG, 0, 80, p+'forestt.bmp',  (0, 0, 0))
     game.bg_list = [game.bg_2, game.bg_4, game.bg_5]
     game.bg_2.copy = game.bg_2.image.copy()
@@ -59,6 +64,7 @@ def create_map(game):
     game.bg_2.x, game.bg_2.speed = 0, 0.5
     game.bg_4.x, game.bg_4.speed = 0, 2
     game.bg_5.x, game.bg_5.speed = 0, 2
+
 
 def create_menu(game):
     game_menu = GameMenu(GAME_WIDTH, GAME_HEIGHT, game)
@@ -72,11 +78,13 @@ def create_menu(game):
     game_menu.show('firstscreen')
     return game_menu
 
+
 def launch_game(game, game_menu):
     game_menu.kill()
     game_menu = None
     pg.mixer.music.fadeout(300)
     create_map(game)
+
 
 def main():
     # INIT pg----------------------
@@ -91,17 +99,21 @@ def main():
 
     # GAME ---------------------
     game = LF2_Game(display, GAME_WIDTH, GAME_HEIGHT)
-    #game_menu = create_menu(game)
+    # game_menu = create_menu(game)
     create_map(game)
     game_bar = create_gamebar(game)
+    player = create_player(game)
+    player.velocity = 4
 
     # LOOP----------------------
+    game_menu = None
     running = True
     speed = 0
     max_scroll_x = {'current': 0, 'max_left': -1000, 'max_right': 0}
     clock = pg.time.Clock()
     while running:
-        scroll_bg(game, speed, max_scroll_x)
+        if speed > 0 and player.x < 200 or speed < 0 and player.x > GAME_WIDTH-500:
+            scroll_bg(game, speed, max_scroll_x)
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 running = False
@@ -118,28 +130,64 @@ def main():
                     else:
                         game_menu.current_menu.go_back()
                 elif event.key == pg.K_RETURN:
-                    if game_menu.current_menu:
+                    if game_menu and game_menu.current_menu:
                         game_menu.current_menu.press_enter()
                 elif event.key == pg.K_BACKSPACE:
-                    if game_menu:
+                    if game_menu and game_menu.current_menu:
                         game_menu.current_menu.go_back()
                     else:
                         game.move_sprite()
                 elif event.key == pg.K_DOWN:
-                    if game_menu:
+                    if player:
+                        player.K_DOWN = True
+                    elif game_menu:
                         game_menu.current_menu.move_cursor_down()
                 elif event.key == pg.K_UP:
-                    if game_menu:
+                    if player:
+                        player.K_UP = True
+                    elif game_menu:
                         game_menu.current_menu.move_cursor_up()
                 elif event.key == pg.K_RIGHT:
+                    if player:
+                        player.K_RIGHT = True
+                        player.K_LEFT = False
                     if game.bg_list:
                         speed = -1
                 elif event.key == pg.K_LEFT:
+                    if player:
+                        player.K_LEFT = True
+                        player.K_RIGHT = False
                     if game.bg_list:
                         speed = 1
+                if event.key == pg.K_SPACE:
+                    player.K_SPACE = True
+                if event.key == pg.K_RETURN:
+                    player.K_RETURN = True
             elif event.type == pg.KEYUP:
-                if event.key == pg.K_RIGHT or event.key == pg.K_LEFT:
-                    speed = 0
+                if event.key == pg.K_RIGHT:
+                    if not player.K_LEFT:
+                        speed = 0
+                    if player:
+                        player.K_RIGHT = False
+                elif event.key == pg.K_LEFT:
+                    if not player.K_RIGHT:
+                        speed = 0
+                    if player:
+                        player.K_LEFT = False
+                elif event.key == pg.K_UP:
+                    if player:
+                        player.K_UP = False
+                elif event.key == pg.K_DOWN:
+                    if player:
+                        player.K_DOWN = False
+                elif event.key == pg.K_SPACE:
+                    player.K_SPACE = False
+                elif event.key == pg.K_RETURN:
+                    player.K_RETURN = False
+        if player.K_RIGHT and player.x > GAME_WIDTH-100:
+            player.rect.x = GAME_WIDTH-100
+        elif player.K_LEFT and player.x < 20:
+            player.rect.x = 20
 
         game.draw()
         clock.tick(FPS)

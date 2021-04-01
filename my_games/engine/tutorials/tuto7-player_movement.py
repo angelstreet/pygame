@@ -2,7 +2,7 @@
 ####################################################
 import pygame as pg
 from engine.src.game import Game, FONT_NAME, WHITE, BLACK, LAYER_GAME, LAYER_UI
-from engine.src.player import HorizontalPlayer, VerticalPlayer, FourDirPlayer, FourDirIsoPlayer, HeightDirPlayer
+from engine.src.player import HorizontalPlayer, VerticalPlayer, FourDirPlayer
 
 FPS = 60
 GAME_WIDTH, GAME_HEIGHT = 600, 400
@@ -42,6 +42,7 @@ def next(game, player, direction):
         direction.text = "add_h_player"
         player.force_right = False
     return player
+
 
 def main():
     # INIT pg----------------------

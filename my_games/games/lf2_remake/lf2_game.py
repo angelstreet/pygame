@@ -1,5 +1,6 @@
 import pygame as pg
 from engine.src.game import Game
+from engine.src.player import HorizontalPlayer
 from engine.src.utility import scale_img
 
 
@@ -12,6 +13,62 @@ class LF2_Game(Game):
         self.move_sprite(imagegamebar, x, y)
         self.add_sprite(layer, x, y, imagegamebar)
 
+    def add_player(self, layer, x, y, json, scale=1, force_right=False):
+        player = Lf2Player(layer+2, json, scale, force_right)
+        player.move(x, y)
+        self.game_sprites.add(player)
+        return player
+
+
+class Lf2Player(HorizontalPlayer):
+    def __init__(self, layer, json, scale=1, force_right=False):
+        HorizontalPlayer.__init__(self, layer, json, scale,force_right)
+
+    def _check_event(self):
+        if self.K_RETURN:
+            print(self.current_state,self.current_state in ('attack'), self._is_last_frame())
+            if not self.current_state in ('attack','attack2'):
+                self._reset_velocity()
+                self._set_state('attack')
+                self._attack()
+            elif self.current_state in ('attack') and self._is_last_frame():
+                self._set_state('attack2')
+                self._attack()
+        elif self.K_SPACE:
+            if not self.current_state in ('jump', 'fall'):
+                self._set_state('jump')
+                self._jump()
+        elif not (self.current_state == 'attack' or self.current_state == 'jump' or self.current_state == 'fall' or self.current_state == 'hurt'):
+            if self.K_LEFT:
+                self.velocity_x = -self.velocity
+                if self.direction_h != 'left':
+                    self.direction_h = 'left'
+                    self.current_frame_id = 0
+                self._set_state('walk')
+            elif self.K_RIGHT:
+                self.velocity_x = self.velocity
+                if self.direction_h != 'right':
+                    self.direction_h = 'right'
+                    self.current_frame_id = 0
+                self._set_state('walk')
+            if self.K_UP:
+                self.velocity_y = -self.velocity
+                if self.direction_v != 'up':
+                    self.direction_v = 'up'
+                    self.current_frame_id = 0
+                self._set_state('walk')
+            elif self.K_DOWN:
+                self.velocity_y = self.velocity
+                if self.direction_v != 'down':
+                    self.direction_v = 'down'
+                    self.current_frame_id = 0
+                self._set_state('walk')
+            if not (self.K_LEFT or self.K_RIGHT):
+                self.velocity_x = 0
+            if not (self.K_UP or self.K_DOWN):
+                self.velocity_y = 0
+            if not (self.K_LEFT or self.K_RIGHT or self.K_UP or self.K_DOWN):
+                self._set_state('idle')
 
 class Lf2GameBar(pg.sprite.Sprite):
     def __init__(self, max_hp, max_mp, av_path, bg_path, hp_path, mp_path, offset, scale=1):

@@ -60,6 +60,8 @@ def move_sprite(sprite, x, y, displace=False):
     else:
         sprite.rect.x = x
         sprite.rect.y = y
+    sprite.x = sprite.rect.x
+    sprite.y = sprite.rect.y
 
 
 def setIcon(iconfile):

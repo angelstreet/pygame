@@ -19,11 +19,11 @@ class _Player(GameSprite):
         self.velocity_z = 0
         self.gravity = 1
         self.jump_force = -10
-        self.z = 0
         self.rigid = True
         self.collision_list = []
         self.current_state = None
         self.debug = False
+        self.sound_data = None
         pygame.mixer.init()
         pygame.mixer.music.set_volume(0.1)
         self._init_player()
@@ -85,7 +85,7 @@ class _Player(GameSprite):
                     self.prev_state = self.current_state
                 self.current_state = state
             else:
-                states = ['idle', 'walk', 'run' 'attack', 'jump', 'fall', 'hurt']
+                states = ['idle', 'walk', 'run' 'attack','attack2', 'jump', 'fall', 'hurt']
                 for state in states:
                     if state in self.current_frame:
                         if self.current_state:
@@ -190,7 +190,7 @@ class _Player(GameSprite):
                 self._reset_velocity()
 
     def _attack(self):
-        if 'attack' in self.sound_data:
+        if self.sound_data and 'attack' in self.sound_data:
             attack_sound = self.sound_data['attack']
             pygame.mixer.music.load(attack_sound)
             pygame.mixer.music.play()
@@ -198,7 +198,7 @@ class _Player(GameSprite):
     def _jump(self):
         self.z = 0
         self.velocity_z = self.jump_force
-        if 'jump' in self.sound_data:
+        if self.sound_data and 'jump' in self.sound_data:
             jump_sound = self.sound_data['jump']
             pygame.mixer.music.load(jump_sound)
             pygame.mixer.music.play()
@@ -255,6 +255,13 @@ class _Player(GameSprite):
     def _get_nb_frame(self):
         nb_frames = len(self.frames_data[self.current_frame])-1  # less midbottom and sprite
         return nb_frames
+
+    def _is_last_frame(self):
+        print(self.current_frame_id,self._get_nb_frame()-1)
+        if self.current_frame_id == self._get_nb_frame()-1:
+            return True
+        return False
+
 
     def _animate(self):
         frame_rate = self._get_frame_rate()
@@ -427,6 +434,7 @@ class FourDirPlayer(_Player):
                 self.velocity_y = 0
             if not (self.K_LEFT or self.K_RIGHT or self.K_UP or self.K_DOWN):
                 self._set_state('idle')
+
 
 class FourDirIsoPlayer(_Player):
     def __init__(self, layer, json, scale=1):
